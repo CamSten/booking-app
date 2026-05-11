@@ -1,13 +1,16 @@
 package com.example.bookingapp.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 public class Booking {
+    public enum BookingStatus {
+        ACTIVE,
+        CANCELLED,
+        COMPLETED
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +23,8 @@ public class Booking {
     private LocalDate startdate;
     private LocalDate enddate;
     private int cost;
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
 
     public Booking() {
 
@@ -95,5 +100,13 @@ public class Booking {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public BookingStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BookingStatus status) {
+        this.status = status;
     }
 }

@@ -5,6 +5,7 @@ import com.example.bookingapp.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -22,6 +23,18 @@ public class BookingController {
     @GetMapping("/{id}")
     public Booking getBookingById(@PathVariable Long id) {
         return bookingService.getBookingById(id);
+    }
+    @GetMapping("/customer/{customerid}")
+    public List<Booking> getBookingsByCustomerId(@PathVariable Long customerid) {
+        return bookingService.getBookingsByCustomerId(customerid);
+    }
+    @GetMapping("/room/{roomid}")
+    public List<Booking> getBookingsByRoomId(@PathVariable Long roomid) {
+        return bookingService.getBookingsByRoomId(roomid);
+    }
+    @GetMapping("/startdate/{date}")
+    public List<Booking> getBookingsByStartdate(@PathVariable LocalDate date) {
+        return bookingService.getBookingsByStartdate(date);
     }
 
     @PostMapping("")

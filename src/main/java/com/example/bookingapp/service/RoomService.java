@@ -34,6 +34,6 @@ public class RoomService {
     }
 
     public List<Room> findAvailableRooms(LocalDate startDate, LocalDate endDate) {
-        return List.of();
+        return roomRepository.findAvailableRooms(startDate, endDate);
     }
 }

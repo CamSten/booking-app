@@ -1,5 +1,7 @@
 package com.example.bookingapp.service;
 
+import com.example.bookingapp.exception.ActiveBookingException;
+import com.example.bookingapp.model.Booking;
 import com.example.bookingapp.model.Customer;
 import com.example.bookingapp.repository.BookingRepository;
 import com.example.bookingapp.repository.CustomerRepository;
@@ -11,6 +13,7 @@ import java.util.List;
 public class CustomerService {
     @Autowired
     private final CustomerRepository customerRepository;
+    @Autowired
     private final BookingRepository bookingRepository;
 
     public CustomerService(CustomerRepository customerRepository, BookingRepository bookingRepository) {
@@ -47,6 +50,11 @@ public class CustomerService {
     }
 
     public void deleteCustomer(Long id) {
+        boolean hasActiveBooking = bookingRepository.activeCustomer(id, Booking.BookingStatus.ACTIVE);
+
+        if(hasActiveBooking){
+            throw new ActiveBookingException("Cannot delete a customer with an active booking");
+        }
         customerRepository.deleteById(id);
     }
 }

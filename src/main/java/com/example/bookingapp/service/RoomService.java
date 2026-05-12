@@ -1,6 +1,7 @@
 package com.example.bookingapp.service;
 
 import com.example.bookingapp.model.Room;
+import com.example.bookingapp.exception.RoomNotFoundException;
 import com.example.bookingapp.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,9 @@ public class RoomService {
         return roomRepository.findAll();
     }
 
-    public Optional<Room> getRoomById(Long id) {
-        return roomRepository.findById(id);
+    public Room getRoomById(Long id) {
+        return roomRepository.findById(id)
+                .orElseThrow(() -> new RoomNotFoundException("Room with id " + id + " was not found."));
     }
 
     public Room saveRoom(Room room) {

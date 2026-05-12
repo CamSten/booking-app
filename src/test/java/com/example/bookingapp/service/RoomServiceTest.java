@@ -74,4 +74,11 @@ class RoomServiceTest {
         assertEquals("201", savedRoom.getRoomNumber());
         verify(roomRepository, times(1)).save(any(Room.class));
     }
+
+    @Test
+    void deleteRoomCallsRepositoryDelete() {
+        roomService.deleteRoom(1L);
+
+        verify(roomRepository, times(1)).deleteById(1L);
+    }
 }

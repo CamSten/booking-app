@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,5 +61,17 @@ class RoomServiceTest {
 
         assertThrows(RoomNotFoundException.class, () -> roomService.getRoomById(99L));
         verify(roomRepository, times(1)).findById(99L);
+    }
+
+    @Test
+    void saveRoomReturnsSavedRoom() {
+        Room roomToSave = new Room();
+        roomToSave.setRoomNumber("201");
+        when(roomRepository.save(any(Room.class))).thenReturn(roomToSave);
+
+        Room savedRoom = roomService.saveRoom(new Room());
+
+        assertEquals("201", savedRoom.getRoomNumber());
+        verify(roomRepository, times(1)).save(any(Room.class));
     }
 }

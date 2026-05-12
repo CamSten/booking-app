@@ -1,5 +1,6 @@
 package com.example.bookingapp.service;
 
+import com.example.bookingapp.model.Booking;
 import com.example.bookingapp.model.Room;
 import com.example.bookingapp.exception.RoomNotFoundException;
 import com.example.bookingapp.repository.RoomRepository;
@@ -36,6 +37,6 @@ public class RoomService {
     }
 
     public List<Room> findAvailableRooms(LocalDate startDate, LocalDate endDate) {
-        return roomRepository.findAvailableRooms(startDate, endDate);
+        return roomRepository.findAvailableRooms(startDate, endDate, Booking.BookingStatus.CANCELLED);
     }
 }

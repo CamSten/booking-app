@@ -1,5 +1,6 @@
 package com.example.bookingapp.service;
 
+import com.example.bookingapp.exception.RoomNotFoundException;
 import com.example.bookingapp.model.Room;
 import com.example.bookingapp.repository.RoomRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,5 +52,13 @@ class RoomServiceTest {
 
         assertEquals("101", foundRoom.getRoomNumber());
         verify(roomRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void getRoomByIdThrowsExceptionWhenNotExists() {
+        when(roomRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(RoomNotFoundException.class, () -> roomService.getRoomById(99L));
+        verify(roomRepository, times(1)).findById(99L);
     }
 }

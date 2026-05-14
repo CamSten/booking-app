@@ -50,7 +50,7 @@ public class CustomerService {
     }
 
     public void deleteCustomer(Long id) {
-        boolean hasActiveBooking = bookingRepository.activeCustomer(id, Booking.BookingStatus.ACTIVE);
+        boolean hasActiveBooking = bookingRepository.existsByCustomeridAndStatus(id, Booking.BookingStatus.ACTIVE);
 
         if(hasActiveBooking){
             throw new ActiveBookingException("Cannot delete a customer with an active booking");

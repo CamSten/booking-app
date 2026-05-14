@@ -1,0 +1,203 @@
+.windsong-regular {
+    font-family: "WindSong", cursive;
+    font-size: large;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.windsong-medium {
+    font-family: "WindSong", cursive;
+    font-size: 3rem;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.dancing-script {
+    font-family: "Dancing Script", cursive;
+    font-size: 3rem;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.league-script-regular {
+    font-family: "League Script", cursive;
+    font-size: 3rem;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+body {
+    overflow-x: hidden;
+    background: linear-gradient(
+            135deg,
+            #f5e6e8,
+            #fdf6f0,
+            #e8f1f2
+    );
+    font-family: Arial, sans-serif;
+}
+
+
+.hero {
+    height: 260px;
+    background-image: url("../images/peonies.jpg");
+    background-size: cover;
+    background-position: center;
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 0;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+            to bottom,
+            rgba(255, 250, 245, 0.75),
+            rgba(255, 250, 245, 0.4)
+    );
+
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+
+.header-title {
+    font-family: "League Script", cursive;
+    font-size: 3.6rem;
+    font-weight: 600;
+    margin: 0;
+
+    color: #2f2a28;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.subtitle {
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 2px;
+    font-size: 1rem;
+    color: #777;
+}
+
+
+.calendar-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    padding: 0 16px;
+    box-sizing: border-box;
+    overflow-x: visible;
+}
+
+#calendar {
+    display: none;
+}
+
+
+.flatpickr-calendar {
+    width: fit-content;
+    max-width: 100%;
+
+    background: #fffaf5;
+    border: none;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.10);
+
+    font-family: Arial, sans-serif;
+    padding: 12px;
+
+    box-sizing: border-box;
+}
+
+
+.flatpickr-months {
+    background: transparent;
+    padding: 10px 0;
+}
+
+.flatpickr-current-month {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #2f2a28;
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+    fill: #a67b6b;
+}
+
+.flatpickr-prev-month:hover,
+.flatpickr-next-month:hover {
+    fill: #2f2a28;
+}
+
+
+.flatpickr-weekday {
+    font-weight: 500;
+    color: #a67b6b;
+    font-size: 0.85rem;
+}
+
+
+.flatpickr-days {
+    padding: 6px;
+}
+
+.flatpickr-day {
+    border-radius: 10px;
+    transition: all 0.15s ease;
+    margin: 2px;
+    font-size: 14px;
+}
+
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+    background: #f3e3de;
+    border-color: transparent;
+}
+
+.flatpickr-day.today {
+    border-color: transparent;
+}
+
+.flatpickr-day:focus {
+    outline: none;
+}
+
+
+.flatpickr-day.inRange {
+    background: #ead7d1;
+    border-color: #ead7d1;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange:focus,
+.flatpickr-day.endRange:focus,
+.flatpickr-day.selected:active,
+.flatpickr-day.startRange:active,
+.flatpickr-day.endRange:active {
+    background: #a67b6b !important;
+    border-color: #a67b6b !important;
+    color: white !important;
+    box-shadow: none !important;
+}

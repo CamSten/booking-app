@@ -46,10 +46,23 @@
                 <span th:text="${room.roomNumber}">101</span>
             </p>
 
+            <div id="extra-bed-section"
+                 th:if="${room.extraBedAvailable}">
+                <label>
+                    <input type="checkbox" id="extra-bed">
+                    Extra bed
+                </label>
+            </div>
+
             <p>
-                <strong>Extra bed available:</strong>
-                <span th:text="${room.extraBedAvailable ? 'Yes' : 'No'}">No</span>
+
+                <span th:text="${room.extraBedAvailable ? 'Yes' : 'No'}"></span>
             </p>
+
+            <div id="guest-section" style="display:none;">
+                <label>Guests:</label>
+                <select id="guest-count"></select>
+            </div>
 
             <p>
                 <strong>Dates:</strong>
@@ -64,30 +77,28 @@
             <button class="btn btn-dark w-100 mt-3" id="book-button">
                 Book this room
             </button>
-
-            <!--           TILL SENARE:  -->
-            <!--            <img id="room-image"-->
-            <!--                 th:src="@{'/images/rooms/' + ${room.id} + '/1.jpg'}"-->
-            <!--                 alt="Room image">-->
-
-            <!--            <h2 th:text="${room.roomType}">Room Type</h2>-->
-
-            <!--            <p>-->
-            <!--                <strong>Price per night:</strong>-->
-            <!--                <span th:text="${room.roomPrice} + ' SEK'">0 SEK</span>-->
-            <!--            </p>-->
-
-            <!--            <p>-->
-            <!--                <strong>Guests:</strong>-->
-            <!--                <span id="guest-count">Not selected</span>-->
-            <!--            </p>-->
-            <!--            <p>-->
-            <!--            <span id="booking-dates"-->
-            <!--                  th:text="${selectedDates ?: 'Not selected'}">Not selected</span>-->
-            <!--            </p>-->
-
         </div>
     </div>
+    <!--           TILL SENARE:  -->
+    <!--            <img id="room-image"-->
+    <!--                 th:src="@{'/images/rooms/' + ${room.id} + '/1.jpg'}"-->
+    <!--                 alt="Room image">-->
+
+    <!--            <h2 th:text="${room.roomType}">Room Type</h2>-->
+
+    <!--            <p>-->
+    <!--                <strong>Price per night:</strong>-->
+    <!--                <span th:text="${room.roomPrice} + ' SEK'">0 SEK</span>-->
+    <!--            </p>-->
+
+    <!--            <p>-->
+    <!--                <strong>Guests:</strong>-->
+    <!--                <span id="guest-count">Not selected</span>-->
+    <!--            </p>-->
+    <!--            <p>-->
+    <!--            <span id="booking-dates"-->
+    <!--                  th:text="${selectedDates ?: 'Not selected'}">Not selected</span>-->
+    <!--            </p>-->
 
 </div>
 <div class="modal" id="myModal">

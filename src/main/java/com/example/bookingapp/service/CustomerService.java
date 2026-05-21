@@ -37,7 +37,6 @@ public class CustomerService {
 
     public Customer createCustomer(Customer customer) {
         Customer newCustomer = new Customer(
-                customer.getUserName(),
                 customer.getName(),
                 customer.getEmail(),
                 customer.getAddress(),
@@ -50,7 +49,7 @@ public class CustomerService {
         Customer updatedCustomer = customerRepository.findById(id).orElse(null);
 
         if(updatedCustomer != null){
-            updatedCustomer.setUserName(customer.getUserName());
+            updatedCustomer.setName(customer.getName());
             updatedCustomer.setEmail(customer.getEmail());
             updatedCustomer.setAddress(customer.getAddress());
             updatedCustomer.setPhone(customer.getPhone());
@@ -70,14 +69,14 @@ public class CustomerService {
         customerRepository.deleteById(id);
     }
 
-    public Optional<Customer> loginCustomer(String name, String password) {
+    public Optional<Customer> loginCustomer(String email, String password) {
 
-        if (name == null || name.isBlank()
+        if (email == null || email.isBlank()
                 || password == null || password.isBlank()) {
             return Optional.empty();
         }
 
-        return customerRepository.findByName(name)
-                .filter(customer -> passwordEncoder.matches(password, customer.getPassword()));
+        return customerRepository.findByEmail(email)
+                .filter(customer -> passwordEncoder.matches(password,customer.getPassword()));
     }
 }

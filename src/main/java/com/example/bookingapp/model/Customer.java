@@ -11,21 +11,21 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String Name;
-    private String Email;
-    private String Address;
-    private String Phone;
-    private String Password;
+    private String name;
+    private String email;
+    private String address;
+    private String phone;
+    private String password;
 
     public Customer() {
     }
 
-    public Customer(String Name, String Email, String Address, String Phone, String Password) {
-        this.Name = Name;
-        this.Email = Email;
-        this.Address = Address;
-        this.Phone = Phone;
-        this.Password = Password;
+    public Customer(String name, String email, String address, String phone, String password) {
+        this.name = name;
+        this.email = email;
+        this.address = address;
+        this.phone = phone;
+        this.password = password;
     }
 
     public long getId() {
@@ -37,42 +37,42 @@ public class Customer {
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
-    public void setName(String Name) {
-        this.Name = Name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
 
     public String getAddress() {
-        return Address;
+        return address;
     }
 
     public void setAddress(String address) {
-        Address = address;
+        this.address = address;
     }
 
     public String getPhone() {
-        return Phone;
+        return phone;
     }
 
     public void setPhone(String phone) {
-        Phone = phone;
+        this.phone = phone;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 }

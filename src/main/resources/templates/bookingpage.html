@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Hôtel de Ville</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+            href="https://fonts.googleapis.com/css2?family=League+Script&display=swap"
+            rel="stylesheet">
+    <link rel="stylesheet" href="testbackend.css">
+
+</head>
+<body>
+
+<div class="hero">
+    <div class="hero-content">
+        <h1 class="header-title">L'Hôtel de Ville'</h1>
+        <p class="subtitle">Bed & Breakfast</p>
+    </div>
+</div>
+
+<div class = "booking-container container my-5">
+    <div class = "row g-4">
+        <div class="col-lg-7">
+            <div class="calendar-card">
+                <input type="text" id="calendar" class="shadow-sm">
+            </div>
+        </div>
+    </div>
+
+    <div class = "col-lg-7">
+        <div class = "booking-card">
+
+            <h2 th:text="${room.roomType}">Room Type</h2>
+
+            <p>
+                <strong>Room number:</strong>
+                <span th:text="${room.roomNumber}">101</span>
+            </p>
+
+            <div id="extra-bed-section"
+                 th:if="${room.extraBedAvailable}">
+                <label>
+                    <input type="checkbox" id="extra-bed">
+                    Extra bed
+                </label>
+            </div>
+
+            <p>
+
+                <span th:text="${room.extraBedAvailable ? 'Yes' : 'No'}"></span>
+            </p>
+
+            <div id="guest-section" style="display:none;">
+                <label>Guests:</label>
+                <select id="guest-count"></select>
+            </div>
+
+            <p>
+                <strong>Dates:</strong>
+                <span id="booking-dates">Not selected</span>
+            </p>
+
+            <p>
+                <strong>Total price:</strong>
+                <span id="booking-total">0 SEK</span>
+            </p>
+
+            <button class="btn btn-dark w-100 mt-3" id="book-button">
+                Book this room
+            </button>
+        </div>
+    </div>
+    <!--           TILL SENARE:  -->
+    <!--            <img id="room-image"-->
+    <!--                 th:src="@{'/images/rooms/' + ${room.id} + '/1.jpg'}"-->
+    <!--                 alt="Room image">-->
+
+    <!--            <h2 th:text="${room.roomType}">Room Type</h2>-->
+
+    <!--            <p>-->
+    <!--                <strong>Price per night:</strong>-->
+    <!--                <span th:text="${room.roomPrice} + ' SEK'">0 SEK</span>-->
+    <!--            </p>-->
+
+    <!--            <p>-->
+    <!--                <strong>Guests:</strong>-->
+    <!--                <span id="guest-count">Not selected</span>-->
+    <!--            </p>-->
+    <!--            <p>-->
+    <!--            <span id="booking-dates"-->
+    <!--                  th:text="${selectedDates ?: 'Not selected'}">Not selected</span>-->
+    <!--            </p>-->
+
+</div>
+<div class="modal" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Booking confirmed</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col" id="modalBody">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a th:href="@{/}" class="btn btn-primary">
+                    Close
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+    flatpickr("#calendar", {
+        mode: "range",
+        minDate: "today",
+        dateFormat: "Y-m-d",
+        inline: true
+    });
+</script>
+
+</body>
+
+</html>

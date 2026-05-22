@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String Name;
     private String Email;
@@ -40,8 +40,8 @@ public class Customer {
         return Name;
     }
 
-    public void setName(String name) {
-        Name = name;
+    public void setName(String Name) {
+        this.Name = Name;
     }
 
     public String getEmail() {

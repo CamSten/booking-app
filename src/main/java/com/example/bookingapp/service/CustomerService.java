@@ -6,8 +6,11 @@ import com.example.bookingapp.model.Customer;
 import com.example.bookingapp.repository.BookingRepository;
 import com.example.bookingapp.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -15,10 +18,13 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     @Autowired
     private final BookingRepository bookingRepository;
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
 
-    public CustomerService(CustomerRepository customerRepository, BookingRepository bookingRepository) {
+    public CustomerService(CustomerRepository customerRepository, BookingRepository bookingRepository, PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
         this.bookingRepository = bookingRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Customer getCustomerById(Long id) {
@@ -30,7 +36,12 @@ public class CustomerService {
     }
 
     public Customer createCustomer(Customer customer) {
-        Customer newCustomer = new Customer(customer.getName(),customer.getEmail(),customer.getAddress(),customer.getPhone(),customer.getPassword());
+        Customer newCustomer = new Customer(
+                customer.getName(),
+                customer.getEmail(),
+                customer.getAddress(),
+                customer.getPhone(),
+                passwordEncoder.encode(customer.getPassword()));
         return customerRepository.save(newCustomer);
     }
 
@@ -50,11 +61,22 @@ public class CustomerService {
     }
 
     public void deleteCustomer(Long id) {
-        boolean hasActiveBooking = bookingRepository.activeCustomer(id, Booking.BookingStatus.ACTIVE);
+        boolean hasActiveBooking = bookingRepository.existsByCustomeridAndStatus(id, Booking.BookingStatus.ACTIVE);
 
         if(hasActiveBooking){
             throw new ActiveBookingException("Cannot delete a customer with an active booking");
         }
         customerRepository.deleteById(id);
+    }
+
+    public Optional<Customer> loginCustomer(String email, String password) {
+
+        if (email == null || email.isBlank()
+                || password == null || password.isBlank()) {
+            return Optional.empty();
+        }
+
+        return customerRepository.findByEmail(email)
+                .filter(customer -> passwordEncoder.matches(password,customer.getPassword()));
     }
 }

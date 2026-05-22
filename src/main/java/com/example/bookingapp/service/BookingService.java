@@ -39,20 +39,19 @@ public class BookingService {
         return bookingRepository.findAll();
     }
     public Booking createBooking(BookingDTO req) {
-        if (checkRoomAvailability(req.getRoomid(), req.getStartdate(), req.getEnddate(), (long) -1)){
+        if (checkRoomAvailability(req.getRoomid(), req.getStartDate(), req.getEndDate(), (long) -1)){
             Booking booking = new Booking();
             booking.setRoomid(req.getRoomid());
-            booking.setStartdate(req.getStartdate());
-            booking.setEnddate(req.getEnddate());
-            booking.setBedcount(req.getBedcount());
-            booking.setExtrabed(req.isExtraBed());
-            int nights = Math.toIntExact(ChronoUnit.DAYS.between(req.getStartdate(), req.getEnddate()));
-            booking.setNightcount(nights);
+            booking.setStartDate(req.getStartDate());
+            booking.setEndDate(req.getEndDate());
+            booking.setGuestCount(req.getGuestCount());
+            booking.setExtraBed(req.isExtraBed());
+            int nights = Math.toIntExact(ChronoUnit.DAYS.between(req.getStartDate(), req.getEndDate()));
             Room room = roomRepository.findById(req.getRoomid()).orElseThrow();
             int cost = nights * room.getCostPerNight();
             booking.setCost(cost);
             booking.setStatus(Booking.BookingStatus.ACTIVE);
-            booking.setSubmitdate(LocalDateTime.now());
+            booking.setSubmitDate(LocalDateTime.now());
             return bookingRepository.save(booking);
         }
         return null;
@@ -68,8 +67,8 @@ public class BookingService {
         }
         List<Booking> activeBookings = getActiveBookingsByRoomId(roomId);
         for (Booking b : activeBookings){
-            boolean dateTaken = (startDate.isBefore(b.getEnddate()) &&
-                    enddate.isAfter(b.getStartdate()));
+            boolean dateTaken = (startDate.isBefore(b.getEndDate()) &&
+                    enddate.isAfter(b.getStartDate()));
             if (dateTaken && !b.getId().equals(bookingId)){
                 return false;
             }
@@ -80,14 +79,13 @@ public class BookingService {
     public Booking updateBooking(Long id, Booking booking) {
         Booking existingBooking = bookingRepository.findById(id).orElse(null);
         if (existingBooking != null) {
-            if (checkRoomAvailability(booking.getRoomid(), booking.getStartdate(), booking.getEnddate(), existingBooking.getId())) {
-                existingBooking.setSubmitdate(booking.getSubmitdate());
+            if (checkRoomAvailability(booking.getRoomid(), booking.getStartDate(), booking.getEndDate(), existingBooking.getId())) {
+                existingBooking.setSubmitDate(booking.getSubmitDate());
                 existingBooking.setCustomerid(booking.getCustomerid());
                 existingBooking.setRoomid(booking.getRoomid());
-                existingBooking.setBedcount(booking.getBedcount());
-                existingBooking.setNightcount(booking.getNightcount());
-                existingBooking.setStartdate(booking.getStartdate());
-                existingBooking.setEnddate(booking.getEnddate());
+                existingBooking.setGuestCount(booking.getGuestCount());
+                existingBooking.setStartDate(booking.getStartDate());
+                existingBooking.setEndDate(booking.getEndDate());
                 existingBooking.setCost(booking.getCost());
                 return bookingRepository.save(existingBooking);
             }

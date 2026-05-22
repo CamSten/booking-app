@@ -15,14 +15,13 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime submitdate;
+    private LocalDateTime submitDate;
     private Long customerid;
     private Long roomid;
-    private int bedcount;
-    private boolean extrabed;
-    private int nightcount;
-    private LocalDate startdate;
-    private LocalDate enddate;
+    private int guestCount;
+    private boolean extraBed;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private int cost;
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
@@ -31,12 +30,12 @@ public class Booking {
 
     }
 
-    public boolean isExtrabed() {
-        return extrabed;
+    public boolean isExtraBed() {
+        return extraBed;
     }
 
-    public void setExtrabed(boolean extrabed) {
-        this.extrabed = extrabed;
+    public void setExtraBed(boolean extrabed) {
+        this.extraBed = extrabed;
     }
 
     public int getCost() {
@@ -47,36 +46,28 @@ public class Booking {
         this.cost = cost;
     }
 
-    public LocalDate getEnddate() {
-        return enddate;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setEnddate(LocalDate enddate) {
-        this.enddate = enddate;
+    public void setEndDate(LocalDate enddate) {
+        this.endDate = enddate;
     }
 
-    public LocalDate getStartdate() {
-        return startdate;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setStartdate(LocalDate startdate) {
-        this.startdate = startdate;
+    public void setStartDate(LocalDate startdate) {
+        this.startDate = startdate;
     }
 
-    public int getNightcount() {
-        return nightcount;
+    public int getGuestCount() {
+        return guestCount;
     }
 
-    public void setNightcount(int nightcount) {
-        this.nightcount = nightcount;
-    }
-
-    public int getBedcount() {
-        return bedcount;
-    }
-
-    public void setBedcount(int bedcount) {
-        this.bedcount = bedcount;
+    public void setGuestCount(int bedcount) {
+        this.guestCount = bedcount;
     }
 
     public Long getRoomid() {
@@ -95,12 +86,12 @@ public class Booking {
         this.customerid = customerid;
     }
 
-    public LocalDateTime getSubmitdate() {
-        return submitdate;
+    public LocalDateTime getSubmitDate() {
+        return submitDate;
     }
 
-    public void setSubmitdate(LocalDateTime submitdate) {
-        this.submitdate = submitdate;
+    public void setSubmitDate(LocalDateTime submitdate) {
+        this.submitDate = submitdate;
     }
 
     public Long getId() {

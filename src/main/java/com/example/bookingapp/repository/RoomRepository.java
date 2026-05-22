@@ -14,6 +14,6 @@ import java.util.List;
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
     @Query("SELECT r FROM Room r WHERE r.id NOT IN " +
-           "(SELECT b.roomid FROM Booking b WHERE b.startdate < :endDate AND b.enddate > :startDate AND b.status != :cancelledStatus)")
+           "(SELECT b.roomid FROM Booking b WHERE b.startDate < :endDate AND b.endDate > :startDate AND b.status != :cancelledStatus)")
     List<Room> findAvailableRooms(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("cancelledStatus") Booking.BookingStatus cancelledStatus);
 }

@@ -5,13 +5,12 @@ import java.time.LocalDate;
 public class BookingDTO {
     private Long roomid;
     private int nightCost;
-    private LocalDate startdate;
-    private LocalDate enddate;
-    private int bedcount;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private int guestCount;
     private boolean extraBed;
 
     public BookingDTO() {
-
     }
 
     public Long getRoomid() {
@@ -21,7 +20,6 @@ public class BookingDTO {
     public int getNightCost() {
         return nightCost;
     }
-
     public void setNightCost(int nightCost) {
         this.nightCost = nightCost;
     }
@@ -30,28 +28,28 @@ public class BookingDTO {
         this.roomid = roomid;
     }
 
-    public LocalDate getStartdate() {
-        return startdate;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setStartdate(LocalDate startdate) {
-        this.startdate = startdate;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public LocalDate getEnddate() {
-        return enddate;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setEnddate(LocalDate enddate) {
-        this.enddate = enddate;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
-    public int getBedcount() {
-        return bedcount;
+    public int getGuestCount() {
+        return guestCount;
     }
 
-    public void setBedcount(int bedcount) {
-        this.bedcount = bedcount;
+    public void setGuestCount(int guestCount) {
+        this.guestCount = guestCount;
     }
 
     public boolean isExtraBed() {

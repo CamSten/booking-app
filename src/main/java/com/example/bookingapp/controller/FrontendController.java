@@ -1,13 +1,22 @@
 package com.example.bookingapp.controller;
 
+import com.example.bookingapp.repository.RoomRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class FrontendController {
 
+    private final RoomRepository roomRepository;
+
+    public FrontendController(RoomRepository roomRepository) {
+        this.roomRepository = roomRepository;
+    }
+
     @GetMapping("/home")
-    public String showHomePage() {
+    public String showHomePage(Model model) {
+        model.addAttribute("rooms", roomRepository.findAll());
         return "homepage";
     }
 

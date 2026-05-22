@@ -20,14 +20,20 @@
 
     <main class="container mt-5">
         <div class="row g-4">
-            <div class="col-12 col-md-3"><div class="p-5 border bg-light rounded shadow-sm" style="min-height: 150px;"></div></div>
-            <div class="col-12 col-md-3"><div class="p-5 border bg-light rounded shadow-sm" style="min-height: 150px;"></div></div>
-            <div class="col-12 col-md-3"><div class="p-5 border bg-light rounded shadow-sm" style="min-height: 150px;"></div></div>
-            <div class="col-12 col-md-3"><div class="p-5 border bg-light rounded shadow-sm" style="min-height: 150px;"></div></div>
-            <div class="col-12 col-md-3"><div class="p-5 border bg-light rounded shadow-sm" style="min-height: 150px;"></div></div>
-            <div class="col-12 col-md-3"><div class="p-5 border bg-light rounded shadow-sm" style="min-height: 150px;"></div></div>
-            <div class="col-12 col-md-3"><div class="p-5 border bg-light rounded shadow-sm" style="min-height: 150px;"></div></div>
-            <div class="col-12 col-md-3"><div class="p-5 border bg-light rounded shadow-sm" style="min-height: 150px;"></div></div>
+            <!-- Thymeleaf loop starts here -->
+            <div class="col-12 col-md-3" th:each="room : ${rooms}">
+                <div class="card h-100 shadow-sm border-0">
+                    <img th:src="${room.roomType == 'Single' ? '/images/single_room.png' : '/images/double_room.png'}" 
+                         class="card-img-top" 
+                         alt="Hotel Room" 
+                         style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold mb-1" th:text="'Room ' + ${room.roomNumber}"></h5>
+                        <p class="text-muted mb-0" th:text="${room.roomType}"></p>
+                    </div>
+                </div>
+            </div>
+            <!-- Thymeleaf loop ends here -->
         </div>
     </main>
 

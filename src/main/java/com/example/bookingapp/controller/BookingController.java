@@ -1,6 +1,7 @@
 package com.example.bookingapp.controller;
 
 import com.example.bookingapp.model.Booking;
+import com.example.bookingapp.model.BookingDTO;
 import com.example.bookingapp.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +48,7 @@ public class BookingController {
     }
 
     @PostMapping("")
-    public Booking createBooking(@RequestBody Booking booking) {
+    public Booking createBooking(@RequestBody BookingDTO booking) {
         return bookingService.createBooking(booking);
     }
 

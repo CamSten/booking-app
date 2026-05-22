@@ -19,6 +19,7 @@ public class Booking {
     private Long customerid;
     private Long roomid;
     private int bedcount;
+    private boolean extrabed;
     private int nightcount;
     private LocalDate startdate;
     private LocalDate enddate;
@@ -28,6 +29,14 @@ public class Booking {
 
     public Booking() {
 
+    }
+
+    public boolean isExtrabed() {
+        return extrabed;
+    }
+
+    public void setExtrabed(boolean extrabed) {
+        this.extrabed = extrabed;
     }
 
     public int getCost() {

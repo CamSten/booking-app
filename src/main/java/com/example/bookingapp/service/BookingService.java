@@ -2,19 +2,26 @@
 package com.example.bookingapp.service;
 
 import com.example.bookingapp.model.Booking;
+import com.example.bookingapp.model.BookingDTO;
+import com.example.bookingapp.model.Room;
 import com.example.bookingapp.repository.BookingRepository;
+import com.example.bookingapp.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 
 @Service
 public class BookingService {
     private final BookingRepository bookingRepository;
+    private final RoomRepository roomRepository;
 
-    public BookingService(BookingRepository bookingRepository) {
+
+    public BookingService(BookingRepository bookingRepository, RoomRepository roomRepository) {
         this.bookingRepository = bookingRepository;
+        this.roomRepository = roomRepository;
     }
     public Booking getBookingById(Long id) {
         return bookingRepository.findById(id).orElse(null);
@@ -31,8 +38,19 @@ public class BookingService {
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
-    public Booking createBooking(Booking booking) {
-        if (checkRoomAvailability(booking.getRoomid(), booking.getStartdate(), booking.getEnddate(), (long) -1)){
+    public Booking createBooking(BookingDTO req) {
+        if (checkRoomAvailability(req.getRoomid(), req.getStartdate(), req.getEnddate(), (long) -1)){
+            Booking booking = new Booking();
+            booking.setRoomid(req.getRoomid());
+            booking.setStartdate(req.getStartdate());
+            booking.setEnddate(req.getEnddate());
+            booking.setBedcount(req.getBedcount());
+            booking.setExtrabed(req.isExtraBed());
+            int nights = Math.toIntExact(ChronoUnit.DAYS.between(req.getStartdate(), req.getEnddate()));
+            booking.setNightcount(nights);
+            Room room = roomRepository.findById(req.getRoomid()).orElseThrow();
+            int cost = nights * room.getCostPerNight();
+            booking.setCost(cost);
             booking.setStatus(Booking.BookingStatus.ACTIVE);
             booking.setSubmitdate(LocalDateTime.now());
             return bookingRepository.save(booking);

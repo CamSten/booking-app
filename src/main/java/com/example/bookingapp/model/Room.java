@@ -15,6 +15,7 @@ public class Room {
     private String roomNumber;
     private String roomType;
     private boolean extraBedAvailable;
+    private int costPerNight;
 
     public Room() {
     }
@@ -49,5 +50,13 @@ public class Room {
 
     public void setExtraBedAvailable(boolean extraBedAvailable) {
         this.extraBedAvailable = extraBedAvailable;
+    }
+
+    public int getCostPerNight() {
+        return costPerNight;
+    }
+
+    public void setCostPerNight(int costPerNight) {
+        this.costPerNight = costPerNight;
     }
 }

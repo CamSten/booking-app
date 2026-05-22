@@ -21,21 +21,21 @@
     <main class="container mt-5">
         <div class="row bg-light p-4 rounded shadow-sm">
             <div class="col-12 col-md-6 mb-4 mb-md-0">
-                <img src="/images/peonies.jpg" class="img-fluid rounded" alt="Room View">
+                <img th:src="${room.roomType == 'Single' ? '/images/single_room.png' : '/images/double_room.png'}" class="img-fluid rounded" alt="Room View">
             </div>
             
             <div class="col-12 col-md-6 d-flex flex-column justify-content-center">
-                <h2 class="fw-bold mb-3">Room 101</h2>
+                <h2 class="fw-bold mb-3" th:text="'Room ' + ${room.roomNumber}">Room 101</h2>
                 <div class="fs-5 mb-2">
-                    <span class="fw-bold">Type:</span> Single
+                    <span class="fw-bold">Type:</span> <span th:text="${room.roomType}">Single</span>
                 </div>
                 <div class="fs-5 mb-4">
-                    <span class="fw-bold">Extra Bed Available:</span> No
+                    <span class="fw-bold">Extra Bed Available:</span> <span th:text="${room.extraBedAvailable ? 'Yes' : 'No'}">No</span>
                 </div>
                 <p class="text-muted mb-5">
                     A beautiful and cozy room perfect for your stay. Features a stunning view and comfortable amenities.
                 </p>
-                <a href="/book" class="btn btn-success btn-lg w-100">Book Now</a>
+                <a th:href="@{/book(roomId=${room.id})}" class="btn btn-success btn-lg w-100">Book Now</a>
             </div>
         </div>
     </main>

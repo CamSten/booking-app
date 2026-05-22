@@ -40,8 +40,8 @@ public class Customer {
         return Name;
     }
 
-    public void setName(String name) {
-        Name = name;
+    public void setName(String Name) {
+        this.Name = Name;
     }
 
     public String getEmail() {

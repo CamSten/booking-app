@@ -39,9 +39,13 @@ public class AuthController {
 
     @PostMapping("/signup")
     public String signup(@ModelAttribute("signupCustomer") Customer customer, Model model) {
-        customerService.createCustomer(customer);
+        try{customerService.createCustomer(customer);
         model.addAttribute("success", "Signup Successful");
         return "redirect:/auth";
+        } catch(Exception e){
+            model.addAttribute("signupError", e.getMessage());
+            return "auth";
+        }
     }
 
     @GetMapping("/logout")
@@ -52,17 +56,13 @@ public class AuthController {
 
     @GetMapping("/profile")
     public String profile(HttpSession session, Model model) {
-        Long customerId = (Long) session.getAttribute("customerId");
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
 
         if (customerId == null) {
             return "redirect:/auth";
         }
 
         Customer customer = customerService.getCustomerById(customerId);
-
-        if (customer == null) {
-            return "redirect:/auth";
-        }
 
         model.addAttribute("customer", customer);
 

@@ -36,6 +36,11 @@ public class CustomerService {
     }
 
     public Customer createCustomer(Customer customer) {
+        Optional<Customer> existingCustomer = customerRepository.findByEmail(customer.getEmail());
+        if (existingCustomer.isPresent()) {
+            throw new ActiveBookingException("Email already exists");
+        }
+
         Customer newCustomer = new Customer(
                 customer.getName(),
                 customer.getEmail(),

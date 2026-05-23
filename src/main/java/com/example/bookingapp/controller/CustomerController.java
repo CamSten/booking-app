@@ -2,39 +2,70 @@ package com.example.bookingapp.controller;
 
 import com.example.bookingapp.model.Customer;
 import com.example.bookingapp.service.CustomerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
-@RestController
-@RequestMapping("/customers")
+import java.util.Optional;
+
+
+@Controller
 public class CustomerController {
 
-    @Autowired
-    private CustomerService customerService;
-
-    @GetMapping("")
-    public List<Customer> getAllCustomers() {
-        return customerService.getAllCustomers();
+    private final CustomerService customerService;
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
-    @GetMapping("/{id}")
-    public Customer getCustomerById(@PathVariable Long id) {
-        return customerService.getCustomerById(id);
+    @GetMapping("/customer")
+    public String showCustomerPage(Model model) {
+        model.addAttribute("loginCustomer", new Customer());
+        model.addAttribute("signupCustomer", new Customer());
+        return "customer";
     }
 
-    @PostMapping("")
-    public Customer createCustomer(@RequestBody Customer customer) {
-        return customerService.createCustomer(customer);
+    @PostMapping("/login")
+    public String login(@ModelAttribute("loginCustomer") Customer customer, HttpSession session, Model model) {
+        Optional<Customer> loggedinCustomer = customerService.loginCustomer(customer.getEmail(), customer.getPassword());
+
+        if (loggedinCustomer.isPresent()) {
+            session.setAttribute("loginCustomerId", loggedinCustomer.get().getId());
+            return "redirect:/profile";
+        }
+        model.addAttribute("error", "Invalid username and/or password");
+        return "customer";
     }
 
-    @PutMapping("/{id}")
-    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
-        return customerService.updateCustomer(id, customer);
+    @PostMapping("/signup")
+    public String signup(@ModelAttribute("signupCustomer") Customer customer, Model model) {
+        try{customerService.createCustomer(customer);
+        model.addAttribute("success", "Signup Successful");
+        return "redirect:/customer";
+        } catch(Exception e){
+            model.addAttribute("signupError", e.getMessage());
+            return "customer";
+        }
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteCustomer(@PathVariable Long id) {
-        customerService.deleteCustomer(id);
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/customer";
+    }
+
+    @GetMapping("/profile")
+    public String profile(HttpSession session, Model model) {
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
+
+        if (customerId == null) {
+            return "redirect:/customer";
+        }
+
+        Customer customer = customerService.getCustomerById(customerId);
+
+        model.addAttribute("customer", customer);
+
+        return "profile";
     }
 }

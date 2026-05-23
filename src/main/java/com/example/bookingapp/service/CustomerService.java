@@ -5,8 +5,6 @@ import com.example.bookingapp.model.Booking;
 import com.example.bookingapp.model.Customer;
 import com.example.bookingapp.repository.BookingRepository;
 import com.example.bookingapp.repository.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,11 +12,8 @@ import java.util.Optional;
 
 @Service
 public class CustomerService {
-    @Autowired
     private final CustomerRepository customerRepository;
-    @Autowired
     private final BookingRepository bookingRepository;
-    @Autowired
     private final PasswordEncoder passwordEncoder;
 
     public CustomerService(CustomerRepository customerRepository, BookingRepository bookingRepository, PasswordEncoder passwordEncoder) {
@@ -58,7 +53,7 @@ public class CustomerService {
             updatedCustomer.setEmail(customer.getEmail());
             updatedCustomer.setAddress(customer.getAddress());
             updatedCustomer.setPhone(customer.getPhone());
-            updatedCustomer.setPassword(customer.getPassword());
+            updatedCustomer.setPassword(passwordEncoder.encode(customer.getPassword()));
             return customerRepository.save(updatedCustomer);
         } else {
             return null;

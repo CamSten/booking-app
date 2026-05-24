@@ -53,7 +53,13 @@ public class CustomerService {
             updatedCustomer.setEmail(customer.getEmail());
             updatedCustomer.setAddress(customer.getAddress());
             updatedCustomer.setPhone(customer.getPhone());
-            updatedCustomer.setPassword(passwordEncoder.encode(customer.getPassword()));
+            if(customer.getPassword() != null &&
+                    !customer.getPassword().isBlank()) {
+
+                updatedCustomer.setPassword(
+                        passwordEncoder.encode(customer.getPassword())
+                );
+            }
             return customerRepository.save(updatedCustomer);
         } else {
             return null;

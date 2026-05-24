@@ -1,6 +1,7 @@
 package com.example.bookingapp.controller;
 
 import com.example.bookingapp.model.Customer;
+import com.example.bookingapp.repository.CustomerRepository;
 import com.example.bookingapp.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -14,8 +15,10 @@ import java.util.Optional;
 public class CustomerController {
 
     private final CustomerService customerService;
-    public CustomerController(CustomerService customerService) {
+    private final CustomerRepository customerRepository;
+    public CustomerController(CustomerService customerService, CustomerRepository customerRepository ) {
         this.customerService = customerService;
+        this.customerRepository = customerRepository;
     }
 
     @GetMapping("/customer")
@@ -54,18 +57,25 @@ public class CustomerController {
         return "redirect:/customer";
     }
 
+//    @GetMapping("/profile")
+//    public String profile(HttpSession session, Model model) {
+//        Long customerId = (Long) session.getAttribute("loginCustomerId");
+//
+//        if (customerId == null) {
+//            return "redirect:/customer";
+//        }
+//
+//        Customer customer = customerService.getCustomerById(customerId);
+//
+//        model.addAttribute("customer", customer);
+//
+//        return "profile";
+//    }
+
     @GetMapping("/profile")
-    public String profile(HttpSession session, Model model) {
-        Long customerId = (Long) session.getAttribute("loginCustomerId");
-
-        if (customerId == null) {
-            return "redirect:/customer";
-        }
-
-        Customer customer = customerService.getCustomerById(customerId);
-
-        model.addAttribute("customer", customer);
-
-        return "profile";
+    public String showProfilePage(@RequestParam Long customerId, Model model) {
+        model.addAttribute("customer", customerRepository.findById(customerId).orElse(null));
+        return "tempProfileWithBookings";
     }
+
 }

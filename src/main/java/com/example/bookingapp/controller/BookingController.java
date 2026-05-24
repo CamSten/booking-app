@@ -30,6 +30,12 @@ public class BookingController {
         return bookingService.getBookingsByCustomerId(customerid);
     }
 
+    @GetMapping("/customer/active/{customerid}")
+    public List<Booking> getUpcomingBookingsByCustomerId(@PathVariable Long customerid) {
+        return bookingService.getActiveBookingsByCustomerId(customerid);
+    }
+
+
     @GetMapping("/room/{roomid}")
     public List<Booking> getBookingsByRoomId(@PathVariable Long roomid) {
         return bookingService.getBookingsByRoomId(roomid);

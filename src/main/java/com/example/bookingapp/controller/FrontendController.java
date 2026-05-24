@@ -32,5 +32,6 @@ public class FrontendController {
         model.addAttribute("room", roomRepository.findById(roomId).orElse(null));
         return "bookingpage";
     }
+
 }
 

@@ -17,6 +17,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.stream;
+
 
 @Service
 public class BookingService {
@@ -26,7 +28,9 @@ public class BookingService {
     public BookingService(BookingRepository bookingRepository, RoomRepository roomRepository) {
         this.bookingRepository = bookingRepository;
         this.roomRepository = roomRepository;
+
     }
+
     public Booking getBookingById(Long id) {
         return bookingRepository.findById(id).orElse(null);
     }
@@ -63,6 +67,11 @@ public class BookingService {
 
     public List<Booking> getActiveBookingsByRoomId(Long roomId){
         return bookingRepository.findByRoomidAndStatus(roomId, Booking.BookingStatus.ACTIVE);
+    }
+    public List<Booking> getActiveBookingsByCustomerId(long customerId){
+        return bookingRepository.findByCustomeridAndStatus(customerId, Booking.BookingStatus.ACTIVE)
+                .stream().filter(b ->
+                        !b.getEnddate().isBefore(LocalDate.now())).toList();
     }
 
     public boolean checkRoomAvailability(Long roomId, LocalDate startDate, LocalDate enddate, Long bookingId){

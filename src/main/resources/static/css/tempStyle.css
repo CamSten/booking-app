@@ -149,11 +149,7 @@ body {
     font-weight: 600;
 }
 
-.booking-card span {
-    color: #2f2a28;
-    font-weight: 500;
-}
-
+.booking-card span,
 .booking-card label {
     color: #2f2a28;
     font-weight: 500;
@@ -192,6 +188,7 @@ body {
 #extra-bed-section {
     margin: 18px 0;
 }
+
 #extra-bed-section label {
     display: flex;
     align-items: center;
@@ -224,6 +221,7 @@ body {
     transform: translateY(-1px);
     box-shadow: 0 6px 18px rgba(166, 123, 107, 0.35);
 }
+
 #calendar {
     visibility: hidden;
     position: absolute;
@@ -246,64 +244,6 @@ body {
     box-shadow: 0 12px 40px rgba(0,0,0,0.10);
     font-family: Arial, sans-serif;
     padding: 12px;
-    box-sizing: border-box;
-}
-
-.flatpickr-months {
-    background: transparent;
-    padding: 10px 0;
-}
-
-.flatpickr-current-month {
-    font-size: 1.15rem;
-    font-weight: 500;
-    color: #2f2a28;
-}
-
-.flatpickr-prev-month,
-.flatpickr-next-month {
-    fill: #a67b6b;
-}
-
-.flatpickr-prev-month:hover,
-.flatpickr-next-month:hover {
-    fill: #2f2a28;
-}
-
-.flatpickr-weekday {
-    font-weight: 500;
-    color: #a67b6b;
-    font-size: 0.85rem;
-}
-
-.flatpickr-days {
-    padding: 6px;
-}
-
-.flatpickr-day {
-    border-radius: 10px;
-    transition: all 0.15s ease;
-    margin: 2px;
-    font-size: 14px;
-}
-
-.flatpickr-day:hover {
-    background: #f3e3de;
-    border-color: transparent;
-}
-
-.flatpickr-day.inRange {
-    background: #ead7d1;
-    border-color: #ead7d1;
-}
-
-.flatpickr-day.selected,
-.flatpickr-day.startRange,
-.flatpickr-day.endRange {
-    background: #a67b6b !important;
-    border-color: #a67b6b !important;
-    color: white !important;
-    box-shadow: none !important;
 }
 
 .modal-content {
@@ -318,13 +258,14 @@ body {
     padding: 20px 24px;
     font-family: Arial, sans-serif;
     color: #2f2a28;
+    text-align: center;
 }
 
 #modal_image,
 .modal-room-image {
     width: 100%;
-    max-width: 260px;   /* 👈 detta är “thumbnail-känslan” */
-    height: 160px;      /* fast höjd = snygg crop */
+    max-width: 260px;
+    height: 160px;
     object-fit: cover;
     border-radius: 14px;
     display: block;
@@ -333,7 +274,6 @@ body {
 }
 
 .modal-body h5 {
-    text-align: center;
     font-size: 1.4rem;
     margin-bottom: 12px;
     color: #5f4b45;
@@ -343,22 +283,59 @@ body {
     margin: 10px 0;
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(166, 123, 107, 0.15);
-    line-height: 1.4;
 }
 
-.modal-body p:last-child {
-    border-bottom: none;
+.bookings-table-card {
+    background: #fffaf5;
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    border: 1px solid rgba(166, 123, 107, 0.12);
 }
 
-.modal-body strong {
-    color: #a67b6b;
+#bookings-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
 }
 
-#modalBody {
-    text-align: center;
-}
-
-.modal-body p:last-of-type {
-    margin-top: 14px;
+#bookings-table thead th {
+    font-size: 0.85rem;
     font-weight: 600;
+    color: #a67b6b;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(166, 123, 107, 0.2);
+}
+
+#bookings-table tbody tr {
+    background: white;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    border-radius: 14px;
+    transition: all 0.15s ease;
+}
+
+#bookings-table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.10);
+}
+
+#bookings-table td {
+    padding: 14px 12px;
+    vertical-align: middle;
+    color: #2f2a28;
+}
+
+.booking-thumbnail {
+    width: 72px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    transition: transform 0.15s ease;
+}
+
+#bookings-table tbody tr:hover .booking-thumbnail {
+    transform: scale(1.05);
 }

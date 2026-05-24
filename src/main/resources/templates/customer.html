@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Signup</title>
+</head>
+<body>
+
+<div class="popup">
+
+    <div class="popupContent">
+        <form th:action="@{/login}"
+              th:object="${loginCustomer}"
+              method="post">
+
+            <h1>Login</h1>
+
+            <div th:if="${error}">
+                <p th:text="${error}"></p>
+            </div>
+
+            <div>
+                <label>Email address</label>
+                <br>
+                <input type="email"
+                       th:field="*{email}"
+                       placeholder="Enter email"
+                       required>
+            </div>
+
+            <br>
+            <div>
+                <label>Password</label>
+                <br>
+                <input type="password"
+                       th:field="*{password}"
+                       placeholder="Enter password"
+                       required>
+            </div>
+
+            <br>
+            <button type="submit">
+                Log in
+            </button>
+        </form>
+
+        <hr>
+        <form th:action="@{/signup}"
+              th:object="${signupCustomer}"
+              method="post">
+            <h1>Sign Up</h1>
+
+            <div>
+                <label>Full name</label>
+                <br>
+                <input type="text"
+                       th:field="*{name}"
+                       placeholder="Enter full name"
+                       required>
+            </div>
+
+            <br>
+            <div>
+                <label>Email address</label>
+                <br>
+                <input type="email"
+                       th:field="*{email}"
+                       placeholder="Enter email"
+                       required>
+            </div>
+
+            <br>
+            <div>
+                <label>Phone number</label>
+                <br>
+                <input type="text"
+                       th:field="*{phone}"
+                       placeholder="Enter phone number"
+                       required>
+            </div>
+
+            <br>
+            <div>
+                <label>Address</label>
+                <br>
+                <input type="text"
+                       th:field="*{address}"
+                       placeholder="Enter address"
+                       required>
+            </div>
+
+            <br>
+            <div>
+                <label>Password</label>
+                <br>
+                <input type="password"
+                       th:field="*{password}"
+                       placeholder="Enter password"
+                       required>
+            </div>
+
+            <br>
+            <button type="submit">
+                Sign up
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -68,4 +68,14 @@ public class CustomerController {
 
         return "profile";
     }
+
+    @PostMapping("/profile/delete")
+    public String deleteCustomer(HttpSession session) {
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
+        if (customerId != null) {
+            customerService.deleteCustomer(customerId);
+        }
+        session.invalidate();
+        return "redirect:/customer";
+    }
 }

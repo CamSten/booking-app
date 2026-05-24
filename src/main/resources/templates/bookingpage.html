@@ -15,75 +15,89 @@
     <link
             href="https://fonts.googleapis.com/css2?family=League+Script&display=swap"
             rel="stylesheet">
-    <link rel="stylesheet" href="testbackend.css">
+    <link rel="stylesheet" th:href="@{/css/tempStyle.css}">
 
 </head>
 <body>
 
 <div class="hero">
     <div class="hero-content">
-        <h1 class="header-title">L'Hôtel de Ville'</h1>
+        <h1 class="header-title">L'Hôtel de Ville</h1>
         <p class="subtitle">Bed & Breakfast</p>
     </div>
 </div>
 
-<div class = "booking-container container my-5">
-    <div class = "row g-4">
-        <div class="col-lg-7">
+<div class="booking-container container my-5">
+    <div class="row g-4">
+
+        <div class="col-12 col-lg-6">
             <div class="calendar-card">
                 <input type="text" id="calendar" class="shadow-sm">
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+
+            <div class="booking-card">
+
+                <input type="hidden"
+                       id="room-id"
+                       th:value="${room.id}">
+
+                <input type="hidden"
+                       id="room-price"
+                       th:value="${room.costPerNight}">
+                <img id="room-image"
+                     src="/images/single_room.png"
+                     alt="Room image">
+<!--                <img id="room-image"-->
+<!--                     th:src="@{'/images/rooms/' + ${room.id} + '/1.jpg'}"-->
+<!--                     alt="Room image">-->
+
+                <h2 th:text="${room.roomType}">Room Type</h2>
+
+                <p>
+                    <strong>Price per night:</strong>
+                    <span th:text="${room.costPerNight} + ' SEK'">0 SEK</span>
+                </p>
+
+                <p>
+                    <strong>Room number:</strong>
+                    <span th:text="${room.roomNumber}">101</span>
+                </p>
+
+                <div id="extra-bed-section"
+                     th:if="${room.extraBedAvailable}">
+                    <label>
+                        <input type="checkbox" id="extra-bed">
+                        Extra bed
+                    </label>
+                </div>
+
+                <div id="guest-section" style="display:none;">
+                    <label id = "guestlabel">Guests:</label>
+                </div>
+
+                <p>
+                    <strong>Dates:</strong>
+                    <span id="booking-dates">Not selected</span>
+                </p>
+
+                <p>
+                    <strong>Total price:</strong>
+                    <span id="booking-total">0 SEK</span>
+                </p>
+
+                <button class="book-btn"
+                        id="book-button"
+                        style="display:none;">
+                    Book this room
+                </button>
 
             </div>
         </div>
+
     </div>
-
-    <div class = "col-lg-7">
-        <div class = "booking-card">
-            <input type="hidden"
-                   id="room-id"
-                   th:value="${room.id}">
-
-            <input type="hidden"
-                   id="room-price"
-                   th:value="${room.costPerNight}">
-
-            <img id="room-image"
-                 th:src="@{'/images/rooms/' + ${room.id} + '/1.jpg'}"
-                 alt="Room image">
-
-            <h2 th:text="${room.roomType}">Room Type</h2>
-            <p><strong>Price per night:</strong>
-                <span th:text="${room.costPerNight} + ' SEK'">0 SEK</span></p>
-
-            <p><strong>Room number:</strong>
-                <span th:text="${room.roomNumber}">101</span></p>
-
-            <div id="extra-bed-section"
-                 th:if="${room.extraBedAvailable}">
-                <label>
-                    <input type="checkbox" id="extra-bed">
-                    Extra bed
-                </label>
-            </div>
-
-            <div id="guest-section" style="display:none;">
-                <label>Guests:</label>
-            </div>
-
-            <p><strong>Dates:</strong>
-                <span id="booking-dates">Not selected</span></p>
-
-            <p><strong>Total price:</strong>
-                <span id="booking-total">0 SEK</span></p>
-
-            <button class="btn btn-dark w-100 mt-3"
-                    id="book-button"
-                    style="display:none;">
-                Book this room
-            </button>
-        </div>
-    </div>
-
 </div>
 <div class="modal" id="myModal">
     <div class="modal-dialog">

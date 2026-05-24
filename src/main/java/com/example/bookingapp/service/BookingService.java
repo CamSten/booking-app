@@ -6,10 +6,15 @@ import com.example.bookingapp.model.BookingDTO;
 import com.example.bookingapp.model.Room;
 import com.example.bookingapp.repository.BookingRepository;
 import com.example.bookingapp.repository.RoomRepository;
+import jakarta.persistence.EntityManager;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -17,7 +22,6 @@ import java.util.List;
 public class BookingService {
     private final BookingRepository bookingRepository;
     private final RoomRepository roomRepository;
-
 
     public BookingService(BookingRepository bookingRepository, RoomRepository roomRepository) {
         this.bookingRepository = bookingRepository;
@@ -39,19 +43,19 @@ public class BookingService {
         return bookingRepository.findAll();
     }
     public Booking createBooking(BookingDTO req) {
-        if (checkRoomAvailability(req.getRoomid(), req.getStartDate(), req.getEndDate(), (long) -1)){
+        if (checkRoomAvailability(req.getRoomid(), req.getStartdate(), req.getEnddate(), (long) -1)){
             Booking booking = new Booking();
             booking.setRoomid(req.getRoomid());
-            booking.setStartDate(req.getStartDate());
-            booking.setEndDate(req.getEndDate());
-            booking.setGuestCount(req.getGuestCount());
-            booking.setExtraBed(req.isExtraBed());
-            int nights = Math.toIntExact(ChronoUnit.DAYS.between(req.getStartDate(), req.getEndDate()));
+            booking.setStartdate(req.getStartdate());
+            booking.setEnddate(req.getEnddate());
+            booking.setGuestcount(req.getGuestcount());
+            booking.setExtrabed(req.isExtrabed());
+            int nights = Math.toIntExact(ChronoUnit.DAYS.between(req.getStartdate(), req.getEnddate()));
             Room room = roomRepository.findById(req.getRoomid()).orElseThrow();
             int cost = nights * room.getCostPerNight();
             booking.setCost(cost);
             booking.setStatus(Booking.BookingStatus.ACTIVE);
-            booking.setSubmitDate(LocalDateTime.now());
+            booking.setSubmitdate(LocalDateTime.now());
             return bookingRepository.save(booking);
         }
         return null;
@@ -67,8 +71,8 @@ public class BookingService {
         }
         List<Booking> activeBookings = getActiveBookingsByRoomId(roomId);
         for (Booking b : activeBookings){
-            boolean dateTaken = (startDate.isBefore(b.getEndDate()) &&
-                    enddate.isAfter(b.getStartDate()));
+            boolean dateTaken = (startDate.isBefore(b.getEnddate()) &&
+                    enddate.isAfter(b.getStartdate()));
             if (dateTaken && !b.getId().equals(bookingId)){
                 return false;
             }
@@ -79,13 +83,13 @@ public class BookingService {
     public Booking updateBooking(Long id, Booking booking) {
         Booking existingBooking = bookingRepository.findById(id).orElse(null);
         if (existingBooking != null) {
-            if (checkRoomAvailability(booking.getRoomid(), booking.getStartDate(), booking.getEndDate(), existingBooking.getId())) {
-                existingBooking.setSubmitDate(booking.getSubmitDate());
+            if (checkRoomAvailability(booking.getRoomid(), booking.getStartdate(), booking.getEnddate(), existingBooking.getId())) {
+                existingBooking.setSubmitdate(booking.getSubmitdate());
                 existingBooking.setCustomerid(booking.getCustomerid());
                 existingBooking.setRoomid(booking.getRoomid());
-                existingBooking.setGuestCount(booking.getGuestCount());
-                existingBooking.setStartDate(booking.getStartDate());
-                existingBooking.setEndDate(booking.getEndDate());
+                existingBooking.setGuestcount(booking.getGuestcount());
+                existingBooking.setStartdate(booking.getStartdate());
+                existingBooking.setEnddate(booking.getEnddate());
                 existingBooking.setCost(booking.getCost());
                 return bookingRepository.save(existingBooking);
             }

@@ -26,4 +26,11 @@ public class FrontendController {
         model.addAttribute("room", roomRepository.findById(id).orElse(null));
         return "roompage";
     }
+
+    @GetMapping("/book")
+    public String showBookingPage(@RequestParam Long roomId, Model model) {
+        model.addAttribute("room", roomRepository.findById(roomId).orElse(null));
+        return "bookingpage";
+    }
 }
+

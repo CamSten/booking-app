@@ -46,7 +46,10 @@ public class BookingController {
             @PathVariable LocalDate enddate) {
         return bookingService.checkRoomAvailability(roomid, startdate, enddate, (long) -1);
     }
-
+    @GetMapping("/room/{roomid}/blocked-dates")
+    public List<Booking> getBlockedDates(@PathVariable Long roomid) {
+        return bookingService.getActiveBookingsByRoomId(roomid);
+    }
     @PostMapping("")
     public Booking createBooking(@RequestBody BookingDTO booking) {
         return bookingService.createBooking(booking);

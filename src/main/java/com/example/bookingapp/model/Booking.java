@@ -15,27 +15,36 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime submitDate;
+    private LocalDateTime submitdate;
     private Long customerid;
     private Long roomid;
-    private int guestCount;
-    private boolean extraBed;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private int guestcount;
+    private boolean extrabed;
+    private LocalDate startdate;
+    private LocalDate enddate;
     private int cost;
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
     public Booking() {
 
+
     }
 
-    public boolean isExtraBed() {
-        return extraBed;
+    public int getGuestcount() {
+        return guestcount;
     }
 
-    public void setExtraBed(boolean extrabed) {
-        this.extraBed = extrabed;
+    public void setGuestcount(int guest_count) {
+        this.guestcount = guest_count;
+    }
+
+    public boolean isExtrabed() {
+        return extrabed;
+    }
+
+    public void setExtrabed(boolean extrabed) {
+        this.extrabed = extrabed;
     }
 
     public int getCost() {
@@ -46,29 +55,22 @@ public class Booking {
         this.cost = cost;
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    public LocalDate getEnddate() {
+        return enddate;
     }
 
-    public void setEndDate(LocalDate enddate) {
-        this.endDate = enddate;
+    public void setEnddate(LocalDate enddate) {
+        this.enddate = enddate;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public LocalDate getStartdate() {
+        return startdate;
     }
 
-    public void setStartDate(LocalDate startdate) {
-        this.startDate = startdate;
+    public void setStartdate(LocalDate startdate) {
+        this.startdate = startdate;
     }
 
-    public int getGuestCount() {
-        return guestCount;
-    }
-
-    public void setGuestCount(int bedcount) {
-        this.guestCount = bedcount;
-    }
 
     public Long getRoomid() {
         return roomid;
@@ -86,12 +88,12 @@ public class Booking {
         this.customerid = customerid;
     }
 
-    public LocalDateTime getSubmitDate() {
-        return submitDate;
+    public LocalDateTime getSubmitdate() {
+        return submitdate;
     }
 
-    public void setSubmitDate(LocalDateTime submitdate) {
-        this.submitDate = submitdate;
+    public void setSubmitdate(LocalDateTime submitdate) {
+        this.submitdate = submitdate;
     }
 
     public Long getId() {
@@ -109,4 +111,5 @@ public class Booking {
     public void setStatus(BookingStatus status) {
         this.status = status;
     }
+
 }

@@ -2,31 +2,25 @@
     font-family: "WindSong", cursive;
     font-size: large;
     font-weight: 400;
-    font-style: normal;
 }
 
 .windsong-medium {
     font-family: "WindSong", cursive;
     font-size: 3rem;
     font-weight: 500;
-    font-style: normal;
 }
 
 .dancing-script {
     font-family: "Dancing Script", cursive;
     font-size: 3rem;
-    font-optical-sizing: auto;
     font-weight: 400;
-    font-style: normal;
 }
 
 .league-script-regular {
     font-family: "League Script", cursive;
     font-size: 3rem;
     font-weight: 400;
-    font-style: normal;
 }
-
 
 body {
     overflow-x: hidden;
@@ -37,8 +31,8 @@ body {
             #e8f1f2
     );
     font-family: Arial, sans-serif;
+    color: #2f2a28;
 }
-
 
 .hero {
     height: 260px;
@@ -46,26 +40,20 @@ body {
     background-size: cover;
     background-position: center;
     position: relative;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
-    z-index: 0;
 }
 
 .hero::before {
     content: "";
     position: absolute;
     inset: 0;
-
     background: linear-gradient(
             to bottom,
             rgba(255, 250, 245, 0.75),
             rgba(255, 250, 245, 0.4)
     );
-
-    z-index: 1;
 }
 
 .hero-content {
@@ -74,13 +62,11 @@ body {
     text-align: center;
 }
 
-
 .header-title {
     font-family: "League Script", cursive;
     font-size: 3.6rem;
     font-weight: 600;
     margin: 0;
-
     color: #2f2a28;
     text-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
@@ -92,6 +78,156 @@ body {
     color: #777;
 }
 
+.booking-container {
+    max-width: 1100px;
+}
+
+.booking-container .row {
+    justify-content: center;
+}
+
+.booking-card,
+.calendar-card {
+    background: #fffaf5;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    transition:
+            transform 0.15s ease,
+            box-shadow 0.15s ease;
+}
+
+.booking-card {
+    border: 1px solid rgba(166, 123, 107, 0.15);
+    backdrop-filter: blur(4px);
+}
+
+.booking-card:hover,
+.calendar-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+
+.calendar-card {
+    display: flex;
+    justify-content: center;
+}
+
+.booking-card img {
+    width: 92%;
+    max-height: 320px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 18px auto;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.booking-card h2 {
+    margin-top: 14px;
+    margin-bottom: 18px;
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: #5f4b45;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.booking-card p {
+    margin: 14px 0;
+    color: #5a514d;
+    line-height: 1.5;
+}
+
+.booking-card p:not(:last-child) {
+    border-bottom: 1px solid rgba(166, 123, 107, 0.12);
+    padding-bottom: 10px;
+}
+
+.booking-card strong {
+    color: #a67b6b;
+    font-weight: 600;
+}
+
+.booking-card span {
+    color: #2f2a28;
+    font-weight: 500;
+}
+
+.booking-card label {
+    color: #2f2a28;
+    font-weight: 500;
+}
+
+#guest-section {
+    margin: 18px 0;
+}
+
+#guest-section label {
+    display: block;
+    margin-bottom: 8px;
+    color: #a67b6b;
+    font-weight: 600;
+}
+
+#guest-count {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid rgba(166, 123, 107, 0.25);
+    border-radius: 10px;
+    background: #fff;
+    color: #2f2a28;
+    font-size: 0.95rem;
+    transition:
+            border-color 0.15s ease,
+            box-shadow 0.15s ease;
+}
+
+#guest-count:focus {
+    outline: none;
+    border-color: #a67b6b;
+    box-shadow: 0 0 0 4px rgba(166, 123, 107, 0.15);
+}
+
+#extra-bed-section {
+    margin: 18px 0;
+}
+#extra-bed-section label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #5a514d;
+}
+
+#extra-bed {
+    accent-color: #a67b6b;
+}
+
+.book-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px 20px;
+    background: #a67b6b;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition:
+            background 0.2s ease,
+            transform 0.15s ease,
+            box-shadow 0.15s ease;
+}
+
+.book-btn:hover {
+    background: #8f6658;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(166, 123, 107, 0.35);
+}
+#calendar {
+    visibility: hidden;
+    position: absolute;
+}
 
 .calendar-wrapper {
     display: flex;
@@ -99,42 +235,19 @@ body {
     margin-top: 40px;
     padding: 0 16px;
     box-sizing: border-box;
-    overflow-x: visible;
-}
-
-#calendar {
-    display: none;
-}
-.booking-card {
-    background: #fffaf5;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-}
-.calendar-card {
-    background: #fffaf5;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-    display: flex;
-    justify-content: center;
 }
 
 .flatpickr-calendar {
     width: fit-content;
     max-width: 100%;
-
     background: #fffaf5;
     border: none;
     border-radius: 24px;
     box-shadow: 0 12px 40px rgba(0,0,0,0.10);
-
     font-family: Arial, sans-serif;
     padding: 12px;
-
     box-sizing: border-box;
 }
-
 
 .flatpickr-months {
     background: transparent;
@@ -157,13 +270,11 @@ body {
     fill: #2f2a28;
 }
 
-
 .flatpickr-weekday {
     font-weight: 500;
     color: #a67b6b;
     font-size: 0.85rem;
 }
-
 
 .flatpickr-days {
     padding: 6px;
@@ -176,21 +287,10 @@ body {
     font-size: 14px;
 }
 
-
-.flatpickr-day:hover,
-.flatpickr-day:focus {
+.flatpickr-day:hover {
     background: #f3e3de;
     border-color: transparent;
 }
-
-.flatpickr-day.today {
-    border-color: transparent;
-}
-
-.flatpickr-day:focus {
-    outline: none;
-}
-
 
 .flatpickr-day.inRange {
     background: #ead7d1;
@@ -199,18 +299,66 @@ body {
 
 .flatpickr-day.selected,
 .flatpickr-day.startRange,
-.flatpickr-day.endRange,
-.flatpickr-day.selected:hover,
-.flatpickr-day.startRange:hover,
-.flatpickr-day.endRange:hover,
-.flatpickr-day.selected:focus,
-.flatpickr-day.startRange:focus,
-.flatpickr-day.endRange:focus,
-.flatpickr-day.selected:active,
-.flatpickr-day.startRange:active,
-.flatpickr-day.endRange:active {
+.flatpickr-day.endRange {
     background: #a67b6b !important;
     border-color: #a67b6b !important;
     color: white !important;
     box-shadow: none !important;
+}
+
+.modal-content {
+    border-radius: 18px;
+    border: none;
+    background: #fffaf5;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+.modal-body {
+    padding: 20px 24px;
+    font-family: Arial, sans-serif;
+    color: #2f2a28;
+}
+
+#modal_image,
+.modal-room-image {
+    width: 100%;
+    max-width: 260px;   /* 👈 detta är “thumbnail-känslan” */
+    height: 160px;      /* fast höjd = snygg crop */
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+    margin: 0 auto 16px auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.modal-body h5 {
+    text-align: center;
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    color: #5f4b45;
+}
+
+.modal-body p {
+    margin: 10px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(166, 123, 107, 0.15);
+    line-height: 1.4;
+}
+
+.modal-body p:last-child {
+    border-bottom: none;
+}
+
+.modal-body strong {
+    color: #a67b6b;
+}
+
+#modalBody {
+    text-align: center;
+}
+
+.modal-body p:last-of-type {
+    margin-top: 14px;
+    font-weight: 600;
 }

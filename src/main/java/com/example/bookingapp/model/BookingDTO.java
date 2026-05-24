@@ -4,11 +4,11 @@ import java.time.LocalDate;
 
 public class BookingDTO {
     private Long roomid;
-    private int nightCost;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private int guestCount;
-    private boolean extraBed;
+    private int nightcost;
+    private LocalDate startdate;
+    private LocalDate enddate;
+    private int guestcount;
+    private boolean extrabed;
 
     public BookingDTO() {
     }
@@ -17,46 +17,46 @@ public class BookingDTO {
         return roomid;
     }
 
-    public int getNightCost() {
-        return nightCost;
+    public int getNightcost() {
+        return nightcost;
     }
-    public void setNightCost(int nightCost) {
-        this.nightCost = nightCost;
+    public void setNightcost(int nightcost) {
+        this.nightcost = nightcost;
     }
 
     public void setRoomid(Long roomid) {
         this.roomid = roomid;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public LocalDate getStartdate() {
+        return startdate;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public void setStartdate(LocalDate startdate) {
+        this.startdate = startdate;
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    public LocalDate getEnddate() {
+        return enddate;
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void setEnddate(LocalDate enddate) {
+        this.enddate = enddate;
     }
 
-    public int getGuestCount() {
-        return guestCount;
+    public boolean isExtrabed() {
+        return extrabed;
     }
 
-    public void setGuestCount(int guestCount) {
-        this.guestCount = guestCount;
+    public int getGuestcount() {
+        return guestcount;
     }
 
-    public boolean isExtraBed() {
-        return extraBed;
+    public void setGuestcount(int guestcount) {
+        this.guestcount = guestcount;
     }
 
-    public void setExtraBed(boolean extraBed) {
-        this.extraBed = extraBed;
+    public void setExtrabed(boolean extrabed) {
+        this.extrabed = extrabed;
     }
 }

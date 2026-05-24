@@ -1,7 +1,6 @@
 package com.example.bookingapp.controller;
 
 import com.example.bookingapp.model.Customer;
-import com.example.bookingapp.repository.CustomerRepository;
 import com.example.bookingapp.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -15,14 +14,17 @@ import java.util.Optional;
 public class CustomerController {
 
     private final CustomerService customerService;
-    private final CustomerRepository customerRepository;
-    public CustomerController(CustomerService customerService, CustomerRepository customerRepository ) {
+    public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
-        this.customerRepository = customerRepository;
     }
 
     @GetMapping("/customer")
-    public String showCustomerPage(Model model) {
+    public String showCustomerPage(HttpSession session, Model model) {
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
+
+        if(customerId != null){
+            return "redirect:/profile";
+        }
         model.addAttribute("loginCustomer", new Customer());
         model.addAttribute("signupCustomer", new Customer());
         return "customer";
@@ -57,24 +59,49 @@ public class CustomerController {
         return "redirect:/customer";
     }
 
-//    @GetMapping("/profile")
-//    public String profile(HttpSession session, Model model) {
-//        Long customerId = (Long) session.getAttribute("loginCustomerId");
-//
-//        if (customerId == null) {
-//            return "redirect:/customer";
-//        }
-//
-//        Customer customer = customerService.getCustomerById(customerId);
-//
-//        model.addAttribute("customer", customer);
-//
-//        return "profile";
-//    }
-
     @GetMapping("/profile")
-    public String showProfilePage(@RequestParam Long customerId, Model model) {
-        model.addAttribute("customer", customerRepository.findById(customerId).orElse(null));
-        return "tempProfileWithBookings";
+    public String profile(HttpSession session, Model model) {
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
+
+       if (customerId == null) {
+           return "redirect:/customer";
+        }
+
+        Customer customer = customerService.getCustomerById(customerId);
+
+        model.addAttribute("customer", customer);
+
+        return "Profile";
+    }
+
+    @GetMapping("/profile/edit")
+    public String editProfile(HttpSession session, Model model) {
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
+        if (customerId == null) {
+            return "redirect:/customer";
+        }
+        Customer customer = customerService.getCustomerById(customerId);
+        model.addAttribute("customer", customer);
+        return "editProfile";
+    }
+
+    @PostMapping("profile/edit")
+    public String updateProfile(@ModelAttribute("customer") Customer customer, HttpSession session) {
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
+        if (customerId == null) {
+            return "redirect:/customer";
+        }
+        customerService.updateCustomer(customerId, customer);
+        return "redirect:/profile";
+    }
+
+    @PostMapping("/profile/delete")
+    public String deleteCustomer(HttpSession session) {
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
+        if (customerId != null) {
+            customerService.deleteCustomer(customerId);
+        }
+        session.invalidate();
+        return "redirect:/customer";
     }
 }

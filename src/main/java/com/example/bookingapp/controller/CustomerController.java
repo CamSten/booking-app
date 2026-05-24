@@ -78,4 +78,10 @@ public class CustomerController {
         return "tempProfileWithBookings";
     }
 
+        Customer customer = customerService.getCustomerById(customerId);
+
+        model.addAttribute("customer", customer);
+
+        return "profile";
+    }
 }

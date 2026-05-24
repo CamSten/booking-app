@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+</head>
+<body>
+<h1>Edit Profile</h1>
+<form th:action="@{/profile/edit}"
+      th:object="${customer}"
+      method="post">
+
+    <div>
+        <label>Name</label>
+        <br>
+        <input type="text"
+               th:field="*{name}"
+               required>
+    </div>
+
+    <br>
+    <div>
+        <label>Email</label>
+        <br>
+        <input type="email"
+               th:field="*{email}"
+               required>
+    </div>
+
+    <br>
+    <div>
+        <label>Phone</label>
+        <br>
+        <input type="text"
+               th:field="*{phone}"
+               required>
+    </div>
+
+    <br>
+    <div>
+        <label>Address</label>
+        <br>
+        <input type="text"
+               th:field="*{address}"
+               required>
+    </div>
+
+    <br>
+    <div>
+        <label>Password</label>
+        <br>
+        <input type="password"
+               th:field="*{password}"
+               required>
+    </div>
+
+    <br>
+    <button type="submit">
+        Save Changes
+    </button>
+</form>
+</body>
+</html>

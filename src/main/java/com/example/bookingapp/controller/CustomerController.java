@@ -69,6 +69,27 @@ public class CustomerController {
         return "profile";
     }
 
+    @GetMapping("/profile/edit")
+    public String editProfile(HttpSession session, Model model) {
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
+        if (customerId == null) {
+            return "redirect:/customer";
+        }
+        Customer customer = customerService.getCustomerById(customerId);
+        model.addAttribute("customer", customer);
+        return "editProfile";
+    }
+
+    @PostMapping("profile/edit")
+    public String updateProfile(@ModelAttribute("customer") Customer customer, HttpSession session) {
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
+        if (customerId == null) {
+            return "redirect:/customer";
+        }
+        customerService.updateCustomer(customerId, customer);
+        return "redirect:/profile";
+    }
+
     @PostMapping("/profile/delete")
     public String deleteCustomer(HttpSession session) {
         Long customerId = (Long) session.getAttribute("loginCustomerId");

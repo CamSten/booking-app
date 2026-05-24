@@ -40,7 +40,6 @@
     </p>
 </div>
 
-<br>
 
 
 <div class="booking-view-card">
@@ -58,9 +57,26 @@
         <tbody id="bookings-container">
         </tbody>
     </table>
-    <a th:href="@{/logout}">
-        Logout
-    </a>
+    <br>
+    <form th:action="@{/logout}" method="get">
+        <button type="submit">
+            Logout
+        </button>
+    </form>
+
+    <br>
+    <form th:action="@{/profile/edit}" method="get">
+        <button type="submit">
+            Edit Profile
+        </button>
+    </form>
+
+    <br>
+    <form th:action="@{/profile/delete}" method="post">
+        <button type="submit" onclick="return confirm('Are you sure you want to delete your account?')">
+            Delete Account
+        </button>
+    </form>
 </div>
 
 <script th:src="@{/js/profileBookings.js}"></script>

@@ -77,11 +77,4 @@ public class CustomerController {
         model.addAttribute("customer", customerRepository.findById(customerId).orElse(null));
         return "tempProfileWithBookings";
     }
-
-        Customer customer = customerService.getCustomerById(customerId);
-
-        model.addAttribute("customer", customer);
-
-        return "profile";
-    }
 }

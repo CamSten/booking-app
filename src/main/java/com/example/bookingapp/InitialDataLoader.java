@@ -65,20 +65,19 @@ public class InitialDataLoader implements CommandLineRunner {
             b1.setCost(3 * 1200);
             b1.setStatus(Booking.BookingStatus.ACTIVE);
             b1.setSubmitdate(LocalDateTime.now());
-
             bookingRepository.save(b1);
-        }
-        Booking b1 = new Booking();
-        b1.setCustomerid(5L);
-        b1.setRoomid(7L);
-        b1.setGuestcount(2);
-        b1.setStartdate(LocalDate.now().plusDays(7));
-        b1.setEnddate(LocalDate.now().plusDays(12));
-        b1.setCost(5 * 1200);
-        b1.setStatus(Booking.BookingStatus.ACTIVE);
-        b1.setSubmitdate(LocalDateTime.now());
 
-        bookingRepository.save(b1);
+            Booking b2 = new Booking();
+            b2.setCustomerid(5L);
+            b2.setRoomid(7L);
+            b2.setGuestcount(2);
+            b2.setStartdate(LocalDate.now().plusDays(7));
+            b2.setEnddate(LocalDate.now().plusDays(12));
+            b2.setCost(5 * 1200);
+            b2.setStatus(Booking.BookingStatus.ACTIVE);
+            b2.setSubmitdate(LocalDateTime.now());
+            bookingRepository.save(b2);
+        }
     }
 }
 

@@ -26,13 +26,14 @@ public class DebugDatabaseConfig {
 //    @Bean
 //    public CommandLineRunner cleanSchema(JdbcTemplate jdbcTemplate) {
 //        return args -> {
-//            jdbcTemplate.execute("ALTER TABLE booking DROP COLUMN bedcount");
+//
 //            jdbcTemplate.execute("ALTER TABLE booking DROP COLUMN guest_count");
 //            jdbcTemplate.execute("ALTER TABLE booking DROP COLUMN extrabed");
 //            jdbcTemplate.execute("ALTER TABLE booking DROP COLUMN extra_bed");
 //            jdbcTemplate.execute("ALTER TABLE booking DROP COLUMN start_date");
 //            jdbcTemplate.execute("ALTER TABLE booking DROP COLUMN end_date");
 //            jdbcTemplate.execute("ALTER TABLE booking DROP COLUMN submit_date");
+//    jdbcTemplate.execute("ALTER TABLE booking DROP COLUMN bedcount");
 //            jdbcTemplate.execute("ALTER TABLE booking DROP COLUMN nightcount");
 //        };
 //    }

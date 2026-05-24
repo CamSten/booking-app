@@ -1,39 +1,43 @@
-const roomId = document.getElementById("room-id");
+console.log("booking.js loaded");
+console.log("room-id element:", document.getElementById("room-id"));
+
 const extraBedOption = document.getElementById('extra-bed');
 const modalBody = document.getElementById('modalBody');
+
 let guestcount;
 const bookingState = {
     selectedDates: null,
     nights: 0,
     extra_bed: false
 };
-
-initializeCalendar();
-showGuestSection();
-
+document.addEventListener("DOMContentLoaded", () => {
+    initializeCalendar();
+    showGuestSection();
+});
 function initializeCalendar(){
-    console.log("Loading blocked dates...");
-
+    const roomId = document.getElementById("room-id").value;
     fetch(`/bookings/room/${roomId}/blocked-dates`)
-        .then(r => r.json())
+        .then(r => {
+            if (!r.ok) throw new Error("API error");
+            return r.json();
+        })
         .then(bookings => {
-
-            const disabled = bookings.map(b => ({
-                from: b.startdate,
-                to: b.enddate
-            }));
-
+            if (!bookings) return;
+            const disabled = bookings
+                .filter(b => b.startdate && b.enddate)
+                .map(b => {
+                    const start = new Date(b.startdate);
+                    const end = new Date(b.enddate);
+                    return start <= end
+                        ? { from: b.startdate, to: b.enddate }
+                        : { from: b.enddate, to: b.startdate };
+                });
             console.log("Disabled ranges:", disabled);
 
             flatpickr("#calendar", {
                 mode: "range",
-                minDate: "today",
-                dateFormat: "Y-m-d",
                 inline: true,
-                disable: disabled,
-                onChange: function(selectedDates, dateStr) {
-                    handleDateSelection(selectedDates, dateStr);
-                }
+                onReady: function(selectedDates, dateStr, instance){},
             });
         });
 }

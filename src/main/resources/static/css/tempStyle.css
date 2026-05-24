@@ -208,8 +208,11 @@ body {
     color: white;
     border: none;
     border-radius: 12px;
+    display: block;
     font-size: 1rem;
-    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
     transition:
             background 0.2s ease,
             transform 0.15s ease,
@@ -297,7 +300,27 @@ body {
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(166, 123, 107, 0.15);
 }
+.search-intro {
+    text-align: center;
+    margin-bottom: 12px;
+}
 
+.search-title {
+    display: block;
+    font-size: 1rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #a67b6b;
+    margin-bottom: 6px;
+}
+
+.search-prompt{
+    font-family: "League Script", cursive;
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: #5f4b45;
+    margin: 0;
+}
 .bookings-table-card {
     background: #fffaf5;
     border-radius: 20px;

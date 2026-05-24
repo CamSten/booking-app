@@ -32,6 +32,10 @@ public class FrontendController {
         model.addAttribute("room", roomRepository.findById(roomId).orElse(null));
         return "bookingpage";
     }
+    @GetMapping("/search")
+    public String showSearchPage() {
+        return "searchpage";
+    }
 
 }
 

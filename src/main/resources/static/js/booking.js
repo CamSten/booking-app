@@ -1,10 +1,5 @@
-console.log("booking.js loaded");
-console.log("room-id element:", document.getElementById("room-id"));
-
 const extraBedOption = document.getElementById('extra-bed');
 const modalBody = document.getElementById('modalBody');
-
-let guestcount;
 const bookingState = {
     selectedDates: null,
     nights: 0,
@@ -18,27 +13,41 @@ function initializeCalendar(){
     const roomId = document.getElementById("room-id").value;
     fetch(`/bookings/room/${roomId}/blocked-dates`)
         .then(r => {
-            if (!r.ok) throw new Error("API error");
+            if (!r.ok) {
+                throw new Error("API error");
+            }
+
             return r.json();
         })
         .then(bookings => {
-            if (!bookings) return;
-            const disabled = bookings
+            const disabledDates = bookings
                 .filter(b => b.startdate && b.enddate)
-                .map(b => {
-                    const start = new Date(b.startdate);
-                    const end = new Date(b.enddate);
-                    return start <= end
-                        ? { from: b.startdate, to: b.enddate }
-                        : { from: b.enddate, to: b.startdate };
-                });
-            console.log("Disabled ranges:", disabled);
+                .map(b => ({
+                    from: b.startdate,
+                    to: b.enddate
+                }));
 
             flatpickr("#calendar", {
                 mode: "range",
                 inline: true,
-                onReady: function(selectedDates, dateStr, instance){},
+                minDate: "today",
+                disable: disabledDates,
+
+                onChange: function(selectedDates, dateStr) {
+
+                    bookingState.selectedDates =
+                        selectedDates;
+                    if (selectedDates.length === 2) {
+                        handleDateSelection(
+                            selectedDates,
+                            dateStr
+                        );
+                    }
+                }
             });
+        })
+        .catch(error => {
+            console.error(error);
         });
 }
 
@@ -74,7 +83,12 @@ function showGuestSection(){
     });
 }
 function handleDateSelection(selectedDates, dateStr){
+    if (!bookingState.selectedDates || bookingState.selectedDates.length < 2) {
+        alert("Please select valid dates");
+        return;
+    }
     bookingState.selectedDates = selectedDates;
+    bookingState.nights = 0
     document.getElementById("booking-dates").textContent = dateStr;
     updateTotalPrice(selectedDates, Number(guestcount.value));
     showBookingButton();
@@ -84,8 +98,11 @@ function handleDateSelection(selectedDates, dateStr){
 function showBookingButton(){
     document.getElementById('book-button').style.display = "block";
 }
-
-function updateTotalPrice(selectedDates, guests){
+function getGuestCount(){
+    return Number(document.getElementById('guest-count').value);
+}
+function updateTotalPrice(selectedDates){
+    const guests = getGuestCount();
     const roomPrice = Number(
         document.getElementById('room-price').value
     );
@@ -102,7 +119,6 @@ function updateTotalPrice(selectedDates, guests){
     totalPriceDisplay.innerHTML = `
         ${totalPrice} SEK`;
 }
-
 
 function handleBookingClick(){
     const formatDate = (d) => d.toISOString().split("T")[0];

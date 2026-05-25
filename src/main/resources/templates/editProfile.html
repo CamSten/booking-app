@@ -6,6 +6,7 @@
     <title>Edit Profile</title>
 </head>
 <body>
+    <div th:replace="~{fragments/hero :: hero(hideLogin=true)}"></div>
 <h1>Edit Profile</h1>
 <form th:action="@{/profile/edit}"
       th:object="${customer}"

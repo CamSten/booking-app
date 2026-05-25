@@ -21,11 +21,8 @@
                        id="room-price"
                        th:value="${room.costPerNight}">
                 <img id="room-image"
-                     src="/images/single_room.png"
+                     th:src="@{'/images/rooms/room_' + ${room.id} + '_1.jpg'}"
                      alt="Room image">
-<!--                <img id="room-image"-->
-<!--                     th:src="@{'/images/rooms/' + ${room.id} + '/1.jpg'}"-->
-<!--                     alt="Room image">-->
 
                 <h2 th:text="${room.roomType} + ' Room'">Room Type</h2>
 
@@ -66,6 +63,10 @@
                         style="display:none;">
                     Book this room
                 </button>
+                
+                <a class="btn btn-outline-secondary w-100 mt-2" style="border-radius: 12px; padding: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;" href="/home">
+                    Back to All Rooms
+                </a>
 
             </div>
         </div>

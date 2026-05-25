@@ -12,11 +12,7 @@
     <link rel="stylesheet" th:href="@{/css/tempStyle.css}">
 </head>
 <body>
-    <header class="d-flex justify-content-between align-items-center p-3 border-bottom shadow-sm">
-        <a href="/" class="btn btn-outline-secondary" style="width: 120px;">Back</a>
-        <h1 class="m-0 fw-bold" style="font-family: 'League Script', cursive; font-size: 3rem;">ROOM DETAILS</h1>
-        <a href="/customer" class="btn btn-primary" style="width: 120px;">Login/profile</a>
-    </header>
+    <div th:replace="~{fragments/hero :: hero}"></div>
 
     <main class="container mt-5">
         <div class="row bg-light p-4 rounded shadow-sm">
@@ -55,7 +51,7 @@
                 <p class="text-muted mb-5">
                     A beautiful and cozy room perfect for your stay. Features a stunning view and comfortable amenities.
                 </p>
-                <a th:href="@{/book(roomId=${room.id})}" class="btn btn-success btn-lg w-100">Book Now</a>
+                <a th:href="@{/book(roomId=${room.id})}" class="book-btn text-center text-decoration-none mt-4">Book Now</a>
             </div>
         </div>
     </main>

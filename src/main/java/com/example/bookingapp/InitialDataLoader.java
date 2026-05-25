@@ -33,6 +33,7 @@ public class InitialDataLoader implements CommandLineRunner {
                 singleRoom.setRoomNumber("10" + i);
                 singleRoom.setRoomType("Single");
                 singleRoom.setExtraBedAvailable(false);
+                singleRoom.setCostPerNight(1000);
                 roomRepository.save(singleRoom);
             }
 
@@ -41,6 +42,7 @@ public class InitialDataLoader implements CommandLineRunner {
                 doubleRoom.setRoomNumber("10" + i);
                 doubleRoom.setRoomType("Double");
                 doubleRoom.setExtraBedAvailable(true);
+                doubleRoom.setCostPerNight(1500);
                 roomRepository.save(doubleRoom);
             }
         }

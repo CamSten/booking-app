@@ -56,7 +56,8 @@ public class BookingService {
             booking.setExtrabed(req.isExtrabed());
             int nights = Math.toIntExact(ChronoUnit.DAYS.between(req.getStartdate(), req.getEnddate()));
             Room room = roomRepository.findById(req.getRoomid()).orElseThrow();
-            int cost = nights * room.getCostPerNight();
+            int extraBedFee = req.isExtrabed() ? 250 : 0;
+            int cost = nights * (room.getCostPerNight() + extraBedFee);
             booking.setCost(cost);
             booking.setStatus(Booking.BookingStatus.ACTIVE);
             booking.setSubmitdate(LocalDateTime.now());

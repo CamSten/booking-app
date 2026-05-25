@@ -75,12 +75,17 @@ function showGuestSection(){
         document.getElementById('guest-count');
     guestcount.addEventListener('change', () => {
         if (bookingState.selectedDates) {
-            updateTotalPrice(
-                bookingState.selectedDates,
-                Number(guestcount.value)
-            );
+            updateTotalPrice(bookingState.selectedDates);
         }
     });
+
+    if (extraBedOption) {
+        extraBedOption.addEventListener('change', () => {
+            if (bookingState.selectedDates) {
+                updateTotalPrice(bookingState.selectedDates);
+            }
+        });
+    }
 }
 function handleDateSelection(selectedDates, dateStr){
     if (!bookingState.selectedDates || bookingState.selectedDates.length < 2) {
@@ -90,7 +95,7 @@ function handleDateSelection(selectedDates, dateStr){
     bookingState.selectedDates = selectedDates;
     bookingState.nights = 0
     document.getElementById("booking-dates").textContent = dateStr;
-    updateTotalPrice(selectedDates, Number(guestcount.value));
+    updateTotalPrice(selectedDates);
     showBookingButton();
     console.log(dateStr);
 }
@@ -102,7 +107,6 @@ function getGuestCount(){
     return Number(document.getElementById('guest-count').value);
 }
 function updateTotalPrice(selectedDates){
-    const guests = getGuestCount();
     const roomPrice = Number(
         document.getElementById('room-price').value
     );
@@ -114,7 +118,13 @@ function updateTotalPrice(selectedDates){
             (lastDate - firstDate) / millisecondsPerDay
         );
     }
-    const totalPrice = bookingState.nights * guests * roomPrice;
+    
+    let extraBedFee = 0;
+    if (extraBedOption && extraBedOption.checked) {
+        extraBedFee = 250;
+    }
+    const totalPrice = bookingState.nights * (roomPrice + extraBedFee);
+    
     const totalPriceDisplay = document.getElementById('booking-total');
     totalPriceDisplay.innerHTML = `
         ${totalPrice} SEK`;

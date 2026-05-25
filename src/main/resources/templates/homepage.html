@@ -23,7 +23,7 @@
             <div class="col-12 col-md-3" th:each="room : ${rooms}">
                 <a th:href="@{/room(id=${room.id})}" class="text-decoration-none text-dark">
                     <div class="card h-100 shadow-sm border-0">
-                        <img th:src="${room.roomType == 'Single' ? '/images/single_room.png' : '/images/double_room.png'}" 
+                        <img th:src="@{'/images/rooms/room_' + ${room.id} + '_1.jpg'}" 
                              class="card-img-top" 
                              alt="Hotel Room" 
                              style="height: 200px; object-fit: cover;">

@@ -28,10 +28,18 @@ public class FrontendController {
     }
 
     @GetMapping("/book")
-    public String showBookingPage(@RequestParam Long roomId, Model model) {
-        model.addAttribute("room", roomRepository.findById(roomId).orElse(null));
+    public String showBookingPage(
+            @RequestParam Long roomId,
+            @RequestParam(required = false) Long bookingId,
+            Model model) {
+        model.addAttribute(
+                "room",
+                roomRepository.findById(roomId).orElse(null)
+        );
+        model.addAttribute("bookingId", bookingId);
         return "bookingpage";
     }
+
     @GetMapping("/search")
     public String showSearchPage() {
         return "searchpage";

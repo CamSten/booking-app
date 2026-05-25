@@ -90,17 +90,16 @@ public class BookingService {
         return true;
     }
 
-    public Booking updateBooking(Long id, Booking booking) {
+    public Booking updateBooking(Long id, BookingDTO booking) {
         Booking existingBooking = bookingRepository.findById(id).orElse(null);
         if (existingBooking != null) {
             if (checkRoomAvailability(booking.getRoomid(), booking.getStartdate(), booking.getEnddate(), existingBooking.getId())) {
-                existingBooking.setSubmitdate(booking.getSubmitdate());
-                existingBooking.setCustomerid(booking.getCustomerid());
                 existingBooking.setRoomid(booking.getRoomid());
                 existingBooking.setGuestcount(booking.getGuestcount());
                 existingBooking.setStartdate(booking.getStartdate());
                 existingBooking.setEnddate(booking.getEnddate());
-                existingBooking.setCost(booking.getCost());
+                int nights = Math.toIntExact(ChronoUnit.DAYS.between(booking.getStartdate(), booking.getEnddate()));
+                existingBooking.setCost(booking.getNightcost()*nights);
                 return bookingRepository.save(existingBooking);
             }
         }

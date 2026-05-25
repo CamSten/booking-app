@@ -80,7 +80,7 @@ public class BookingController {
     }
 
     @PutMapping("/{id}")
-    public Booking updateBooking(@PathVariable Long id, @RequestBody Booking booking) {
+    public Booking updateBooking(@PathVariable Long id, @RequestBody BookingDTO booking) {
         return bookingService.updateBooking(id, booking);
     }
     @PutMapping("/{id}/cancel")

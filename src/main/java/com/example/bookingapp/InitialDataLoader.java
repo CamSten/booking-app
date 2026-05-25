@@ -94,5 +94,6 @@ public class InitialDataLoader implements CommandLineRunner {
             bookingRepository.save(b2);
         }
     }
+
 }
 

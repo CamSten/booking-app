@@ -1,33 +1,53 @@
 const extraBedOption = document.getElementById('extra-bed');
 const modalBody = document.getElementById('modalBody');
+const params = new URLSearchParams(window.location.search);
+const bookingId = params.get("bookingId");
+let editMode = false;
+let calendar;
+let guestcount;
 const bookingState = {
     selectedDates: null,
     nights: 0,
-    extra_bed: false
 };
 document.addEventListener("DOMContentLoaded", () => {
     initializeCalendar();
     showGuestSection();
+    if (bookingId){
+        editMode = true;
+        fetch(`/bookings/${bookingId}`)
+            .then(response => response.json())
+            .then(booking => applyBookingInfo(booking));
+    }
 });
 function initializeCalendar(){
     const roomId = document.getElementById("room-id").value;
+    let disabledDates;
     fetch(`/bookings/room/${roomId}/blocked-dates`)
         .then(r => {
             if (!r.ok) {
                 throw new Error("API error");
             }
-
             return r.json();
         })
         .then(bookings => {
-            const disabledDates = bookings
+
+            let filteredBookings = bookings;
+
+            if (editMode) {
+                filteredBookings =
+                    bookings.filter(
+                        b => b.id !== Number(bookingId)
+                    );
+            }
+
+            const disabledDates = filteredBookings
                 .filter(b => b.startdate && b.enddate)
                 .map(b => ({
                     from: b.startdate,
                     to: b.enddate
                 }));
 
-            flatpickr("#calendar", {
+            calendar = flatpickr("#calendar", {
                 mode: "range",
                 inline: true,
                 minDate: "today",
@@ -37,6 +57,7 @@ function initializeCalendar(){
 
                     bookingState.selectedDates =
                         selectedDates;
+
                     if (selectedDates.length === 2) {
                         handleDateSelection(
                             selectedDates,
@@ -46,11 +67,30 @@ function initializeCalendar(){
                 }
             });
         })
-        .catch(error => {
-            console.error(error);
-        });
 }
-
+function applyBookingInfo(booking){
+    bookingState.selectedDates = [
+        new Date(booking.startdate),
+        new Date(booking.enddate)
+    ];
+    calendar.setDate([
+        booking.startdate,
+        booking.enddate
+    ]);
+    document.getElementById("booking-dates")
+        .textContent =
+        `${booking.startdate} → ${booking.enddate}`;
+    guestcount.value = booking.guestcount;
+    if (extraBedOption) {
+        extraBedOption.checked = booking.extrabed;
+    }
+    updateTotalPrice(
+        bookingState.selectedDates,
+    );
+    showBookingButton();
+    document.getElementById("book-button")
+        .textContent = "Save changes";
+}
 function showGuestSection(){
     const guestSection =
         document.getElementById('guest-section');
@@ -88,10 +128,6 @@ function showGuestSection(){
     }
 }
 function handleDateSelection(selectedDates, dateStr){
-    if (!bookingState.selectedDates || bookingState.selectedDates.length < 2) {
-        alert("Please select valid dates");
-        return;
-    }
     bookingState.selectedDates = selectedDates;
     bookingState.nights = 0
     document.getElementById("booking-dates").textContent = dateStr;
@@ -142,13 +178,15 @@ function handleBookingClick(){
             : false
     };
 
-    fetch("/bookings", {
-        method: "POST",
+    let url = editMode  ? `/bookings/${bookingId}`
+        : "/bookings";
+    let method = editMode ? "PUT"
+        : "POST";
+    fetch(url, {
+        method: method,
         headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(bookingRequest)
-    })
+            "Content-Type": "application/json" },
+        body: JSON.stringify(bookingRequest) })
         .then(response => {
             if (!response.ok) {
                 throw new Error("Booking failed");
@@ -182,6 +220,8 @@ function showConfirmationModal(data){
     const modal = new bootstrap.Modal(
         document.getElementById('myModal')
     );
+    const modalTitle = document.querySelector(".modal-title");
+    modalTitle.innerHTML = editMode ? "Your booking has been updated" :"Booking confirmed"
     modal.show();
 }
 document.getElementById('book-button')

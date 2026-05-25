@@ -41,7 +41,7 @@ public class BookingService {
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
-    public Booking createBooking(BookingDTO req) {
+    public Booking createBooking(BookingDTO req, Long customerId) {
         if (checkRoomAvailability(req.getRoomid(), req.getStartdate(), req.getEnddate(), (long) -1)){
             Booking booking = new Booking();
             booking.setRoomid(req.getRoomid());
@@ -50,6 +50,7 @@ public class BookingService {
             booking.setGuestcount(req.getGuestcount());
             booking.setExtrabed(req.isExtrabed());
             booking.setCost(req.getCost());
+            booking.setCustomerid(customerId);
             booking.setStatus(Booking.BookingStatus.ACTIVE);
             booking.setSubmitdate(LocalDateTime.now());
             return bookingRepository.save(booking);

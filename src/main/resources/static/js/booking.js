@@ -197,8 +197,32 @@ function handleBookingClick(){
         })
         .catch(error => {
             console.error(error);
-            alert("Something went wrong with booking");
+            showErrorModal("You must be logged in to book a room. Please log in or create a free account to continue.");
         });
+}
+
+function showErrorModal(message) {
+    const modalElement = document.getElementById('myModal');
+    let modal = bootstrap.Modal.getInstance(modalElement);
+    if (!modal) {
+        modal = new bootstrap.Modal(modalElement);
+    }
+    const modalTitle = document.querySelector(".modal-title");
+    const modalBody = document.getElementById('modalBody');
+    const modalFooter = document.querySelector(".modal-footer");
+
+    modalTitle.innerHTML = "Authentication Required";
+    modalBody.innerHTML = `<p style="color: #5a514d; font-size: 1.1rem; text-align: center; margin-top: 15px;">${message}</p>`;
+    
+    modalFooter.innerHTML = `
+        <a href="/customer" class="modal-btn modal-btn-primary text-decoration-none text-center" style="width: 100%; margin-bottom: 8px;">Log In / Sign Up</a>
+        <button class="modal-btn modal-btn-secondary w-100" data-bs-dismiss="modal">Close</button>
+    `;
+    
+    const newModalElement = modalElement.cloneNode(true);
+    modalElement.parentNode.replaceChild(newModalElement, modalElement);
+    const freshModal = new bootstrap.Modal(newModalElement);
+    freshModal.show();
 }
 
 function showConfirmationModal(data){

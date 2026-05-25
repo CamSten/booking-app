@@ -75,8 +75,12 @@ public class BookingController {
         return bookingService.getActiveBookingsByRoomId(roomid);
     }
     @PostMapping("")
-    public Booking createBooking(@RequestBody BookingDTO booking) {
-        return bookingService.createBooking(booking);
+    public Booking createBooking(@RequestBody BookingDTO booking, jakarta.servlet.http.HttpSession session) {
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
+        if (customerId == null) {
+            throw new RuntimeException("User must be logged in to book a room");
+        }
+        return bookingService.createBooking(booking, customerId);
     }
 
     @PutMapping("/{id}")

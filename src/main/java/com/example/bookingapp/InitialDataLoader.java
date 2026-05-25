@@ -45,6 +45,19 @@ public class InitialDataLoader implements CommandLineRunner {
                 doubleRoom.setCostPerNight(1500);
                 roomRepository.save(doubleRoom);
             }
+        } else {
+            java.util.List<Room> existingRooms = roomRepository.findAll();
+            for (Room room : existingRooms) {
+                if (room.getCostPerNight() == 0) {
+                    if ("Single".equals(room.getRoomType())) {
+                        room.setCostPerNight(1000);
+                        roomRepository.save(room);
+                    } else if ("Double".equals(room.getRoomType())) {
+                        room.setCostPerNight(1500);
+                        roomRepository.save(room);
+                    }
+                }
+            }
         }
         if (customerRepository.count() == 0) {
             Customer c = new Customer();

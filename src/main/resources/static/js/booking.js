@@ -220,6 +220,8 @@ function showConfirmationModal(data){
     const modal = new bootstrap.Modal(
         document.getElementById('myModal')
     );
+    const modalTitle = document.querySelector(".modal-title");
+    modalTitle.innerHTML = editMode ? "Your booking has been updated" :"Booking confirmed"
     modal.show();
 }
 document.getElementById('book-button')

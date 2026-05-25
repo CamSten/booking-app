@@ -58,8 +58,14 @@ function showBookingDetails(booking){
     <p><strong>Extra bed:</strong> Yes</p>` : ''}
         <p><strong>Total cost:</strong>
             ${booking.cost} SEK</p>
-    <p><button class = "edit-booking-button">Edit</button></p>
-    <p><button class = "delete-booking-button">Cancel</button></p>`;
+   <div class="modal-actions">
+    <button class="edit-booking-button">
+        Edit
+    </button>
+    <button class="delete-booking-button">
+        Cancel
+    </button>
+</div>`;
     const modal = new bootstrap.Modal(
         document.getElementById('myModal')
     );
@@ -74,9 +80,10 @@ function createEditButton(booking){
     });
 }
 
-function editBooking(){
+
+function editBooking(booking){
     window.location.href =
-        `/booking/${booking.roomid}?bookingId=${booking.id}`;
+        `/book?roomId=${booking.roomid}&bookingId=${booking.id}`;
 }
 function createDeleteButton(booking){
 

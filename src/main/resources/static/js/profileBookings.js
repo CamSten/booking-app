@@ -126,3 +126,26 @@ function showFeedback(message) {
         <button class="modal-btn modal-btn-primary">Close</button>`;
     modal.show();
 }
+
+function showAccountDeleteConfirm(event, form){
+    event.preventDefault();
+    const modalElement = document.getElementById('myModal');
+    const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+        
+    const modalTitle = document.querySelector(".modal-title");
+    if(modalTitle) modalTitle.innerHTML = "Delete Account";
+    
+    document.getElementById('modalBody').innerHTML = `
+        <p style="color: #5a514d; font-size: 1.1rem; text-align: center; margin-top: 15px;">
+            Are you absolutely sure you want to delete your account? This action cannot be undone.
+        </p>`;
+        
+    document.querySelector(".modal-footer").innerHTML = `
+        <button class="modal-btn modal-btn-danger yes text-center" style="width: 100%; margin-bottom: 8px;">Yes, Delete My Account</button>
+        <button class="modal-btn modal-btn-secondary no w-100">Cancel</button>`;
+        
+    document.querySelector(".modal-footer .yes").onclick = () => form.submit();
+    document.querySelector(".modal-footer .no").onclick = () => modal.hide();
+    
+    modal.show();
+}

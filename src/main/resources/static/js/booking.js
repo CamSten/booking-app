@@ -1,5 +1,4 @@
 const extraBedOption = document.getElementById('extra-bed');
-const modalBody = document.getElementById('modalBody');
 const params = new URLSearchParams(window.location.search);
 const bookingId = params.get("bookingId");
 let editMode = false;
@@ -8,6 +7,7 @@ let guestcount;
 const bookingState = {
     selectedDates: null,
     nights: 0,
+    cost: 0,
 };
 document.addEventListener("DOMContentLoaded", () => {
     initializeCalendar();
@@ -30,53 +30,43 @@ function initializeCalendar(){
             return r.json();
         })
         .then(bookings => {
-
             let filteredBookings = bookings;
-
             if (editMode) {
                 filteredBookings =
                     bookings.filter(
                         b => b.id !== Number(bookingId)
                     );
             }
-
-            const disabledDates = filteredBookings
+            disabledDates = filteredBookings
                 .filter(b => b.startdate && b.enddate)
                 .map(b => ({
                     from: b.startdate,
                     to: b.enddate
                 }));
-
             calendar = flatpickr("#calendar", {
                 mode: "range",
                 inline: true,
                 minDate: "today",
                 disable: disabledDates,
-
                 onChange: function(selectedDates, dateStr) {
-
-                    bookingState.selectedDates =
-                        selectedDates;
-
                     if (selectedDates.length === 2) {
-                        handleDateSelection(
-                            selectedDates,
-                            dateStr
-                        );
+                        bookingState.selectedDates = [
+                            new Date(selectedDates[0]),
+                            new Date(selectedDates[1])
+                        ];
+                        document.getElementById("booking-dates").textContent = dateStr;
+                        updateTotalPrice(bookingState.selectedDates);
+                        showBookingButton();
                     }
                 }
             });
         })
 }
 function applyBookingInfo(booking){
-    bookingState.selectedDates = [
-        new Date(booking.startdate),
-        new Date(booking.enddate)
-    ];
-    calendar.setDate([
-        booking.startdate,
-        booking.enddate
-    ]);
+    const start = new Date(booking.startdate);
+    const end = new Date(booking.enddate);
+    calendar.setDate([start, end]);
+    bookingState.selectedDates = [start, end];
     document.getElementById("booking-dates")
         .textContent =
         `${booking.startdate} → ${booking.enddate}`;
@@ -84,12 +74,11 @@ function applyBookingInfo(booking){
     if (extraBedOption) {
         extraBedOption.checked = booking.extrabed;
     }
-    updateTotalPrice(
-        bookingState.selectedDates,
-    );
+
     showBookingButton();
     document.getElementById("book-button")
         .textContent = "Save changes";
+    updateTotalPrice(bookingState.selectedDates)
 }
 function showGuestSection(){
     const guestSection =
@@ -133,10 +122,15 @@ function handleDateSelection(selectedDates, dateStr){
     document.getElementById("booking-dates").textContent = dateStr;
     updateTotalPrice(selectedDates);
     showBookingButton();
-    console.log(dateStr);
+
 }
 
 function showBookingButton(){
+    console.log(`startdate in showBookBtn: ${bookingState.selectedDates[0]}`);
+    console.log(`enddate in showBookBtn: ${bookingState.selectedDates[1]}`)
+
+    document.getElementById('book-button')
+        .addEventListener('click', handleBookingClick);
     document.getElementById('book-button').style.display = "block";
 }
 function getGuestCount(){
@@ -154,30 +148,35 @@ function updateTotalPrice(selectedDates){
             (lastDate - firstDate) / millisecondsPerDay
         );
     }
-    
     let extraBedFee = 0;
     if (extraBedOption && extraBedOption.checked) {
         extraBedFee = 250;
     }
     const totalPrice = bookingState.nights * (roomPrice + extraBedFee);
-    
-    const totalPriceDisplay = document.getElementById('booking-total');
-    totalPriceDisplay.innerHTML = `
-        ${totalPrice} SEK`;
+    console.log(`COST IS: ${totalPrice}`)
+    document.getElementById("booking-total")
+        .textContent =
+        `${totalPrice} SEK`;
+    bookingState.cost = totalPrice;
 }
 
 function handleBookingClick(){
-    const formatDate = (d) => d.toISOString().split("T")[0];
+    const formatDate = (d) => {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
     const bookingRequest = {
         roomid: document.getElementById("room-id").value,
         startdate: formatDate(bookingState.selectedDates[0]),
         enddate: formatDate(bookingState.selectedDates[1]),
         guestcount: guestcount.value,
+        cost: bookingState.cost,
         extrabed: extraBedOption
             ? extraBedOption.checked
             : false
     };
-
     let url = editMode  ? `/bookings/${bookingId}`
         : "/bookings";
     let method = editMode ? "PUT"
@@ -203,6 +202,11 @@ function handleBookingClick(){
 }
 
 function showConfirmationModal(data){
+    const price = data.cost;
+    console.log(price);
+    const modalElement = document.getElementById('myModal');
+    const modal = new bootstrap.Modal(modalElement);
+    const modalBody = document.getElementById('modalBody');
     modalBody.innerHTML = `
         <img id = "modal_image"
             src="/images/single_room.png"
@@ -217,12 +221,18 @@ function showConfirmationModal(data){
     <p><strong>Extra bed:</strong> Yes</p>` : ''}
         <p><strong>Total cost:</strong>
             ${data.cost} SEK</p>`;
-    const modal = new bootstrap.Modal(
-        document.getElementById('myModal')
-    );
     const modalTitle = document.querySelector(".modal-title");
     modalTitle.innerHTML = editMode ? "Your booking has been updated" :"Booking confirmed"
+    const modalFooter = document.querySelector(".modal-footer");
+    modalFooter.innerHTML = `
+    <button class="modal-btn modal-btn-primary"
+            data-bs-dismiss="modal">
+        Close
+    </button>
+`;
+    const reroute = editMode ? "/profile" : "/home";
+    modalElement.addEventListener("hidden.bs.modal", () => {
+        window.location.href = reroute ;
+    }, { once: true });
     modal.show();
 }
-document.getElementById('book-button')
-    .addEventListener('click', handleBookingClick);

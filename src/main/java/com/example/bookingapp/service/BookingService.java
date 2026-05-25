@@ -6,15 +6,10 @@ import com.example.bookingapp.model.BookingDTO;
 import com.example.bookingapp.model.Room;
 import com.example.bookingapp.repository.BookingRepository;
 import com.example.bookingapp.repository.RoomRepository;
-import jakarta.persistence.EntityManager;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.stream;
@@ -54,11 +49,7 @@ public class BookingService {
             booking.setEnddate(req.getEnddate());
             booking.setGuestcount(req.getGuestcount());
             booking.setExtrabed(req.isExtrabed());
-            int nights = Math.toIntExact(ChronoUnit.DAYS.between(req.getStartdate(), req.getEnddate()));
-            Room room = roomRepository.findById(req.getRoomid()).orElseThrow();
-            int extraBedFee = req.isExtrabed() ? 250 : 0;
-            int cost = nights * (room.getCostPerNight() + extraBedFee);
-            booking.setCost(cost);
+            booking.setCost(req.getCost());
             booking.setStatus(Booking.BookingStatus.ACTIVE);
             booking.setSubmitdate(LocalDateTime.now());
             return bookingRepository.save(booking);
@@ -98,8 +89,8 @@ public class BookingService {
                 existingBooking.setGuestcount(booking.getGuestcount());
                 existingBooking.setStartdate(booking.getStartdate());
                 existingBooking.setEnddate(booking.getEnddate());
-                int nights = Math.toIntExact(ChronoUnit.DAYS.between(booking.getStartdate(), booking.getEnddate()));
-                existingBooking.setCost(booking.getNightcost()*nights);
+                existingBooking.setExtrabed(booking.isExtrabed());
+                existingBooking.setCost(booking.getCost());
                 return bookingRepository.save(existingBooking);
             }
         }

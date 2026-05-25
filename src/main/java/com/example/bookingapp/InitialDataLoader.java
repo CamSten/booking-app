@@ -69,10 +69,10 @@ public class InitialDataLoader implements CommandLineRunner {
 
             customerRepository.save(c);
         }
-//        bookingRepository.deleteAll();
+        bookingRepository.deleteAll();
         if (bookingRepository.count() == 0) {
             Booking b1 = new Booking();
-            b1.setCustomerid(5L);
+            b1.setCustomerid(7L);
             b1.setRoomid(1L);
             b1.setGuestcount(2);
             b1.setStartdate(LocalDate.now().plusDays(2));
@@ -83,7 +83,7 @@ public class InitialDataLoader implements CommandLineRunner {
             bookingRepository.save(b1);
 
             Booking b2 = new Booking();
-            b2.setCustomerid(5L);
+            b2.setCustomerid(7L);
             b2.setRoomid(7L);
             b2.setGuestcount(2);
             b2.setStartdate(LocalDate.now().plusDays(7));

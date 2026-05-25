@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class BookingDTO {
     private Long roomid;
-    private int nightcost;
+    private int cost;
     private LocalDate startdate;
     private LocalDate enddate;
     private int guestcount;
@@ -17,11 +17,11 @@ public class BookingDTO {
         return roomid;
     }
 
-    public int getNightcost() {
-        return nightcost;
+    public int getCost() {
+        return cost;
     }
-    public void setNightcost(int nightcost) {
-        this.nightcost = nightcost;
+    public void setCost(int cost) {
+        this.cost = cost;
     }
 
     public void setRoomid(Long roomid) {

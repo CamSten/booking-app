@@ -42,8 +42,11 @@
 
 
 
-<div class="booking-view-card">
-    <h2 id = "bookings-header">Upcoming bookings:</h2>
+<div class="booking-view-card bookings-section">
+    <h2 id="bookings-header">Upcoming Bookings</h2>
+    <p class="bookings-subtitle">
+        View and manage your upcoming stays.
+    </p>
     <table class="table" id="bookings-table">
         <thead>
         <tr>
@@ -80,30 +83,10 @@
         </button>
     </form>
 </div>
-<div class="modal" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Booking details</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <div class="row">
-                        <div class="col" id="modalBody">
 
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <a th:href="@{/profile}" class="btn btn-primary">
-                    Close
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+    <div th:replace="~{fragments/modal :: modal}"></div>
+
+
 <script th:src="@{/js/profileBookings.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

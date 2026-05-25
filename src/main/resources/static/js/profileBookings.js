@@ -1,9 +1,9 @@
 const table = document.getElementById("bookings-container");
-const modalBody = document.getElementById('modalBody');
 const customerid = document.getElementById("customer-id").value;
 createBookingView();
 
 function createBookingView(){
+    table.innerHTML = "";
     fetch(`/bookings/customer/active/${customerid}`)
         .then(r => r.json())
         .then(bookings => {
@@ -23,6 +23,7 @@ function createBookingView(){
 }
 
 function getBookingRow(booking) {
+    console.log(`cost in profileBookings: ${booking.cost}`)
     const row = document.createElement("tr");
     row.classList.add("booking-row");
     row.innerHTML = `
@@ -44,6 +45,9 @@ function getBookingRow(booking) {
     table.appendChild(row);
 }
 function showBookingDetails(booking){
+    const modal = new bootstrap.Modal(document.getElementById('myModal'));
+    const modalBody = document.getElementById('modalBody');
+    const modalFooter = document.querySelector(".modal-footer");
     modalBody.innerHTML = `
         <img id = "modal_image"
             src="/images/single_room.png"
@@ -57,36 +61,68 @@ function showBookingDetails(booking){
         ${booking.extrabed ? `
     <p><strong>Extra bed:</strong> Yes</p>` : ''}
         <p><strong>Total cost:</strong>
-            ${booking.cost} SEK</p>
-   <div class="modal-actions">
-    <button class="edit-booking-button">
-        Edit
-    </button>
-    <button class="delete-booking-button">
-        Cancel
-    </button>
-</div>`;
-    const modal = new bootstrap.Modal(
-        document.getElementById('myModal')
-    );
-    createEditButton(booking)
-    createDeleteButton(booking)
+            ${booking.cost} SEK</p>`;
+    modalFooter.innerHTML = `
+    <div class="modal-actions">
+    <button class="modal-btn modal-btn-primary edit-booking-button">
+    Edit booking</button>
+    <button class="modal-btn modal-btn-danger delete-booking-button">
+    Cancel booking</button>
+</div>
+`;
+    document.querySelector(".edit-booking-button").onclick = () => editBooking(booking);
+    document.querySelector(".delete-booking-button").onclick = () => showDeleteConfirm(booking);
     modal.show();
 }
-function createEditButton(booking){
-    const editButton = document.querySelector(".edit-booking-button");
-    editButton.addEventListener("click", () => {
-        editBooking(booking);
-    });
-}
-
 
 function editBooking(booking){
     window.location.href =
         `/book?roomId=${booking.roomid}&bookingId=${booking.id}`;
 }
-function createDeleteButton(booking){
+function showDeleteConfirm(booking){
+    const modalElement = document.getElementById('myModal');
+    const modal = bootstrap.Modal.getInstance(modalElement)
+        || new bootstrap.Modal(modalElement);
 
+    const modalBody = document.getElementById('modalBody');
+    const modalFooter = document.querySelector(".modal-footer");
+    modalBody.innerHTML = `
+        <p>Are you sure you want to cancel this booking?</p>`;
+    modalFooter.innerHTML = `
+<button class="modal-btn modal-btn-danger yes">Yes</button>
+<button class="modal-btn modal-btn-secondary no">No</button>`;
+    modalFooter.querySelector(".yes").onclick = () => deleteBooking(booking);
+    modalFooter.querySelector(".no").onclick = () => modal.hide();
+    modal.show();
 }
 
+function deleteBooking(booking){
+    const id = booking.id;
+    fetch(`/bookings/${id}/cancel`,{
+        method: "PUT"})
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Cancel failed");
+            }
+        })
+        .then(() => {
+            createBookingView();
+            showFeedback("Your booking has been cancelled.");
+        })
+        .catch(() => {
+            showFeedback("Something went wrong with the cancellation.");
+        });
+}
 
+function showFeedback(message) {
+    const modalElement = document.getElementById('myModal');
+
+    const modal = bootstrap.Modal.getInstance(modalElement)
+        || new bootstrap.Modal(modalElement);
+
+    document.getElementById('modalBody').innerHTML = `
+        <p>${message}</p>`;
+    document.querySelector(".modal-footer").innerHTML = `
+        <button class="modal-btn modal-btn-primary">Close</button>`;
+    modal.show();
+}

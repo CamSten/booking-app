@@ -69,7 +69,7 @@ public class InitialDataLoader implements CommandLineRunner {
 
             customerRepository.save(c);
         }
-        bookingRepository.deleteAll();
+        //bookingRepository.deleteAll();
         if (bookingRepository.count() == 0) {
             Booking b1 = new Booking();
             b1.setCustomerid(7L);

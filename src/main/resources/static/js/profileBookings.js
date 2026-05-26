@@ -123,7 +123,7 @@ function showFeedback(message) {
     document.getElementById('modalBody').innerHTML = `
         <p>${message}</p>`;
     document.querySelector(".modal-footer").innerHTML = `
-        <button class="modal-btn modal-btn-primary">Close</button>`;
+        <button class="modal-btn modal-btn-primary" data-bs-dismiss="modal">Close</button>`;
     modal.show();
 }
 

@@ -44,26 +44,27 @@ public class CustomerService {
     }
 
     public Customer updateCustomer(Long id, Customer customer) {
-        Customer updatedCustomer = customerRepository.findById(id).orElse(null);
+        Customer existing = customerRepository.findById(id).orElse(null);
 
-        if(updatedCustomer != null){
-            updatedCustomer.setName(customer.getName());
-            updatedCustomer.setEmail(customer.getEmail());
-            updatedCustomer.setAddress(customer.getAddress());
-            updatedCustomer.setPhone(customer.getPhone());
-            if(customer.getPassword() != null &&
-                    !customer.getPassword().isBlank()) {
-
-                updatedCustomer.setPassword(
-                        passwordEncoder.encode(customer.getPassword())
-                );
-            }
-
-            return customerRepository.save(updatedCustomer);
-
-        } else {
+        if (existing == null) {
             return null;
         }
+
+        Optional<Customer> emailOwner = customerRepository.findByEmail(customer.getEmail());
+
+        if (emailOwner.isPresent() && emailOwner.get().getId() != id) {
+            throw new EmailExistsException("Email already exists");
+        }
+
+        existing.setName(customer.getName());
+        existing.setEmail(customer.getEmail());
+        existing.setAddress(customer.getAddress());
+        existing.setPhone(customer.getPhone());
+        if (customer.getPassword() != null && !customer.getPassword().isBlank()) {
+            existing.setPassword(passwordEncoder.encode(customer.getPassword()));
+        }
+
+        return customerRepository.save(existing);
     }
 
     public void deleteCustomer(Long id) {

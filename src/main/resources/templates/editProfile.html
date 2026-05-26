@@ -9,6 +9,10 @@
         <div class="col-12 col-md-6">
             <div class="booking-card">
                 <h2 class="text-center mb-4" style="font-family: 'Playfair Display', serif; color: #5f4b45;">Edit Profile</h2>
+
+                <div th:if="${editError}" class="alert alert-danger text-center" role="alert">
+                    <p th:text="${editError}" class="m-0"></p>
+                </div>
                 
                 <form th:action="@{/profile/edit}" th:object="${customer}" method="post">
                     

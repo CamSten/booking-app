@@ -27,8 +27,10 @@ public class CustomerController {
         if(customerId != null){
             return "redirect:/profile";
         }
+
         model.addAttribute("loginCustomer", new Customer());
         model.addAttribute("signupCustomer", new Customer());
+
         return "customer";
     }
 
@@ -40,9 +42,11 @@ public class CustomerController {
             session.setAttribute("loginCustomerId", loggedinCustomer.get().getId());
             return "redirect:/profile";
         }
+
         model.addAttribute("error", "Invalid username and/or password");
         model.addAttribute("loginCustomer", new Customer());
         model.addAttribute("signupCustomer", new Customer());
+
         return "customer";
     }
 
@@ -53,6 +57,7 @@ public class CustomerController {
             session.setAttribute("loginCustomerId", createdCustomer.getId());
 
             return "redirect:/customer";
+
         } catch(Exception e){
             model.addAttribute("signupError", e.getMessage());
             model.addAttribute("loginCustomer", new Customer());
@@ -65,6 +70,7 @@ public class CustomerController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
+
         return "redirect:/customer";
     }
 
@@ -89,18 +95,24 @@ public class CustomerController {
         if (customerId == null) {
             return "redirect:/customer";
         }
+
         Customer customer = customerService.getCustomerById(customerId);
+
         model.addAttribute("customer", customer);
+
         return "editProfile";
     }
 
     @PostMapping("profile/edit")
     public String updateProfile(@ModelAttribute("customer") Customer customer, HttpSession session) {
         Long customerId = (Long) session.getAttribute("loginCustomerId");
+
         if (customerId == null) {
             return "redirect:/customer";
         }
+
         customerService.updateCustomer(customerId, customer);
+
         return "redirect:/profile";
     }
 

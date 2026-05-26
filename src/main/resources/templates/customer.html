@@ -19,10 +19,12 @@
                         <label class="form-label" style="color: #a67b6b; font-weight: 600;">Email address</label>
                         <input type="email" class="form-control" th:field="*{email}" placeholder="Enter email" required>
                     </div>
+
                     <div class="mb-4">
                         <label class="form-label" style="color: #a67b6b; font-weight: 600;">Password</label>
                         <input type="password" class="form-control" th:field="*{password}" placeholder="Enter password" required>
                     </div>
+
                     <button type="submit" class="book-btn">Log in</button>
                 </form>
             </div>
@@ -39,27 +41,32 @@
                 <div th:if="${signupError}" class="alert alert-danger text-center" role="alert">
                     <p th:text="${signupError}" class="m-0"></p>
                 </div>
+
                 <form th:action="@{/signup}" th:object="${signupCustomer}" method="post">
                     <div class="row">
                         <div class="col-12 col-lg-6 mb-3">
                             <label class="form-label" style="color: #a67b6b; font-weight: 600;">Full name</label>
                             <input type="text" class="form-control" th:field="*{name}" placeholder="Enter full name" required>
                         </div>
+
                         <div class="col-12 col-lg-6 mb-3">
                             <label class="form-label" style="color: #a67b6b; font-weight: 600;">Email address</label>
                             <input type="email" class="form-control" th:field="*{email}" placeholder="Enter email" required>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-12 col-lg-6 mb-3">
                             <label class="form-label" style="color: #a67b6b; font-weight: 600;">Phone number</label>
                             <input type="text" class="form-control" th:field="*{phone}" placeholder="Enter phone number" required>
                         </div>
+
                         <div class="col-12 col-lg-6 mb-3">
                             <label class="form-label" style="color: #a67b6b; font-weight: 600;">Password</label>
                             <input type="password" class="form-control" th:field="*{password}" placeholder="Enter password" required>
                         </div>
                     </div>
+
                     <div class="mb-4">
                         <label class="form-label" style="color: #a67b6b; font-weight: 600;">Address</label>
                         <input type="text" class="form-control" th:field="*{address}" placeholder="Enter address" required>

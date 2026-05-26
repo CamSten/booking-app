@@ -23,26 +23,14 @@ function initializeCalendar() {
     });
 }
 function showSearchButton(){
-        document.getElementById('search-button').style.display = "block";
+    document.getElementById('search-button').style.display = "block";
 }
 
 function searchRooms(){
-    const startDate = formatDate(bookingState.selectedDates[0]);
-    const endDate = formatDate(bookingState.selectedDates[1]);
-    fetch(`/bookings/availability/${startDate}/${endDate}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Booking failed");
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log(data);
-
-
-            console.log("SUCCESSFUL SEARCH")
-
-        });
+    const startdate = formatDate(bookingState.selectedDates[0]);
+    const enddate = formatDate(bookingState.selectedDates[1]);
+    window.location.href =
+        `/home?startdate=${startdate}&enddate=${enddate}`;
 }
 
 function hideSearchButton(){

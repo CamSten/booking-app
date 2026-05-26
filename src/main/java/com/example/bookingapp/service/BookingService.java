@@ -68,7 +68,7 @@ public class BookingService {
     }
 
     public boolean checkRoomAvailability(Long roomId, LocalDate startDate, LocalDate enddate, Long bookingId){
-        if (!checkDateValidity(roomId, startDate, enddate)){
+        if (!checkDateValidity(startDate, enddate)){
             return false;
         }
         List<Booking> activeBookings = getActiveBookingsByRoomId(roomId);
@@ -111,7 +111,7 @@ public class BookingService {
         bookingRepository.deleteById(id);
     }
 
-    public boolean checkDateValidity(Long roomId, LocalDate startDate, LocalDate enddate){
+    public boolean checkDateValidity(LocalDate startDate, LocalDate enddate){
         return  (!startDate.isAfter(enddate) && !startDate.isEqual(enddate));
     }
 }

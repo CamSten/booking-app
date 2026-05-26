@@ -1,6 +1,7 @@
 package com.example.bookingapp.service;
 
 import com.example.bookingapp.exception.ActiveBookingException;
+import com.example.bookingapp.exception.EmailExistsException;
 import com.example.bookingapp.model.Booking;
 import com.example.bookingapp.model.Customer;
 import com.example.bookingapp.repository.BookingRepository;
@@ -33,7 +34,7 @@ public class CustomerService {
     public Customer createCustomer(Customer customer) {
         Optional<Customer> existingCustomer = customerRepository.findByEmail(customer.getEmail());
         if (existingCustomer.isPresent()) {
-            throw new ActiveBookingException("Email already exists");
+            throw new EmailExistsException("Email already exists");
         }
 
         Customer newCustomer = new Customer(

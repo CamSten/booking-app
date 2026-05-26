@@ -36,6 +36,9 @@
         <div class="col-12 col-md-6">
             <div class="booking-card h-100">
                 <h2 class="text-center mb-4" style="font-family: 'Playfair Display', serif; color: #5f4b45;">Sign Up</h2>
+                <div th:if="${signupError}" class="alert alert-danger text-center" role="alert">
+                    <p th:text="${signupError}" class="m-0"></p>
+                </div>
                 <form th:action="@{/signup}" th:object="${signupCustomer}" method="post">
                     <div class="row">
                         <div class="col-12 col-lg-6 mb-3">

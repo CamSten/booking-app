@@ -9,6 +9,12 @@
         <div class="col-12 col-md-8">
             <div class="booking-card text-center">
                 <h2 class="mb-4" style="font-family: 'Playfair Display', serif; color: #5f4b45;">Customer Profile</h2>
+
+                <div th:if="${deleteError}"
+                     class="alert alert-danger text-center"
+                     role="alert">
+                    <p th:text="${deleteError}" class="m-0"></p>
+                </div>
                 
                 <input type="hidden" id="customer-id" th:value="${customer.id}">
                 
@@ -39,7 +45,7 @@
                         <button type="submit" class="modal-btn modal-btn-secondary" style="background: #e6e2df;">Logout</button>
                     </form>
                     <form th:action="@{/profile/delete}" method="post">
-                        <button type="button" class="modal-btn modal-btn-danger" onclick="showAccountDeleteConfirm(event, this.form)">Delete Account</button>
+                        <button type="submit" class="modal-btn modal-btn-danger" onclick="showAccountDeleteConfirm(event, this.form)">Delete Account</button>
                     </form>
                 </div>
             </div>

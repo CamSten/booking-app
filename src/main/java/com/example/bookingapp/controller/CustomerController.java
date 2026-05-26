@@ -1,6 +1,7 @@
 package com.example.bookingapp.controller;
 
 import com.example.bookingapp.exception.ActiveBookingException;
+import com.example.bookingapp.exception.EmailExistsException;
 import com.example.bookingapp.model.Customer;
 import com.example.bookingapp.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
@@ -103,15 +104,22 @@ public class CustomerController {
         return "editProfile";
     }
 
-    @PostMapping("profile/edit")
-    public String updateProfile(@ModelAttribute("customer") Customer customer, HttpSession session) {
+    @PostMapping("/profile/edit")
+    public String updateProfile(@ModelAttribute("customer") Customer customer, HttpSession session, Model model) {
         Long customerId = (Long) session.getAttribute("loginCustomerId");
 
         if (customerId == null) {
             return "redirect:/customer";
         }
 
-        customerService.updateCustomer(customerId, customer);
+        try {
+            customerService.updateCustomer(customerId, customer);
+
+        } catch (EmailExistsException e) {
+            model.addAttribute("editError", e.getMessage());
+
+            return "editProfile";
+        }
 
         return "redirect:/profile";
     }

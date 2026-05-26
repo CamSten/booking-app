@@ -23,16 +23,12 @@ function createBookingView(){
 }
 
 function getBookingRow(booking) {
-    console.log(`cost in profileBookings: ${booking.cost}`)
+    console.log(`room id is: ${booking.roomid}`)
     const row = document.createElement("tr");
     row.classList.add("booking-row");
     row.innerHTML = `
         <td>
-            <img
-                src="/images/single_room.png"
-                alt="Room image"
-                class="booking-thumbnail">
-        </td>
+<img src="/images/rooms/room_${booking.roomid}_1.jpg" class="booking-thumbnail" alt="Room image">        </td>
         <td>${booking.startdate}</td>
         <td>${booking.enddate}</td>
         <td>${booking.guestcount}</td>
@@ -49,11 +45,7 @@ function showBookingDetails(booking){
     const modalBody = document.getElementById('modalBody');
     const modalFooter = document.querySelector(".modal-footer");
     modalBody.innerHTML = `
-        <img id = "modal_image"
-            src="/images/single_room.png"
-            class="modal-room-image"
-            alt="Room image">
-        <h5>Room ${booking.roomid}</h5>
+<img src="/images/rooms/room_${booking.roomid}_1.jpg" class="booking-thumbnail" alt="Room image">        <h5>Room ${booking.roomid}</h5>
         <p><strong>Dates:</strong><br>
             ${booking.startdate} → ${booking.enddate}</p>
         <p><strong>Guests:</strong>
@@ -131,21 +123,21 @@ function showAccountDeleteConfirm(event, form){
     event.preventDefault();
     const modalElement = document.getElementById('myModal');
     const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-        
+
     const modalTitle = document.querySelector(".modal-title");
     if(modalTitle) modalTitle.innerHTML = "Delete Account";
-    
+
     document.getElementById('modalBody').innerHTML = `
         <p style="color: #5a514d; font-size: 1.1rem; text-align: center; margin-top: 15px;">
             Are you absolutely sure you want to delete your account? This action cannot be undone.
         </p>`;
-        
+
     document.querySelector(".modal-footer").innerHTML = `
         <button class="modal-btn modal-btn-danger yes text-center" style="width: 100%; margin-bottom: 8px;">Yes, Delete My Account</button>
         <button class="modal-btn modal-btn-secondary no w-100">Cancel</button>`;
-        
+
     document.querySelector(".modal-footer .yes").onclick = () => form.submit();
     document.querySelector(".modal-footer .no").onclick = () => modal.hide();
-    
+
     modal.show();
 }

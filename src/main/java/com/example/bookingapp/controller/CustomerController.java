@@ -1,11 +1,13 @@
 package com.example.bookingapp.controller;
 
+import com.example.bookingapp.exception.ActiveBookingException;
 import com.example.bookingapp.model.Customer;
 import com.example.bookingapp.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -39,6 +41,8 @@ public class CustomerController {
             return "redirect:/profile";
         }
         model.addAttribute("error", "Invalid username and/or password");
+        model.addAttribute("loginCustomer", new Customer());
+        model.addAttribute("signupCustomer", new Customer());
         return "customer";
     }
 
@@ -49,6 +53,8 @@ public class CustomerController {
         return "redirect:/customer";
         } catch(Exception e){
             model.addAttribute("signupError", e.getMessage());
+            model.addAttribute("loginCustomer", new Customer());
+            model.addAttribute("signupCustomer", customer);
             return "customer";
         }
     }
@@ -71,7 +77,7 @@ public class CustomerController {
 
         model.addAttribute("customer", customer);
 
-        return "Profile";
+        return "profile";
     }
 
     @GetMapping("/profile/edit")
@@ -96,12 +102,22 @@ public class CustomerController {
     }
 
     @PostMapping("/profile/delete")
-    public String deleteCustomer(HttpSession session) {
+    public String deleteCustomer(HttpSession session, RedirectAttributes redirectAttributes) {
         Long customerId = (Long) session.getAttribute("loginCustomerId");
-        if (customerId != null) {
-            customerService.deleteCustomer(customerId);
+
+        if (customerId == null) {
+            return "redirect:/customer";
         }
-        session.invalidate();
-        return "redirect:/customer";
+        try {
+            customerService.deleteCustomer(customerId);
+            session.invalidate();
+
+            return "redirect:/customer";
+
+        } catch (ActiveBookingException e) {
+            redirectAttributes.addFlashAttribute("deleteError", e.getMessage());
+
+            return "redirect:/profile";
+        }
     }
 }

@@ -248,10 +248,7 @@ function showConfirmationModal(data){
     const modal = new bootstrap.Modal(modalElement);
     const modalBody = document.getElementById('modalBody');
     modalBody.innerHTML = `
-        <img id = "modal_image"
-            src="/images/single_room.png"
-            class="modal-room-image"
-            alt="Room image">
+        <img src="/images/rooms/room_${data.roomid}_1.jpg" class="booking-thumbnail" alt="Room image">
         <h5>Room ${data.roomid}</h5>
         <p><strong>Dates:</strong><br>
             ${data.startdate} → ${data.enddate}</p>

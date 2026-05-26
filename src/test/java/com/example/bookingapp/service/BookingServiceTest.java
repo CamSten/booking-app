@@ -10,7 +10,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -116,5 +120,15 @@ public class BookingServiceTest {
                 .thenReturn(List.of(b1, b4));
         boolean result = bookingService.checkRoomAvailability(roomId, newStartDate, newEndDate, b1.getId());
         assertFalse(result);
+    }
+    @Test
+    public void cancelBookingSetsStatusToCancelled(){
+        Long id = 40L;
+        when(bookingRepository.findById(id)).thenReturn(Optional.of(b1));
+        when(bookingRepository.save(any(Booking.class))).thenReturn(b1);
+        Booking result = bookingService.cancelBooking(id);
+        verify(bookingRepository).save(any(Booking.class));
+        assertNotNull(result);
+        assertEquals(Booking.BookingStatus.CANCELLED, result.getStatus());
     }
 }

@@ -112,7 +112,114 @@ body {
     display: flex;
     justify-content: center;
 }
+.bookings-section {
+    max-width: 1100px;
+    margin: 50px auto;
+    padding: 34px;
+    background: rgba(255, 250, 245, 0.92);
+    border-radius: 28px;
+    border:
+            1px solid rgba(166, 123, 107, 0.10);
+    box-shadow:
+            0 18px 50px rgba(0,0,0,0.08);
+    backdrop-filter: blur(6px);
+}
 
+#bookings-header {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 500;
+    color: #5f4b45;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.bookings-subtitle {
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 2px;
+    font-size: 1rem;
+    color: #777;
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 34px;
+}
+
+#bookings-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 16px;
+}
+
+#bookings-table thead th {
+    border: none;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #a67b6b;
+    padding: 0 14px 10px 14px;
+}
+
+#bookings-table tbody tr {
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(4px);
+    transition:
+            transform 0.16s ease,
+            box-shadow 0.16s ease;
+    box-shadow:
+            0 6px 18px rgba(0,0,0,0.05);
+}
+
+#bookings-table tbody td:first-child {
+    border-top-left-radius: 18px;
+    border-bottom-left-radius: 18px;
+}
+
+#bookings-table tbody td:last-child {
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+}
+
+#bookings-table tbody tr:hover {
+    transform: translateY(-3px);
+    box-shadow:
+            0 14px 32px rgba(0,0,0,0.10);
+}
+
+#bookings-table td {
+    border: none;
+    padding: 18px 16px;
+    vertical-align: middle;
+    color: #4e4541;
+    font-size: 0.95rem;
+}
+
+.booking-thumbnail {
+    width: 84px;
+    height: 62px;
+    object-fit: cover;
+    border-radius: 14px;
+    box-shadow:
+            0 8px 20px rgba(0,0,0,0.12);
+    transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease;
+}
+
+#bookings-table tbody tr:hover .booking-thumbnail {
+    transform: scale(1.04);
+    box-shadow:
+            0 12px 26px rgba(0,0,0,0.16);
+}
+
+#bookings-container td[colspan] {
+    text-align: center;
+    padding: 34px;
+    color: #8f817a;
+    font-style: italic;
+    background: rgba(255,255,255,0.65);
+    border-radius: 18px;
+}
 .booking-card img {
     width: 92%;
     max-height: 320px;
@@ -154,7 +261,6 @@ body {
     color: #2f2a28;
     font-weight: 500;
 }
-
 #guest-section {
     margin: 18px 0;
 }
@@ -198,6 +304,64 @@ body {
 
 #extra-bed {
     accent-color: #a67b6b;
+}
+
+.extra-bed-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #5a514d;
+}
+
+.extra-bed-label span {
+    font-weight: 500;
+}
+
+.extra-bed-fee {
+    font-size: 0.78rem;
+    color: rgba(90, 81, 77, 0.65);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+.book-btn:hover {
+    background: #8f6658;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(166, 123, 107, 0.35);
+}
+.booking-row {
+    cursor: pointer;
+    transition:
+            transform 0.15s ease,
+            box-shadow 0.15s ease;
+}
+
+.booking-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.10);
+}
+
+
+.search-intro {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.search-title {
+    display: block;
+    font-size: 1rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #a67b6b;
+    margin-bottom: 6px;
+}
+
+.search-prompt{
+    font-family: "League Script", cursive;
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: #5f4b45;
+    margin: 0;
 }
 .modal-actions {
     display: flex;
@@ -410,36 +574,12 @@ body {
     box-sizing: border-box;
 }
 
-.flatpickr-calendar {
-    width: fit-content;
-    max-width: 100%;
-    background: #fffaf5;
-    border: none;
-    border-radius: 24px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.10);
-    font-family: Arial, sans-serif;
-    padding: 12px;
-}
-
 .modal-content {
     border-radius: 18px;
     border: none;
     background: #fffaf5;
     box-shadow: 0 20px 60px rgba(0,0,0,0.2);
     overflow: hidden;
-}
-
-.flatpickr-day.inRange {
-    background: rgba(166, 123, 107, 0.25) !important;
-    border-color: transparent;
-}
-
-.flatpickr-day:hover {
-    background: rgba(166, 123, 107, 0.15);
-}
-
-.flatpickr-day.today {
-    border-color: #a67b6b
 }
 
 .search-intro {
@@ -517,119 +657,64 @@ body {
 #bookings-table tbody tr:hover .booking-thumbnail {
     transform: scale(1.05);
 }
-.flatpickr-calendar .flatpickr-day.selected,
-.flatpickr-calendar .flatpickr-day.startRange,
-.flatpickr-calendar .flatpickr-day.endRange {
-    background: #a67b6b !important;
-    border-color: #a67b6b !important;
-    color: white !important;
-}
-
-.bookings-section {
-    max-width: 1100px;
-    margin: 50px auto;
-    padding: 34px;
-    background: rgba(255, 250, 245, 0.92);
-    border-radius: 28px;
-    border:
-            1px solid rgba(166, 123, 107, 0.10);
-    box-shadow:
-            0 18px 50px rgba(0,0,0,0.08);
-    backdrop-filter: blur(6px);
-}
-
-#bookings-header {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
-    font-weight: 500;
-    color: #5f4b45;
-    text-align: center;
-    margin-bottom: 8px;
-}
-
-.bookings-subtitle {
-    font-family: 'Playfair Display', serif;
-    letter-spacing: 2px;
-    font-size: 1rem;
-    color: #777;
-    text-align: center;
-    text-transform: uppercase;
-    margin-bottom: 34px;
-}
-
-#bookings-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 16px;
-}
-
-#bookings-table thead th {
+.flatpickr-calendar {
+    width: fit-content;
+    max-width: 100%;
+    background: #fffaf5;
     border: none;
-    font-size: 0.72rem;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.10);
+    font-family: Arial, sans-serif;
+    padding: 12px;
+}
+
+.flatpickr-calendar .dayContainer,
+.flatpickr-calendar .flatpickr-days,
+.flatpickr-calendar .flatpickr-weekdays {
+    background: transparent !important;
+}
+
+.flatpickr-day {
+    font-weight: 600;
+    color: #3b2f4a;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 10px;
+    position: relative;
+}
+
+.flatpickr-day.inRange {
+    background: rgba(90, 75, 107, 0.14) !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #3b2f4a;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+    background: #5a4b6b !important;
+    border: none !important;
+    color: #fff !important;
     font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #a67b6b;
-    padding: 0 14px 10px 14px;
+    box-shadow: none !important;
 }
 
-#bookings-table tbody tr {
-    background: rgba(255,255,255,0.88);
-    backdrop-filter: blur(4px);
-    transition:
-            transform 0.16s ease,
-            box-shadow 0.16s ease;
-    box-shadow:
-            0 6px 18px rgba(0,0,0,0.05);
+.flatpickr-day:before,
+.flatpickr-day:after {
+    display: none !important;
 }
 
-#bookings-table tbody td:first-child {
-    border-top-left-radius: 18px;
-    border-bottom-left-radius: 18px;
+.flatpickr-day:hover {
+    background: rgba(166, 123, 107, 0.10);
+    transform: scale(1.02);
 }
 
-#bookings-table tbody td:last-child {
-    border-top-right-radius: 18px;
-    border-bottom-right-radius: 18px;
-}
-
-#bookings-table tbody tr:hover {
-    transform: translateY(-3px);
-    box-shadow:
-            0 14px 32px rgba(0,0,0,0.10);
-}
-
-#bookings-table td {
-    border: none;
-    padding: 18px 16px;
-    vertical-align: middle;
-    color: #4e4541;
-    font-size: 0.95rem;
-}
-
-.booking-thumbnail {
-    width: 84px;
-    height: 62px;
-    object-fit: cover;
-    border-radius: 14px;
-    box-shadow:
-            0 8px 20px rgba(0,0,0,0.12);
-    transition:
-            transform 0.18s ease,
-            box-shadow 0.18s ease;
-}
-
-#bookings-table tbody tr:hover .booking-thumbnail {
-    transform: scale(1.04);
-    box-shadow:
-            0 12px 26px rgba(0,0,0,0.16);
-}
-
-#bookings-container td[colspan] {
-    text-align: center;
-    padding: 34px;
-    color: #8f817a;
-    font-style: italic;
-    background: rgba(255,255,255,0.65);
-    border-radius: 18px;
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover {
+    background: transparent !important;
+    color: rgba(59, 47, 74, 0.35) !important;
+    cursor: not-allowed;
+    text-decoration: none !important;
+    box-shadow: none !important;
 }

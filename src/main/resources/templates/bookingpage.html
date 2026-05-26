@@ -38,9 +38,10 @@
 
                 <div id="extra-bed-section"
                      th:if="${room.extraBedAvailable}">
-                    <label>
+                    <label class="extra-bed-label">
                         <input type="checkbox" id="extra-bed">
-                        Extra bed
+                        <span>Extra bed</span>
+                        <span class="extra-bed-fee">(+250 SEK per night)</span>
                     </label>
                 </div>
 

@@ -47,14 +47,17 @@ public class CustomerController {
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute("signupCustomer") Customer customer, Model model) {
-        try{customerService.createCustomer(customer);
-        model.addAttribute("success", "Signup Successful");
-        return "redirect:/customer";
+    public String signup(@ModelAttribute("signupCustomer") Customer customer, HttpSession session, Model model) {
+        try{Customer createdCustomer = customerService.createCustomer(customer);
+
+            session.setAttribute("loginCustomerId", createdCustomer.getId());
+
+            return "redirect:/customer";
         } catch(Exception e){
             model.addAttribute("signupError", e.getMessage());
             model.addAttribute("loginCustomer", new Customer());
             model.addAttribute("signupCustomer", customer);
+
             return "customer";
         }
     }

@@ -23,14 +23,17 @@
                         <strong style="color: #a67b6b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em;">Name</strong>
                         <p class="m-0" style="color: #5a514d; font-size: 1.1rem;" th:text="${customer.name}"></p>
                     </div>
+
                     <div class="col-6 col-md-4 mb-3">
                         <strong style="color: #a67b6b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em;">Email</strong>
                         <p class="m-0" style="color: #5a514d; font-size: 1.1rem;" th:text="${customer.email}"></p>
                     </div>
+
                     <div class="col-6 col-md-4 mb-3">
                         <strong style="color: #a67b6b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em;">Phone</strong>
                         <p class="m-0" style="color: #5a514d; font-size: 1.1rem;" th:text="${customer.phone}"></p>
                     </div>
+
                     <div class="col-12 mb-4 text-center mt-3">
                         <strong style="color: #a67b6b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em;">Address</strong>
                         <p class="m-0" style="color: #5a514d; font-size: 1.1rem;" th:text="${customer.address}"></p>
@@ -41,9 +44,11 @@
                     <form th:action="@{/profile/edit}" method="get">
                         <button type="submit" class="modal-btn modal-btn-secondary">Edit Profile</button>
                     </form>
+
                     <form th:action="@{/logout}" method="get">
                         <button type="submit" class="modal-btn modal-btn-secondary" style="background: #e6e2df;">Logout</button>
                     </form>
+
                     <form th:action="@{/profile/delete}" method="post">
                         <button type="submit" class="modal-btn modal-btn-danger" onclick="showAccountDeleteConfirm(event, this.form)">Delete Account</button>
                     </form>

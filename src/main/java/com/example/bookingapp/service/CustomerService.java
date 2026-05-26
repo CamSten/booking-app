@@ -8,7 +8,6 @@ import com.example.bookingapp.repository.BookingRepository;
 import com.example.bookingapp.repository.CustomerRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,12 +26,9 @@ public class CustomerService {
         return customerRepository.findById(id).orElse(null);
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
-    }
-
     public Customer createCustomer(Customer customer) {
         Optional<Customer> existingCustomer = customerRepository.findByEmail(customer.getEmail());
+
         if (existingCustomer.isPresent()) {
             throw new EmailExistsException("Email already exists");
         }
@@ -43,6 +39,7 @@ public class CustomerService {
                 customer.getAddress(),
                 customer.getPhone(),
                 passwordEncoder.encode(customer.getPassword()));
+
         return customerRepository.save(newCustomer);
     }
 
@@ -61,7 +58,9 @@ public class CustomerService {
                         passwordEncoder.encode(customer.getPassword())
                 );
             }
+
             return customerRepository.save(updatedCustomer);
+
         } else {
             return null;
         }
@@ -73,6 +72,7 @@ public class CustomerService {
         if(hasActiveBooking){
             throw new ActiveBookingException("Cannot delete a customer with an active booking");
         }
+
         customerRepository.deleteById(id);
     }
 

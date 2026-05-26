@@ -56,11 +56,25 @@ function initializeCalendar(){
                         ];
                         document.getElementById("booking-dates").textContent = dateStr;
                         updateTotalPrice(bookingState.selectedDates);
+                        updateExtraBedCheckbox();
                         showBookingButton();
                     }
                 }
             });
         })
+}
+
+function updateExtraBedCheckbox(){
+    const guestCount = Number(guestcount.value);
+    if (!extraBedOption) return;
+    if (guestCount === 3) {
+        extraBedOption.checked = true;
+        extraBedOption.disabled = true;
+    } else {
+        extraBedOption.checked = false;
+        extraBedOption.disabled = false;
+    }
+
 }
 function applyBookingInfo(booking){
     const start = new Date(booking.startdate);
@@ -79,6 +93,7 @@ function applyBookingInfo(booking){
     document.getElementById("book-button")
         .textContent = "Save changes";
     updateTotalPrice(bookingState.selectedDates)
+    updateExtraBedCheckbox();
 }
 function showGuestSection(){
     const guestSection =
@@ -106,6 +121,7 @@ function showGuestSection(){
         if (bookingState.selectedDates) {
             updateTotalPrice(bookingState.selectedDates);
         }
+        updateExtraBedCheckbox();
     });
 
     if (extraBedOption) {

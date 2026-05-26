@@ -16,6 +16,11 @@ public class FrontendController {
 
     private final RoomRepository roomRepository;
 
+    @GetMapping("/")
+    public String redirectRoot() {
+        return "redirect:/home";
+    }
+
     public FrontendController(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
     }

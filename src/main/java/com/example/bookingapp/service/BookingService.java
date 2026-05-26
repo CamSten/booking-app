@@ -23,7 +23,6 @@ public class BookingService {
     public BookingService(BookingRepository bookingRepository, RoomRepository roomRepository) {
         this.bookingRepository = bookingRepository;
         this.roomRepository = roomRepository;
-
     }
 
     public Booking getBookingById(Long id) {
@@ -112,6 +111,8 @@ public class BookingService {
     }
 
     public boolean checkDateValidity(LocalDate startDate, LocalDate enddate){
-        return  (!startDate.isAfter(enddate) && !startDate.isEqual(enddate));
+       boolean correctOrder = (!startDate.isAfter(enddate) && !startDate.isEqual(enddate));
+       boolean notHistoric = (!startDate.isBefore(LocalDate.now()));
+       return (correctOrder && notHistoric);
     }
 }

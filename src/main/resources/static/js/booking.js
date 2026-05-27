@@ -2,6 +2,7 @@ const extraBedOption = document.getElementById('extra-bed');
 const params = new URLSearchParams(window.location.search);
 const bookingId = params.get("bookingId");
 let editMode = false;
+let booking;
 let calendar;
 let guestcount;
 const bookingState = {
@@ -9,63 +10,96 @@ const bookingState = {
     nights: 0,
     cost: 0,
 };
-document.addEventListener("DOMContentLoaded", () => {
-    initializeCalendar();
+document.addEventListener("DOMContentLoaded", async () => {
+    document.getElementById('book-button')
+        .addEventListener('click', handleBookingClick);
+
+    booking = await getBookingData();
+    await initializeCalendar();
     showGuestSection();
-    if (bookingId) {
-        editMode = true;
-        fetch(`/bookings/${bookingId}`)
-            .then(response => response.json())
-            .then(booking => applyBookingInfo(booking));
+
+    if (booking) {
+        applyBookingInfo(booking);
     }
 });
-
-function initializeCalendar(){
-    const roomId = document.getElementById("room-id").value;
-    let disabledDates;
-    fetch(`/bookings/room/${roomId}/blocked-dates`)
-        .then(r => {
-            if (!r.ok) {
-                throw new Error("API error");
-            }
-            return r.json();
-        })
-        .then(bookings => {
-            let filteredBookings = bookings;
-            if (editMode) {
-                filteredBookings =
-                    bookings.filter(
-                        b => b.id !== Number(bookingId)
-                    );
-            }
-            disabledDates = filteredBookings
-                .filter(b => b.startdate && b.enddate)
-                .map(b => ({
-                    from: b.startdate,
-                    to: b.enddate
-                }));
-            calendar = flatpickr("#calendar", {
-                mode: "range",
-                inline: true,
-                minDate: "today",
-                disable: disabledDates,
-                onChange: function(selectedDates, dateStr) {
-                    if (selectedDates.length === 2) {
-                        bookingState.selectedDates = [
-                            new Date(selectedDates[0]),
-                            new Date(selectedDates[1])
-                        ];
-                        document.getElementById("booking-dates").textContent = dateStr;
-                        updateTotalPrice(bookingState.selectedDates);
-                        updateExtraBedCheckbox();
-                        showBookingButton();
-                    }
-                }
-            });
-        })
+async function getBookingData() {
+    const storedBooking =
+        sessionStorage.getItem("ongoingBooking");
+    if (storedBooking != null) {
+        sessionStorage.removeItem("ongoingBooking");
+        return JSON.parse(storedBooking);
+    }
+    if (bookingId == null) {
+        const prefillStart =
+            document.getElementById("prefill-startdate")?.value;
+        const prefillEnd =
+            document.getElementById("prefill-enddate")?.value;
+        if (prefillStart && prefillEnd) {
+            return {
+                startdate: prefillStart,
+                enddate: prefillEnd,
+            };
+        }
+        return null;
+    }
+    editMode = true;
+    const response =
+        await fetch(`/bookings/${bookingId}`);
+    if (!response.ok) {
+        throw new Error("Failed to fetch booking");
+    }
+    return await response.json();
 }
 
-function updateExtraBedCheckbox(){
+async function initializeCalendar() {
+    const roomId =
+        document.getElementById("room-id").value;
+    const response =
+        await fetch(`/bookings/room/${roomId}/blocked-dates`);
+    if (!response.ok) {
+        throw new Error("API error");
+    }
+    const bookings = await response.json();
+    let filteredBookings = bookings;
+    if (editMode) {
+        filteredBookings =
+            bookings.filter(
+                b => b.id !== Number(bookingId)
+            );
+    }
+    const disabledDates =
+        filteredBookings
+            .filter(b => b.startdate && b.enddate)
+            .map(b => ({
+                from: b.startdate,
+                to: b.enddate
+            }));
+
+    calendar = flatpickr("#calendar", {
+        mode: "range",
+        inline: true,
+        minDate: "today",
+        disable: disabledDates,
+        onChange(selectedDates, dateStr) {
+            if (selectedDates.length === 2) {
+                bookingState.selectedDates = [
+                    new Date(selectedDates[0]),
+                    new Date(selectedDates[1])
+                ];
+                document.getElementById(
+                    "booking-dates"
+                ).textContent = dateStr;
+                updateTotalPrice(
+                    bookingState.selectedDates
+                );
+                updateExtraBedCheckbox();
+                showBookingButton();
+            }
+        }
+    });
+}
+
+function updateExtraBedCheckbox() {
     const guestCount = Number(guestcount.value);
     if (!extraBedOption) return;
     if (guestCount === 3) {
@@ -77,7 +111,8 @@ function updateExtraBedCheckbox(){
     }
 }
 
-function applyBookingInfo(booking){
+function applyBookingInfo(booking) {
+    console.log(`booking.startdate: ${booking.startdate}, booking.guestcount: ${booking.guestcount}`)
     const start = new Date(booking.startdate);
     const end = new Date(booking.enddate);
     calendar.setDate([start, end]);
@@ -93,10 +128,11 @@ function applyBookingInfo(booking){
     document.getElementById("book-button")
         .textContent = "Save changes";
     updateTotalPrice(bookingState.selectedDates)
+
     updateExtraBedCheckbox();
 }
 
-function showGuestSection(){
+function showGuestSection() {
     const guestSection =
         document.getElementById('guest-section');
     guestSection.style.display = "block";
@@ -127,13 +163,12 @@ function showGuestSection(){
     }
 }
 
-function showBookingButton(){
+function showBookingButton() {
     document.getElementById('book-button')
-        .addEventListener('click', handleBookingClick);
-    document.getElementById('book-button').style.display = "block";
+        .style.display = "block";
 }
 
-function updateTotalPrice(selectedDates){
+function updateTotalPrice(selectedDates) {
     const roomPrice = Number(
         document.getElementById('room-price').value);
     if (selectedDates.length > 1) {
@@ -153,7 +188,7 @@ function updateTotalPrice(selectedDates){
     bookingState.cost = totalPrice;
 }
 
-function handleBookingClick(){
+function handleBookingClick() {
     const formatDate = (d) => {
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -170,13 +205,15 @@ function handleBookingClick(){
             ? extraBedOption.checked
             : false
     };
-    let url = editMode  ? `/bookings/${bookingId}`: "/bookings";
+    let url = editMode ? `/bookings/${bookingId}` : "/bookings";
     let method = editMode ? "PUT" : "POST";
     fetch(url, {
         method: method,
         headers: {
-            "Content-Type": "application/json" },
-        body: JSON.stringify(bookingRequest) })
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(bookingRequest)
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error("Booking failed");
@@ -187,20 +224,28 @@ function handleBookingClick(){
             showConfirmationModal(data);
         })
         .catch(error => {
+            sessionStorage.setItem(
+                "ongoingBooking",
+                JSON.stringify(bookingRequest)
+            );
+
             console.error(error);
-            showErrorModal("You must be logged in to book a room. Please log in or create a free account to continue.");
+            showErrorModal(
+                "You must be logged in to book a room. Please log in or create a free account to continue.",
+                bookingRequest.roomid);
         });
 }
 
-function showErrorModal(message) {
+function showErrorModal(message, roomId) {
     const modalElement = document.getElementById('myModal');
     const modalTitle = document.querySelector(".modal-title");
     const modalBody = document.getElementById('modalBody');
     const modalFooter = document.querySelector(".modal-footer");
     modalTitle.innerHTML = "Authentication Required";
     modalBody.innerHTML = `<p style="color: #5a514d; font-size: 1.1rem; text-align: center; margin-top: 15px;">${message}</p>`;
+
     modalFooter.innerHTML = `
-        <a href="/customer" class="modal-btn modal-btn-primary text-decoration-none text-center" style="width: 100%; margin-bottom: 8px;">Log In / Sign Up</a>
+        <a href="/customer?returnToBook=true&roomId=${roomId}" class="modal-btn modal-btn-primary text-decoration-none text-center" style="width: 100%; margin-bottom: 8px;">Log In / Sign Up</a>
         <button class="modal-btn modal-btn-secondary w-100" data-bs-dismiss="modal">Close</button>`;
     const newModalElement = modalElement.cloneNode(true);
     modalElement.parentNode.replaceChild(newModalElement, modalElement);
@@ -208,7 +253,7 @@ function showErrorModal(message) {
     freshModal.show();
 }
 
-function showConfirmationModal(data){
+function showConfirmationModal(data) {
     const modalElement = document.getElementById('myModal');
     const modal = new bootstrap.Modal(modalElement);
     const modalBody = document.getElementById('modalBody');
@@ -224,7 +269,7 @@ function showConfirmationModal(data){
         <p><strong>Total cost:</strong>
             ${data.cost} SEK</p>`;
     const modalTitle = document.querySelector(".modal-title");
-    modalTitle.innerHTML = editMode ? "Your booking has been updated" :"Booking confirmed"
+    modalTitle.innerHTML = editMode ? "Your booking has been updated" : "Booking confirmed"
     const modalFooter = document.querySelector(".modal-footer");
     modalFooter.innerHTML = `
     <button class="modal-btn modal-btn-primary"
@@ -233,7 +278,7 @@ function showConfirmationModal(data){
     </button>`;
     const reroute = editMode ? "/profile" : "/home";
     modalElement.addEventListener("hidden.bs.modal", () => {
-        window.location.href = reroute ;
-    }, { once: true });
+        window.location.href = reroute;
+    }, {once: true});
     modal.show();
-}
+}3

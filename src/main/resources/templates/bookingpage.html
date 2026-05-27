@@ -8,6 +8,12 @@
         <div th:replace="~{fragments/calendarcard :: calendarCard}"></div>
         <div class="col-12 col-lg-6">
             <div class="booking-card">
+                <input type="hidden" id="prefill-startdate"
+                       th:value="${startdate}">
+
+                <input type="hidden" id="prefill-enddate"
+                       th:value="${enddate}">
+
                 <input type="hidden"
                        id="booking-id"
                        th:value="${bookingId}">

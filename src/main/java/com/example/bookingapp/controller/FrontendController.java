@@ -1,8 +1,10 @@
 package com.example.bookingapp.controller;
 
 import com.example.bookingapp.model.Booking;
+import com.example.bookingapp.model.BookingDTO;
 import com.example.bookingapp.model.Room;
 import com.example.bookingapp.repository.RoomRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,8 +41,14 @@ public class FrontendController {
     }
 
     @GetMapping("/room")
-    public String showRoomPage(@RequestParam Long id, Model model) {
+    public String showRoomPage(
+            @RequestParam Long id,
+            @RequestParam(required = false) String startdate,
+            @RequestParam(required = false) String enddate,
+            Model model) {
         model.addAttribute("room", roomRepository.findById(id).orElse(null));
+        model.addAttribute("startdate", startdate);
+        model.addAttribute("enddate", enddate);
         return "roompage";
     }
 
@@ -48,12 +56,21 @@ public class FrontendController {
     public String showBookingPage(
             @RequestParam Long roomId,
             @RequestParam(required = false) Long bookingId,
+            @RequestParam(required = false) LocalDate enddate,
+            @RequestParam(required = false) LocalDate startdate,
             Model model) {
+
         model.addAttribute(
                 "room",
                 roomRepository.findById(roomId).orElse(null)
         );
         model.addAttribute("bookingId", bookingId);
+        model.addAttribute("startdate", startdate);
+        model.addAttribute("enddate", enddate);
+
+        if (startdate != null && enddate != null){
+            return "bookingpage";
+        }
         return "bookingpage";
     }
 

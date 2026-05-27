@@ -2,6 +2,7 @@ package com.example.bookingapp.controller;
 
 import com.example.bookingapp.exception.ActiveBookingException;
 import com.example.bookingapp.exception.EmailExistsException;
+import com.example.bookingapp.model.BookingDTO;
 import com.example.bookingapp.model.Customer;
 import com.example.bookingapp.service.CustomerService;
 import jakarta.servlet.http.HttpSession;
@@ -36,14 +37,20 @@ public class CustomerController {
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute("loginCustomer") Customer customer, HttpSession session, Model model) {
+    public String login(@ModelAttribute("loginCustomer") Customer customer, HttpSession session, Model model,
+                        @RequestParam(required = false) Boolean returnToBook,
+                        @RequestParam(required = false) Long roomId) {
         Optional<Customer> loggedinCustomer = customerService.loginCustomer(customer.getEmail(), customer.getPassword());
-
+        System.out.println("roomId is: " + roomId);
         if (loggedinCustomer.isPresent()) {
             session.setAttribute("loginCustomerId", loggedinCustomer.get().getId());
-            return "redirect:/profile";
+            if (Boolean.TRUE.equals(returnToBook) && roomId != null){
+                return "redirect:/book?roomId=" + roomId;
+            }
+            else{
+                return "redirect:/profile";
+            }
         }
-
         model.addAttribute("error", "Invalid username and/or password");
         model.addAttribute("loginCustomer", new Customer());
         model.addAttribute("signupCustomer", new Customer());
@@ -52,13 +59,15 @@ public class CustomerController {
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute("signupCustomer") Customer customer, HttpSession session, Model model) {
+    public String signup(@ModelAttribute("signupCustomer") Customer customer, HttpSession session, Model model,
+                         @RequestParam(required = false) Boolean returnToBook,
+                         @RequestParam(required = false) Long roomId) {
         try{Customer createdCustomer = customerService.createCustomer(customer);
-
             session.setAttribute("loginCustomerId", createdCustomer.getId());
-
-            return "redirect:/customer";
-
+            if(Boolean.TRUE.equals(returnToBook) && roomId != null){
+                return "redirect:/book?roomId=" + roomId;
+            }
+            return  "redirect:/customer";
         } catch(Exception e){
             model.addAttribute("signupError", e.getMessage());
             model.addAttribute("loginCustomer", new Customer());
@@ -75,12 +84,13 @@ public class CustomerController {
         return "redirect:/customer";
     }
 
+
     @GetMapping("/profile")
     public String profile(HttpSession session, Model model) {
         Long customerId = (Long) session.getAttribute("loginCustomerId");
 
-       if (customerId == null) {
-           return "redirect:/customer";
+        if (customerId == null) {
+            return "redirect:/customer";
         }
 
         Customer customer = customerService.getCustomerById(customerId);

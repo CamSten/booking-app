@@ -67,9 +67,8 @@
                             A beautiful and cozy room perfect for your stay.
                         </p>
 
-                        <a th:href="@{/book(roomId=${room.id})}"
-                           class="book-btn text-center text-decoration-none">
-                            Book Now
+                        <a th:href="@{/book(roomId=${room.id},startdate=${startdate},enddate=${enddate})}"
+                           class="book-btn text-center text-decoration-none"> Book Now
                         </a>
 
                     </div>

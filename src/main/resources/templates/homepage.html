@@ -17,7 +17,7 @@
     <main class="container mt-5 mb-5">
         <div class="row g-4">
             <div class="col-12 col-md-3" th:each="room : ${rooms}">
-                <a th:href="@{/room(id=${room.id})}" class="text-decoration-none d-block text-center" style="transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <a th:href="@{/room(id=${room.id},startdate=${param.startdate},enddate=${param.enddate})}" class="text-decoration-none d-block text-center" style="transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                     <img th:src="@{'/images/rooms/room_' + ${room.id} + '_1.jpg'}" 
                          class="w-100 mb-3" 
                          alt="Hotel Room" 

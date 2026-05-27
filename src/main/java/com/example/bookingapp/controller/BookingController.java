@@ -49,6 +49,8 @@ public class BookingController {
     public List<Booking> getBookingsByStartdate(@PathVariable LocalDate date) {
         return bookingService.getBookingsByStartdate(date);
     }
+
+
     @GetMapping("/availability/{roomid}/{startdate}/{enddate}")
     public boolean checkRoomAvailability(
             @PathVariable Long roomid,

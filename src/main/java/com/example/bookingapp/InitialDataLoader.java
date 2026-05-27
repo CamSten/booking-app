@@ -59,6 +59,7 @@ public class InitialDataLoader implements CommandLineRunner {
                 }
             }
         }
+        /*
         if (customerRepository.count() == 0) {
             Customer c = new Customer();
             c.setName("test");
@@ -208,5 +209,6 @@ public class InitialDataLoader implements CommandLineRunner {
             b10.setSubmitdate(LocalDateTime.now());
             bookingRepository.save(b10);
         }
+         */
     }
 }

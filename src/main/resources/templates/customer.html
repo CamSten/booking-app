@@ -14,7 +14,19 @@
                     <p th:text="${error}" class="m-0"></p>
                 </div>
 
+
                 <form th:action="@{/login}" th:object="${loginCustomer}" method="post">
+                    <form th:action="@{/login}"
+                          th:object="${loginCustomer}"
+                          method="post">
+
+                        <input type="hidden"
+                               name="returnToBook"
+                               th:value="${param.returnToBook}">
+
+                        <input type="hidden"
+                               name="roomId"
+                               th:value="${param.roomId}">
                     <div class="mb-3">
                         <label class="form-label" style="color: #a67b6b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em;">Email address</label>
                         <input type="email" class="form-control" th:field="*{email}" placeholder="Enter email" required>
@@ -43,6 +55,17 @@
                 </div>
 
                 <form th:action="@{/signup}" th:object="${signupCustomer}" method="post">
+                    <form th:action="@{/login}"
+                          th:object="${loginCustomer}"
+                          method="post">
+
+                        <input type="hidden"
+                               name="returnToBook"
+                               th:value="${param.returnToBook}">
+
+                        <input type="hidden"
+                               name="roomId"
+                               th:value="${param.roomId}">
                     <div class="row">
                         <div class="col-12 col-lg-6 mb-3">
                             <label class="form-label" style="color: #a67b6b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em;">Full name</label>

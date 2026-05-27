@@ -107,11 +107,10 @@ function showGuestSection(){
         options += `
             <option value="3">3</option>`;
     }
-    guestSection.innerHTML = `
-        <label>Guests:</label>
-        <select id="guest-count">
-            ${options}
-        </select>`;
+    guestSection.innerHTML += `
+    <select id="guest-count">
+        ${options}
+    </select>`;
     guestcount = document.getElementById('guest-count');
     guestcount.addEventListener('change', () => {
         if (bookingState.selectedDates) {

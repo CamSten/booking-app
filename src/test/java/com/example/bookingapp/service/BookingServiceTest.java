@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -74,6 +73,7 @@ public class BookingServiceTest {
         boolean result = bookingService.checkRoomAvailability(roomId, b2.getStartdate(), b2.getEnddate(), b2.getId());
         assertFalse(result);
     }
+
     @Test
     public void checkAvailabilityReturnsFalseForPartialDateOverlap() {
         Long roomId = b1.getRoomid();
@@ -90,6 +90,7 @@ public class BookingServiceTest {
         boolean result = bookingService.checkRoomAvailability(roomId, b3.getStartdate(), b3.getEnddate(), b3.getId());
         assertFalse(result);
     }
+
     @Test
     public void checkAvailabilityIgnoresOverlapForSameBookingId (){
         Long roomId = b1.getRoomid();
@@ -121,6 +122,7 @@ public class BookingServiceTest {
         boolean result = bookingService.checkRoomAvailability(roomId, newStartDate, newEndDate, b1.getId());
         assertFalse(result);
     }
+
     @Test
     public void cancelBookingSetsStatusToCancelled(){
         Long id = 40L;

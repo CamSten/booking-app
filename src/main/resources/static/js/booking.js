@@ -195,10 +195,6 @@ function handleBookingClick(){
 
 function showErrorModal(message) {
     const modalElement = document.getElementById('myModal');
-    let modal = bootstrap.Modal.getInstance(modalElement);
-    if (!modal) {
-        modal = new bootstrap.Modal(modalElement);
-    }
     const modalTitle = document.querySelector(".modal-title");
     const modalBody = document.getElementById('modalBody');
     const modalFooter = document.querySelector(".modal-footer");

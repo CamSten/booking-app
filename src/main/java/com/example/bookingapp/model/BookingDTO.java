@@ -20,6 +20,7 @@ public class BookingDTO {
     public int getCost() {
         return cost;
     }
+
     public void setCost(int cost) {
         this.cost = cost;
     }

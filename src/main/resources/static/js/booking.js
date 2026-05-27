@@ -12,13 +12,14 @@ const bookingState = {
 document.addEventListener("DOMContentLoaded", () => {
     initializeCalendar();
     showGuestSection();
-    if (bookingId){
+    if (bookingId) {
         editMode = true;
         fetch(`/bookings/${bookingId}`)
             .then(response => response.json())
             .then(booking => applyBookingInfo(booking));
     }
 });
+
 function initializeCalendar(){
     const roomId = document.getElementById("room-id").value;
     let disabledDates;
@@ -74,8 +75,8 @@ function updateExtraBedCheckbox(){
         extraBedOption.checked = false;
         extraBedOption.disabled = false;
     }
-
 }
+
 function applyBookingInfo(booking){
     const start = new Date(booking.startdate);
     const end = new Date(booking.enddate);
@@ -88,42 +89,36 @@ function applyBookingInfo(booking){
     if (extraBedOption) {
         extraBedOption.checked = booking.extrabed;
     }
-
     showBookingButton();
     document.getElementById("book-button")
         .textContent = "Save changes";
     updateTotalPrice(bookingState.selectedDates)
     updateExtraBedCheckbox();
 }
+
 function showGuestSection(){
     const guestSection =
         document.getElementById('guest-section');
     guestSection.style.display = "block";
-
     let options = `
         <option value="1">1</option>
-        <option value="2">2</option>
-    `;
+        <option value="2">2</option>`;
     if (extraBedOption) {
         options += `
-            <option value="3">3</option>
-        `;
+            <option value="3">3</option>`;
     }
     guestSection.innerHTML = `
         <label>Guests:</label>
         <select id="guest-count">
             ${options}
-        </select>
-    `;
-    guestcount =
-        document.getElementById('guest-count');
+        </select>`;
+    guestcount = document.getElementById('guest-count');
     guestcount.addEventListener('change', () => {
         if (bookingState.selectedDates) {
             updateTotalPrice(bookingState.selectedDates);
         }
         updateExtraBedCheckbox();
     });
-
     if (extraBedOption) {
         extraBedOption.addEventListener('change', () => {
             if (bookingState.selectedDates) {
@@ -132,30 +127,16 @@ function showGuestSection(){
         });
     }
 }
-function handleDateSelection(selectedDates, dateStr){
-    bookingState.selectedDates = selectedDates;
-    bookingState.nights = 0
-    document.getElementById("booking-dates").textContent = dateStr;
-    updateTotalPrice(selectedDates);
-    showBookingButton();
-
-}
 
 function showBookingButton(){
-    console.log(`startdate in showBookBtn: ${bookingState.selectedDates[0]}`);
-    console.log(`enddate in showBookBtn: ${bookingState.selectedDates[1]}`)
-
     document.getElementById('book-button')
         .addEventListener('click', handleBookingClick);
     document.getElementById('book-button').style.display = "block";
 }
-function getGuestCount(){
-    return Number(document.getElementById('guest-count').value);
-}
+
 function updateTotalPrice(selectedDates){
     const roomPrice = Number(
-        document.getElementById('room-price').value
-    );
+        document.getElementById('room-price').value);
     if (selectedDates.length > 1) {
         const firstDate = selectedDates[0];
         const lastDate = selectedDates[1];
@@ -169,10 +150,7 @@ function updateTotalPrice(selectedDates){
         extraBedFee = 250;
     }
     const totalPrice = bookingState.nights * (roomPrice + extraBedFee);
-    console.log(`COST IS: ${totalPrice}`)
-    document.getElementById("booking-total")
-        .textContent =
-        `${totalPrice} SEK`;
+    document.getElementById("booking-total").textContent = `${totalPrice} SEK`;
     bookingState.cost = totalPrice;
 }
 
@@ -193,10 +171,8 @@ function handleBookingClick(){
             ? extraBedOption.checked
             : false
     };
-    let url = editMode  ? `/bookings/${bookingId}`
-        : "/bookings";
-    let method = editMode ? "PUT"
-        : "POST";
+    let url = editMode  ? `/bookings/${bookingId}`: "/bookings";
+    let method = editMode ? "PUT" : "POST";
     fetch(url, {
         method: method,
         headers: {
@@ -219,22 +195,14 @@ function handleBookingClick(){
 
 function showErrorModal(message) {
     const modalElement = document.getElementById('myModal');
-    let modal = bootstrap.Modal.getInstance(modalElement);
-    if (!modal) {
-        modal = new bootstrap.Modal(modalElement);
-    }
     const modalTitle = document.querySelector(".modal-title");
     const modalBody = document.getElementById('modalBody');
     const modalFooter = document.querySelector(".modal-footer");
-
     modalTitle.innerHTML = "Authentication Required";
     modalBody.innerHTML = `<p style="color: #5a514d; font-size: 1.1rem; text-align: center; margin-top: 15px;">${message}</p>`;
-    
     modalFooter.innerHTML = `
         <a href="/customer" class="modal-btn modal-btn-primary text-decoration-none text-center" style="width: 100%; margin-bottom: 8px;">Log In / Sign Up</a>
-        <button class="modal-btn modal-btn-secondary w-100" data-bs-dismiss="modal">Close</button>
-    `;
-    
+        <button class="modal-btn modal-btn-secondary w-100" data-bs-dismiss="modal">Close</button>`;
     const newModalElement = modalElement.cloneNode(true);
     modalElement.parentNode.replaceChild(newModalElement, modalElement);
     const freshModal = new bootstrap.Modal(newModalElement);
@@ -242,8 +210,6 @@ function showErrorModal(message) {
 }
 
 function showConfirmationModal(data){
-    const price = data.cost;
-    console.log(price);
     const modalElement = document.getElementById('myModal');
     const modal = new bootstrap.Modal(modalElement);
     const modalBody = document.getElementById('modalBody');
@@ -265,8 +231,7 @@ function showConfirmationModal(data){
     <button class="modal-btn modal-btn-primary"
             data-bs-dismiss="modal">
         Close
-    </button>
-`;
+    </button>`;
     const reroute = editMode ? "/profile" : "/home";
     modalElement.addEventListener("hidden.bs.modal", () => {
         window.location.href = reroute ;

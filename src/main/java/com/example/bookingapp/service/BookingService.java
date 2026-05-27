@@ -106,10 +106,6 @@ public class BookingService {
         return null;
     }
 
-    public void deleteBooking(Long id) {
-        bookingRepository.deleteById(id);
-    }
-
     public boolean checkDateValidity(LocalDate startDate, LocalDate enddate){
        boolean correctOrder = (!startDate.isAfter(enddate) && !startDate.isEqual(enddate));
        boolean notHistoric = (!startDate.isBefore(LocalDate.now()));

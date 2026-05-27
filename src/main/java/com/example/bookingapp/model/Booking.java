@@ -1,6 +1,5 @@
 package com.example.bookingapp.model;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -27,7 +26,6 @@ public class Booking {
     private BookingStatus status;
 
     public Booking() {
-
 
     }
 
@@ -71,7 +69,6 @@ public class Booking {
         this.startdate = startdate;
     }
 
-
     public Long getRoomid() {
         return roomid;
     }
@@ -111,5 +108,4 @@ public class Booking {
     public void setStatus(BookingStatus status) {
         this.status = status;
     }
-
 }

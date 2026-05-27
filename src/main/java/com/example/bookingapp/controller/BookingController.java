@@ -91,9 +91,4 @@ public class BookingController {
     public Booking cancelBooking (@PathVariable Long id){
         return bookingService.cancelBooking(id);
     }
-
-    @DeleteMapping("/{id}")
-    public void deleteBooking(@PathVariable Long id) {
-        bookingService.deleteBooking(id);
-    }
 }

@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  booking-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: bookingdb
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '3306:3306'
+  customer-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: customerdb
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '3307:3306'
+  booking-service:
+    build: ./booking-service
+    ports:
+      - '8080:8080'
+    depends_on:
+      - booking-db
+  customer-service:
+    build: ./customer-service
+    ports:
+      - '8081:8081'
+    depends_on:
+      - customer-db

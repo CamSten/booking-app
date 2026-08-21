@@ -59,6 +59,7 @@ public class InitialDataLoader implements CommandLineRunner {
                 }
             }
         }
+        System.out.print("testing");
         /*
         if (customerRepository.count() == 0) {
             Customer c = new Customer();

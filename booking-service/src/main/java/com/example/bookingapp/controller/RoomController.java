@@ -1,8 +1,6 @@
 package com.example.bookingapp.controller;
 
-import com.example.bookingapp.model.Customer;
 import com.example.bookingapp.model.Room;
-import com.example.bookingapp.service.CustomerService;
 import com.example.bookingapp.service.RoomService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

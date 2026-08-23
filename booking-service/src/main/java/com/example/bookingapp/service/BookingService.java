@@ -1,36 +1,44 @@
 
 package com.example.bookingapp.service;
 
+import com.example.bookingapp.config.RestTemplateConfig;
 import com.example.bookingapp.model.Booking;
 import com.example.bookingapp.model.BookingDTO;
-import com.example.bookingapp.model.Room;
 import com.example.bookingapp.repository.BookingRepository;
 import com.example.bookingapp.repository.RoomRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import static java.util.Arrays.stream;
-
 
 @Service
 public class BookingService {
     private final BookingRepository bookingRepository;
     private final RoomRepository roomRepository;
+    private final RestTemplate restTemplate;
 
-    public BookingService(BookingRepository bookingRepository, RoomRepository roomRepository) {
+    public BookingService(BookingRepository bookingRepository, RoomRepository roomRepository, RestTemplateConfig restTemplateConfig) {
         this.bookingRepository = bookingRepository;
         this.roomRepository = roomRepository;
+        this.restTemplate = restTemplateConfig.restTemplate();
     }
 
     public Booking getBookingById(Long id) {
         return bookingRepository.findById(id).orElse(null);
     }
+
     public List<Booking> getBookingsByCustomerId(Long customerid) {
-        return bookingRepository.findByCustomerid(customerid);
+        List<Booking> bookingList =  bookingRepository.findByCustomerid(customerid);
+        return bookingList != null ? bookingList : Collections.emptyList();
     }
+
+    public boolean hasActiveBooking(Long customerId) {
+        return bookingRepository.existsByCustomeridAndStatus(customerId, Booking.BookingStatus.ACTIVE);
+    }
+
     public List<Booking> getBookingsByStartdate(LocalDate startdate){
         return bookingRepository.findByStartdate(startdate);
     }
@@ -62,8 +70,7 @@ public class BookingService {
     }
     public List<Booking> getActiveBookingsByCustomerId(long customerId){
         return bookingRepository.findByCustomeridAndStatus(customerId, Booking.BookingStatus.ACTIVE)
-                .stream().filter(b ->
-                        !b.getEnddate().isBefore(LocalDate.now())).toList();
+                .stream().filter(b -> !b.getEnddate().isBefore(LocalDate.now())).toList();
     }
 
     public boolean checkRoomAvailability(Long roomId, LocalDate startDate, LocalDate enddate, Long bookingId){
@@ -81,8 +88,8 @@ public class BookingService {
         return true;
     }
 
-    public Booking updateBooking(Long id, BookingDTO booking) {
-        Booking existingBooking = bookingRepository.findById(id).orElse(null);
+    public Booking updateBooking(Long bookingId, BookingDTO booking) {
+        Booking existingBooking = bookingRepository.findById(bookingId).orElse(null);
         if (existingBooking != null) {
             if (checkRoomAvailability(booking.getRoomid(), booking.getStartdate(), booking.getEnddate(), existingBooking.getId())) {
                 existingBooking.setRoomid(booking.getRoomid());
@@ -107,8 +114,16 @@ public class BookingService {
     }
 
     public boolean checkDateValidity(LocalDate startDate, LocalDate enddate){
-       boolean correctOrder = (!startDate.isAfter(enddate) && !startDate.isEqual(enddate));
-       boolean notHistoric = (!startDate.isBefore(LocalDate.now()));
-       return (correctOrder && notHistoric);
+        boolean correctOrder = (!startDate.isAfter(enddate) && !startDate.isEqual(enddate));
+        boolean notHistoric = (!startDate.isBefore(LocalDate.now()));
+        return (correctOrder && notHistoric);
+    }
+
+    public boolean isValidCustomerId(Long customerId) {
+        return Boolean.TRUE.equals(restTemplate.getForObject("http://localhost:8081/customer/validate?customerId=" + customerId, Boolean.class));
+    }
+
+    public boolean isAuthorizedCustomer(Long customerId) {
+        return Boolean.TRUE.equals(restTemplate.getForObject("http://localhost:8081/customer/authorize?customerId=" + customerId, Boolean.class));
     }
 }

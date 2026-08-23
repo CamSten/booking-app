@@ -1,26 +1,31 @@
 package com.example.bookingapp.controller;
 
-import com.example.bookingapp.model.Booking;
-import com.example.bookingapp.model.BookingDTO;
-import com.example.bookingapp.model.Room;
-import com.example.bookingapp.service.BookingService;
-import com.example.bookingapp.service.RoomService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.bookingapp.model.*;
+import com.example.bookingapp.service.*;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+/*
+to do:
+ - customer id as parameter
+ - api request for customer id validation
+ - endpoint returning boolean for "customer has active bookings?" ?
+*/
 
 @RestController
 @RequestMapping("/bookings")
 public class BookingController {
+    private final BookingService bookingService;
+    private final RoomService roomService;
 
-    @Autowired
-    private BookingService bookingService;
-    @Autowired
-    private RoomService roomService;
+    // Added constructor, removed autowire
+    public BookingController (BookingService bookingService, RoomService roomService){
+        this.bookingService = bookingService;
+        this.roomService = roomService;
+    }
 
-    @GetMapping("")
+    @GetMapping("/")
     public List<Booking> getAllBookings() {
         return bookingService.getAllBookings();
     }
@@ -29,6 +34,12 @@ public class BookingController {
     public Booking getBookingById(@PathVariable Long id) {
         return bookingService.getBookingById(id);
     }
+
+    @GetMapping("/customer/{customerId}/has-active-booking")
+    public boolean hasActiveBooking(@PathVariable Long customerId) {
+        return bookingService.hasActiveBooking(customerId);
+    }
+
 
     @GetMapping("/customer/{customerid}")
     public List<Booking> getBookingsByCustomerId(@PathVariable Long customerid) {
@@ -50,18 +61,13 @@ public class BookingController {
         return bookingService.getBookingsByStartdate(date);
     }
 
-
     @GetMapping("/availability/{roomid}/{startdate}/{enddate}")
-    public boolean checkRoomAvailability(
-            @PathVariable Long roomid,
-            @PathVariable LocalDate startdate,
-            @PathVariable LocalDate enddate) {
+    public boolean checkRoomAvailability(@PathVariable Long roomid, @PathVariable LocalDate startdate, @PathVariable LocalDate enddate) {
         return bookingService.checkRoomAvailability(roomid, startdate, enddate, (long) -1);
     }
+
     @GetMapping("/availability/{startdate}/{enddate}")
-    public List<Room> getAvailableRoomsByTimeframe(
-        @PathVariable LocalDate startdate,
-        @PathVariable LocalDate enddate){
+    public List<Room> getAvailableRoomsByTimeframe(@PathVariable LocalDate startdate, @PathVariable LocalDate enddate){
         List<Room> allRooms = roomService.getAllRooms();
         List<Room> availableRooms = new ArrayList<>();
         for (Room r : allRooms){
@@ -76,21 +82,31 @@ public class BookingController {
     public List<Booking> getBlockedDates(@PathVariable Long roomid) {
         return bookingService.getActiveBookingsByRoomId(roomid);
     }
+
     @PostMapping("")
-    public Booking createBooking(@RequestBody BookingDTO booking, jakarta.servlet.http.HttpSession session) {
-        Long customerId = (Long) session.getAttribute("loginCustomerId");
-        if (customerId == null) {
-            throw new RuntimeException("User must be logged in to book a room");
+    public Booking createBooking(@RequestBody BookingDTO booking, @RequestParam Long customerId) {
+        if (!bookingService.isAuthorizedCustomer(customerId)) {
+//            throw new RuntimeException("User must be logged in to book a room");
+            return null;
         }
         return bookingService.createBooking(booking, customerId);
     }
 
-    @PutMapping("/{id}")
-    public Booking updateBooking(@PathVariable Long id, @RequestBody BookingDTO booking) {
-        return bookingService.updateBooking(id, booking);
+    @PutMapping("/{bookingId}")
+    public Booking updateBooking(@PathVariable Long bookingId, @RequestBody BookingDTO booking, @RequestParam Long customerId) {
+        if (!bookingService.isAuthorizedCustomer(customerId)) {
+//            throw new RuntimeException("User must be logged in to update a booking");
+            return null;
+        }
+        return bookingService.updateBooking(bookingId, booking);
     }
-    @PutMapping("/{id}/cancel")
-    public Booking cancelBooking (@PathVariable Long id){
-        return bookingService.cancelBooking(id);
+
+    @PutMapping("/{bookingId}/cancel")
+    public Booking cancelBooking (@PathVariable Long bookingId, @RequestParam Long customerId){
+        if (!bookingService.isAuthorizedCustomer(customerId)) {
+//            throw new RuntimeException("User must be logged in to cancel a booking");
+            return null;
+        }
+        return bookingService.cancelBooking(bookingId);
     }
 }

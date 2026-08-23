@@ -2,9 +2,9 @@ package com.example.customer_service.service;
 
 import com.example.customer_service.exception.ActiveBookingException;
 import com.example.customer_service.exception.EmailExistsException;
-import com.example.customer_service.model.Booking;
+//import com.example.customer_service.model.Booking;
 import com.example.customer_service.model.Customer;
-import com.example.customer_service.repository.BookingRepository;
+//import com.example.customer_service.repository.BookingRepository;
 import com.example.customer_service.repository.CustomerRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,12 +13,12 @@ import java.util.Optional;
 @Service
 public class CustomerService {
     private final CustomerRepository customerRepository;
-    private final BookingRepository bookingRepository;
+    //private final BookingRepository bookingRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public CustomerService(CustomerRepository customerRepository, BookingRepository bookingRepository, PasswordEncoder passwordEncoder) {
+    public CustomerService(CustomerRepository customerRepository, /*BookingRepository bookingRepository,*/ PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
-        this.bookingRepository = bookingRepository;
+        //this.bookingRepository = bookingRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -66,7 +66,7 @@ public class CustomerService {
 
         return customerRepository.save(existing);
     }
-
+/*
     public void deleteCustomer(Long id) {
         boolean hasActiveBooking = bookingRepository.existsByCustomeridAndStatus(id, Booking.BookingStatus.ACTIVE);
 
@@ -76,7 +76,7 @@ public class CustomerService {
 
         customerRepository.deleteById(id);
     }
-
+*/
     public Optional<Customer> loginCustomer(String email, String password) {
 
         if (email == null || email.isBlank()

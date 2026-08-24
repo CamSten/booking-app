@@ -51,17 +51,11 @@ public class FrontendController {
     }
 
     @GetMapping("/book")
-    public String showBookingPage(
-            @RequestParam Long roomId,
-            @RequestParam(required = false) Long bookingId,
-            @RequestParam(required = false) LocalDate enddate,
-            @RequestParam(required = false) LocalDate startdate,
+    public String showBookingPage(@RequestParam Long roomId, @RequestParam(required = false) Long bookingId,
+            @RequestParam(required = false) LocalDate enddate, @RequestParam(required = false) LocalDate startdate,
             Model model) {
 
-        model.addAttribute(
-                "room",
-                roomRepository.findById(roomId).orElse(null)
-        );
+        model.addAttribute("room", roomRepository.findById(roomId).orElse(null));
         model.addAttribute("bookingId", bookingId);
         model.addAttribute("startdate", startdate);
         model.addAttribute("enddate", enddate);

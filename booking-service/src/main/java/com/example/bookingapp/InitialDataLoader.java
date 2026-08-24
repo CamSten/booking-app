@@ -1,28 +1,22 @@
 package com.example.bookingapp;
 
-import com.example.bookingapp.model.Booking;
-import com.example.bookingapp.model.Customer;
 import com.example.bookingapp.model.Room;
 import com.example.bookingapp.repository.BookingRepository;
-import com.example.bookingapp.repository.CustomerRepository;
 import com.example.bookingapp.repository.RoomRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Component
 public class InitialDataLoader implements CommandLineRunner {
 
     private final RoomRepository roomRepository;
     private final BookingRepository bookingRepository;
-    private final CustomerRepository customerRepository;
+//    private final CustomerRepository customerRepository;
 
-    public InitialDataLoader(RoomRepository roomRepository, BookingRepository bookingRepository, CustomerRepository customerRepository) {
+    public InitialDataLoader(RoomRepository roomRepository, BookingRepository bookingRepository /*, CustomerRepository customerRepository*/) {
         this.roomRepository = roomRepository;
         this.bookingRepository = bookingRepository;
-        this.customerRepository = customerRepository;
+//        this.customerRepository = customerRepository;
     }
 
     @Override

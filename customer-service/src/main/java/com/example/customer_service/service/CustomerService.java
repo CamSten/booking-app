@@ -75,18 +75,17 @@ public class CustomerService {
         return customerRepository.save(existing);
     }
 
-    public void deleteCustomer(Long customerId) {
-        try {
+    public void deleteCustomer(Long customerId) throws Exception {
             boolean hasActiveBooking = hasActiveBooking(customerId);  /* bookingRepository.existsByCustomeridAndStatus(id, Booking.BookingStatus.ACTIVE); */
             if (hasActiveBooking){
                 throw new ActiveBookingException("Cannot delete a customer with an active booking");
             }
-            customerRepository.deleteById(customerId);
+            Customer customer = customerRepository.findById(customerId).orElse(null);
+            if (customer != null) {
+                customer.setStatus(Customer.CustomerStatus.UNREGISTERED);
+                customerRepository.save(customer);
+            }
 
-        }
-        catch (Exception e){
-            // something has gone wrong in retrieval, handle error code, return feedback
-        }
     }
 
     public boolean hasActiveBooking(Long customerId) throws Exception {

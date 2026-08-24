@@ -46,7 +46,7 @@ public class CustomerRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) throws Exception {
         customerService.deleteCustomer(id);
         return ResponseEntity.ok().build();
     }

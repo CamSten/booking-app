@@ -1,10 +1,8 @@
 package com.example.bookingapp.controller;
 
 import com.example.bookingapp.model.Booking;
-import com.example.bookingapp.model.BookingDTO;
 import com.example.bookingapp.model.Room;
 import com.example.bookingapp.repository.RoomRepository;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

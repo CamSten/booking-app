@@ -14,9 +14,6 @@ public class DebugDatabaseConfig {
     public CommandLineRunner schemaRunner(EntityManager em) {
         return args -> {
             var result = em.createNativeQuery("SHOW COLUMNS FROM booking").getResultList();
-
-            System.out.println("C O L U M N S");
-
             for (Object row : result) {
                 Object[] cols = (Object[]) row;
                 System.out.println(Arrays.toString(cols));

@@ -27,7 +27,7 @@ public class CustomerServiceTest {
     private Customer customer;
     @BeforeEach
     public void setup() {
-        customer = new Customer("Test Customer", "Test@mail.com", "Test Street 1", "123456", "TestPassWord");
+        customer = new Customer("Test Customer", "Test@mail.com", "Test Street 1", "123456", "TestPassWord", Customer.CustomerStatus.ACTIVE);
         customer.setId(1L);
     }
 
@@ -44,7 +44,7 @@ public class CustomerServiceTest {
 
     @Test
     void updateCustomer_ShouldUpdateCustomer_WithNewPassword() {
-        Customer updatedData = new Customer("TestTest Customer", "TestTest@mail.com", "TestTest Street 1", "123456", "TestPassWord");
+        Customer updatedData = new Customer("TestTest Customer", "TestTest@mail.com", "TestTest Street 1", "123456", "TestPassWord", Customer.CustomerStatus.ACTIVE);
 
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
         when(passwordEncoder.encode("TestPassWord")).thenReturn("TestTestPassWord");

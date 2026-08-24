@@ -5,7 +5,6 @@ import com.example.bookingapp.exception.ActiveBookingException;
 import com.example.bookingapp.exception.EmailExistsException;
 import com.example.bookingapp.model.Customer;
 import com.example.bookingapp.repository.CustomerRepository;
-import org.hibernate.sql.ast.tree.from.TableReference;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,8 +13,8 @@ import java.util.Optional;
 
 /*
  * To do:
- *  -  deleteCustomer(): API request for validating customer having no active bookings,
- *  -  adjust method: boolean hasActiveBookings()
+ *  - [X]  deleteCustomer(): API request for validating customer having no active bookings,
+ *  - [X] adjust method: boolean hasActiveBookings()
  *  -  adjust delete procedure: set customer as inactive, without deleting from database?
  * */
 
@@ -27,7 +26,6 @@ public class CustomerService {
     private final PasswordEncoder passwordEncoder;
 
     public CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder, RestTemplateConfig restTemplateConfig) {
-//         public CustomerService(CustomerRepository customerRepository, BookingRepository bookingRepository, PasswordEncoder passwordEncoder) {
         this.restTemplate = restTemplateConfig.restTemplate();
         this.customerRepository = customerRepository;
 //        this.bookingRepository = bookingRepository;
@@ -85,20 +83,12 @@ public class CustomerService {
             if (hasActiveBooking){
                 throw new ActiveBookingException("Cannot delete a customer with an active booking");
             }
-
             customerRepository.deleteById(customerId);
 
         }
         catch (Exception e){
             // something has gone wrong in retrieval, handle error code, return feedback
         }
-        /*
-        in BookingController :
-        * public List<Booking> getBookingsByCustomerId(@PathVariable Long customerid) {
-        return bookingService.getBookingsByCustomerId(customerid);
-    }
-
-        * */
     }
 
     public Optional<Customer> loginCustomer(String email, String password) {

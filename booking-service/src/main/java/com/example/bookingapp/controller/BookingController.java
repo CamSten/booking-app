@@ -8,9 +8,9 @@ import java.util.*;
 
 /*
 to do:
- - customer id as parameter
- - api request for customer id validation
- - endpoint returning boolean for "customer has active bookings?" ?
+ - [X] customer id as parameter
+ - [X] api request for customer id validation
+ - [X] endpoint returning boolean for "customer has active bookings?" ?
 */
 
 @RestController
@@ -39,7 +39,6 @@ public class BookingController {
     public boolean hasActiveBooking(@PathVariable Long customerId) {
         return bookingService.hasActiveBooking(customerId);
     }
-
 
     @GetMapping("/customer/{customerid}")
     public List<Booking> getBookingsByCustomerId(@PathVariable Long customerid) {

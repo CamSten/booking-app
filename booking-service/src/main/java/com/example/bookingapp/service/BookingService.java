@@ -5,24 +5,20 @@ import com.example.bookingapp.config.RestTemplateConfig;
 import com.example.bookingapp.model.Booking;
 import com.example.bookingapp.model.BookingDTO;
 import com.example.bookingapp.repository.BookingRepository;
-import com.example.bookingapp.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Service
 public class BookingService {
     private final BookingRepository bookingRepository;
-    private final RoomRepository roomRepository;
     private final RestTemplate restTemplate;
 
-    public BookingService(BookingRepository bookingRepository, RoomRepository roomRepository, RestTemplateConfig restTemplateConfig) {
+    public BookingService(BookingRepository bookingRepository, RestTemplateConfig restTemplateConfig) {
         this.bookingRepository = bookingRepository;
-        this.roomRepository = roomRepository;
         this.restTemplate = restTemplateConfig.restTemplate();
     }
 
@@ -79,8 +75,7 @@ public class BookingService {
         }
         List<Booking> activeBookings = getActiveBookingsByRoomId(roomId);
         for (Booking b : activeBookings){
-            boolean dateTaken = (startDate.isBefore(b.getEnddate()) &&
-                    enddate.isAfter(b.getStartdate()));
+            boolean dateTaken = (startDate.isBefore(b.getEnddate()) && enddate.isAfter(b.getStartdate()));
             if (dateTaken && !b.getId().equals(bookingId)){
                 return false;
             }

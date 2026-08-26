@@ -3,9 +3,13 @@ package com.example.customer_service.controller;
 import com.example.customer_service.exception.ActiveBookingException;
 import com.example.customer_service.exception.EmailExistsException;
 import com.example.customer_service.model.Customer;
+import com.example.customer_service.model.CustomerDTO;
+import com.example.customer_service.model.CustomerResponseDTO;
+import com.example.customer_service.model.LoginRequestDTO;
 import com.example.customer_service.service.CustomerService;
 import com.example.customer_service.service.SessionService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,46 +43,7 @@ public class CustomerController {
         return "customer";
     }
 
-    @PostMapping("/login")
-    public String login(@ModelAttribute("loginCustomer") Customer customer, HttpSession session, Model model,
-                        @RequestParam(required = false) Boolean returnToBook,
-                        @RequestParam(required = false) Long roomId) {
-        Optional<Customer> loggedinCustomer = customerService.loginCustomer(customer.getEmail(), customer.getPassword());
-        System.out.println("roomId is: " + roomId);
-        if (loggedinCustomer.isPresent()) {
-            session.setAttribute("loginCustomerId", loggedinCustomer.get().getId());
-            if (Boolean.TRUE.equals(returnToBook) && roomId != null){
-                return "redirect:/book?roomId=" + roomId;
-            }
-            else{
-                return "redirect:/profile";
-            }
-        }
-        model.addAttribute("error", "Invalid username and/or password");
-        model.addAttribute("loginCustomer", new Customer());
-        model.addAttribute("signupCustomer", new Customer());
 
-        return "customer";
-    }
-
-    @PostMapping("/signup")
-    public String signup(@ModelAttribute("signupCustomer") Customer customer, HttpSession session, Model model,
-                         @RequestParam(required = false) Boolean returnToBook,
-                         @RequestParam(required = false) Long roomId) {
-        try{Customer createdCustomer = customerService.createCustomer(customer);
-            session.setAttribute("loginCustomerId", createdCustomer.getId());
-            if(Boolean.TRUE.equals(returnToBook) && roomId != null){
-                return "redirect:/book?roomId=" + roomId;
-            }
-            return  "redirect:/customer";
-        } catch(Exception e){
-            model.addAttribute("signupError", e.getMessage());
-            model.addAttribute("loginCustomer", new Customer());
-            model.addAttribute("signupCustomer", customer);
-
-            return "customer";
-        }
-    }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
@@ -156,7 +121,7 @@ public class CustomerController {
 
             return "redirect:/customer";
 
-        } catch (ActiveBookingException e) {
+        } catch (ActiveBookingException e ) {
             redirectAttributes.addFlashAttribute("deleteError", e.getMessage());
 
             return "redirect:/profile";

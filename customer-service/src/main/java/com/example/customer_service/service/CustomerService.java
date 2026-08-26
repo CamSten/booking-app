@@ -3,8 +3,10 @@ package com.example.customer_service.service;
 import com.example.customer_service.config.RestTemplateConfig;
 import com.example.customer_service.exception.ActiveBookingException;
 import com.example.customer_service.exception.EmailExistsException;
-import com.example.customer_service.model.Customer;
+import com.example.customer_service.model.*;
 import com.example.customer_service.repository.CustomerRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -25,6 +27,20 @@ public class CustomerService {
         this.restTemplate = restTemplateConfig.restTemplate();
     }
 
+    public ResponseEntity<CustomerResponseDTO> loginRequestIsValid(LoginRequestDTO requestDTO){
+        return loginCustomer(requestDTO.getEmail(), requestDTO.getPassword());
+    }
+
+    public ResponseEntity<CustomerResponseDTO> signupRequestIsValid(CustomerDTO dto) {
+        if (dto.getEmail() == null || dto.getEmail().isBlank()){
+            return returnInvalid(Feedback.EMPTY_EMAIL);
+        }
+        if (dto.getPassword() == null || dto.getPassword().isBlank()){
+            return returnInvalid(Feedback.EMPTY_PASSWORD);
+        }
+        return createCustomer(dto);
+    }
+
     public Customer getCustomerById(Long id) {
         return customerRepository.findById(id).orElse(null);
     }
@@ -33,22 +49,21 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Customer createCustomer(Customer customer) {
-        Optional<Customer> existingCustomer = customerRepository.findByEmail(customer.getEmail());
+    public ResponseEntity<CustomerResponseDTO> createCustomer(CustomerDTO customerDTO) {
+        Optional<Customer> existingCustomer = customerRepository.findByEmail(customerDTO.getEmail());
 
         if (existingCustomer.isPresent()) {
-            throw new EmailExistsException("Email already exists");
+            return returnInvalid(Feedback.USER_EXISTS);
         }
 
-        Customer newCustomer = new Customer(
-                customer.getName(),
-                customer.getEmail(),
-                customer.getAddress(),
-                customer.getPhone(),
-                passwordEncoder.encode(customer.getPassword()),
-                Customer.CustomerStatus.ACTIVE);
-
-        return customerRepository.save(newCustomer);
+        Customer newCustomer = (customerRepository.save(new Customer(
+                customerDTO.getName(),
+                customerDTO.getEmail(),
+                customerDTO.getAddress(),
+                customerDTO.getPhone(),
+                passwordEncoder.encode(customerDTO.getPassword()),
+                Customer.CustomerStatus.ACTIVE)));
+        return ResponseEntity.status(HttpStatus.OK).body(createResponseDTOFromCustomer(newCustomer));
     }
 
     public Customer updateCustomer(Long id, Customer customer) {
@@ -75,17 +90,19 @@ public class CustomerService {
         return customerRepository.save(existing);
     }
 
-    public void deleteCustomer(Long customerId) throws Exception {
-            boolean hasActiveBooking = hasActiveBooking(customerId);  /* bookingRepository.existsByCustomeridAndStatus(id, Booking.BookingStatus.ACTIVE); */
-            if (hasActiveBooking){
-                throw new ActiveBookingException("Cannot delete a customer with an active booking");
-            }
-            Customer customer = customerRepository.findById(customerId).orElse(null);
-            if (customer != null) {
-                customer.setStatus(Customer.CustomerStatus.UNREGISTERED);
-                customerRepository.save(customer);
-            }
-
+    public ResponseEntity<CustomerResponseDTO> deleteCustomer(Long customerId) throws Exception {
+        boolean hasActiveBooking = hasActiveBooking(customerId);  /* bookingRepository.existsByCustomeridAndStatus(id, Booking.BookingStatus.ACTIVE); */
+        if (hasActiveBooking){
+            return returnInvalid(Feedback.HAS_ACTIVE_BOOKINGS);
+//            throw new ActiveBookingException("Cannot delete a customer with an active booking");
+        }
+        Customer customer = customerRepository.findById(customerId).orElse(null);
+        if (customer != null) {
+            customer.setStatus(Customer.CustomerStatus.UNREGISTERED);
+            customerRepository.save(customer);
+            ResponseEntity.status(HttpStatus.OK).body(new CustomerResponseDTO(Feedback.OK));
+        }
+        return returnInvalid(Feedback.INVALID_USER);
     }
 
     public boolean hasActiveBooking(Long customerId) throws Exception {
@@ -100,15 +117,26 @@ public class CustomerService {
         throw new Exception();
     }
 
-    public Optional<Customer> loginCustomer(String email, String password) {
-
-        if (email == null || email.isBlank()
-                || password == null || password.isBlank()) {
-            return Optional.empty();
+    public ResponseEntity<CustomerResponseDTO> loginCustomer(String email, String password) {
+        if (email == null || email.isBlank() ) {
+            return returnInvalid(Feedback.EMPTY_EMAIL);
         }
-
-        return customerRepository.findByEmail(email)
-                .filter(customer -> passwordEncoder.matches(password,customer.getPassword()));
+        else if (password == null || password.isBlank()){
+            return returnInvalid(Feedback.EMPTY_PASSWORD);
+        }
+        Customer savedCustomer = customerRepository.findByEmail(email).stream().findAny().orElse(null);
+        if (savedCustomer != null) {
+            savedCustomer = customerRepository.findByEmail(email).stream().filter(customer ->
+                    passwordEncoder.matches(password, customer.getPassword())).findAny().orElse(null);
+            if (savedCustomer != null) {
+                CustomerResponseDTO responseDTO = new CustomerResponseDTO(savedCustomer.getId(), savedCustomer.getName(), savedCustomer.getEmail(), savedCustomer.getAddress(), savedCustomer.getPhone(), Feedback.OK);
+                return ResponseEntity.status(HttpStatus.OK).body((responseDTO));
+            }
+            else {
+                return returnInvalid(Feedback.INVALID_PASSWORD);
+            }
+        }
+        return returnInvalid(Feedback.INVALID_EMAIL);
     }
 
     public boolean validateCustomer(Long customerId) {
@@ -118,5 +146,17 @@ public class CustomerService {
 
     public boolean validateAuthorizedCustomer(Long customerId, Long loggedInCustomerId){
         return customerId != null && customerId.equals(loggedInCustomerId);
+    }
+
+    private CustomerResponseDTO createResponseDTOFromCustomer(Customer customer){
+        return new CustomerResponseDTO(customer.getId(), customer.getName(), customer.getEmail(), customer.getAddress(), customer.getPhone(), Feedback.OK);
+    }
+
+    private CustomerResponseDTO validResponse(CustomerDTO customer){
+        return new CustomerResponseDTO(customer.getId(), customer.getName(), customer.getEmail(), customer.getAddress(), customer.getPhone(), Feedback.OK);
+    }
+
+    private ResponseEntity<CustomerResponseDTO> returnInvalid(Feedback feedback){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomerResponseDTO(feedback));
     }
 }

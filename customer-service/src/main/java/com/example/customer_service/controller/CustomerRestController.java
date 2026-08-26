@@ -1,6 +1,9 @@
 package com.example.customer_service.controller;
 
 import com.example.customer_service.model.Customer;
+import com.example.customer_service.model.CustomerDTO;
+import com.example.customer_service.model.CustomerResponseDTO;
+import com.example.customer_service.model.LoginRequestDTO;
 import com.example.customer_service.service.CustomerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +33,15 @@ public class CustomerRestController {
         return ResponseEntity.notFound().build();
     }
 
+
+    @GetMapping("login")
+    public ResponseEntity<CustomerResponseDTO> customerExists(@RequestBody LoginRequestDTO requestDTO){
+        return customerService.loginRequestIsValid(requestDTO);
+    }
+
     @PostMapping
-    public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer) {
-        Customer created = customerService.createCustomer(customer);
-        return ResponseEntity.ok(created);
+    public ResponseEntity<CustomerResponseDTO> registerCustomer(@RequestBody CustomerDTO customer) {
+        return customerService.createCustomer(customer);
     }
 
     @PutMapping("/{id}")

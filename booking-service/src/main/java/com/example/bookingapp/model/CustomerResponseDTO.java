@@ -1,0 +1,22 @@
+package com.example.bookingapp.model;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
+public class CustomerResponseDTO {
+    private long id;
+    private String name;
+    private String email;
+    private String address;
+    private String phone;
+    private Feedback feedback;
+
+    public CustomerResponseDTO() {
+    }
+
+    public CustomerResponseDTO(Feedback feedback){
+        this.feedback = feedback;
+    }
+}

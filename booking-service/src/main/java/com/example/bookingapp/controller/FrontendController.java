@@ -70,12 +70,14 @@ public class FrontendController {
     }
 
 
-    @GetMapping("/customer{customerId}")
-    public String showCustomerPage(@RequestParam CustomerDTO customer, HttpSession session, Model model) {
+    @GetMapping("/customer")
+    public String showCustomerPage(HttpSession session, Model model) {
         Long customerId = (Long) session.getAttribute("loginCustomerId");
         if (customerId != null) {
-            model.addAttribute("loginCustomer", customer);
+            return "redirect:/profile";
         }
+        model.addAttribute("loginCustomer", new CustomerDTO());
+        model.addAttribute("signupCustomer", new CustomerDTO());
         return "customer";
     }
 

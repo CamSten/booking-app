@@ -90,9 +90,9 @@ public class CustomerService {
         return customerRepository.save(existing);
     }
 
-    public ResponseEntity<CustomerResponseDTO> deleteCustomer(Long customerId) throws Exception {
-        boolean hasActiveBooking = hasActiveBooking(customerId);  /* bookingRepository.existsByCustomeridAndStatus(id, Booking.BookingStatus.ACTIVE); */
-        if (hasActiveBooking){
+    public ResponseEntity<CustomerResponseDTO> deleteCustomer(Long customerId)  {
+         hasActiveBooking(customerId);  /* bookingRepository.existsByCustomeridAndStatus(id, Booking.BookingStatus.ACTIVE); */
+        if ( hasActiveBooking(customerId)){
             return returnInvalid(Feedback.HAS_ACTIVE_BOOKINGS);
 //            throw new ActiveBookingException("Cannot delete a customer with an active booking");
         }
@@ -105,16 +105,12 @@ public class CustomerService {
         return returnInvalid(Feedback.INVALID_USER);
     }
 
-    public boolean hasActiveBooking(Long customerId) throws Exception {
+    public boolean hasActiveBooking(Long customerId)   {
         Boolean result = restTemplate.getForObject("http://localhost:8080/bookings/customer/" + customerId
                 + "/has-active-booking", Boolean.class
         );
+        return result != null;
 
-        if (result != null){
-            return result;
-        }
-        // flesh out, specify
-        throw new Exception();
     }
 
     public ResponseEntity<CustomerResponseDTO> loginCustomer(String email, String password) {

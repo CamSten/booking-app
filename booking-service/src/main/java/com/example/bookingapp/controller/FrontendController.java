@@ -70,33 +70,29 @@ public class FrontendController {
     }
 
 
-    @GetMapping("/customer{customerId}")
-    public String showCustomerPage(@RequestParam CustomerDTO customer, HttpSession session, Model model) {
-        Long customerId = (Long) session.getAttribute("loginCustomerId");
-        if (customerId != null) {
-            model.addAttribute("loginCustomer", customer);
-        }
+    @GetMapping("/customer")
+    public String showCustomerPage(Model model) {
+        model.addAttribute("loginCustomer", new CustomerDTO());
+        model.addAttribute("signupCustomer", new CustomerDTO());
         return "customer";
     }
 
     @PostMapping("/login")
-    public String login(CustomerDTO customer, HttpSession session, Model model,
+    public String login(@ModelAttribute("loginCustomer") CustomerDTO customer,
+                        HttpSession session,
+                        Model model,
                         @RequestParam(required = false) Boolean returnToBook,
                         @RequestParam(required = false) Long roomId) {
         CustomerResponseDTO responseDTO = customerService.loginCustomer(customer.getEmail(), customer.getPassword());
         System.out.println("roomId is: " + roomId);
         if (responseDTO.getFeedback() == Feedback.OK) {
             session.setAttribute("loginCustomerId", responseDTO.getId());
-            model.addAttribute("loginCustomer", customer);
-            model.addAttribute("signupCustomer", customer);
             if (Boolean.TRUE.equals(returnToBook) && roomId != null) {
                 return "redirect:/book?roomId=" + roomId;
-            } else {
-                return "redirect:/profile";
             }
+            return "redirect:/profile";
         }
         model.addAttribute("error", responseDTO.getFeedback().feedback);
-
         return "customer";
     }
 

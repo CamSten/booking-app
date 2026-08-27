@@ -28,7 +28,7 @@ public class CustomerService {
 
     public CustomerResponseDTO signupCustomer(CustomerDTO customerDTO){
         try {
-            return restTemplate.postForObject(API_URL, customerDTO, CustomerResponseDTO.class);
+            return restTemplate.postForObject(API_URL +"/signup", customerDTO , CustomerResponseDTO.class);
         } catch (Exception e) {
             return new CustomerResponseDTO(Feedback.USER_EXISTS);
         }

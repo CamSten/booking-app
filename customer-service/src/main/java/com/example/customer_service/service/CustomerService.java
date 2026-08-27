@@ -31,9 +31,11 @@ public class CustomerService {
 
     public ResponseEntity<CustomerResponseDTO> signupRequestIsValid(CustomerDTO dto) {
         if (dto.getEmail() == null || dto.getEmail().isBlank()){
+            System.out.println("empty email");
             return returnInvalid(Feedback.EMPTY_EMAIL);
         }
         if (dto.getPassword() == null || dto.getPassword().isBlank()){
+            System.out.println("empty password");
             return returnInvalid(Feedback.EMPTY_PASSWORD);
         }
         return createCustomer(dto);
@@ -48,19 +50,16 @@ public class CustomerService {
     }
 
     public ResponseEntity<CustomerResponseDTO> createCustomer(CustomerDTO customerDTO) {
+        System.out.println("createCustomer is called");
         Optional<Customer> existingCustomer = customerRepository.findByEmail(customerDTO.getEmail());
 
         if (existingCustomer.isPresent()) {
             return returnInvalid(Feedback.USER_EXISTS);
         }
 
-        Customer newCustomer = (customerRepository.save(new Customer(
-                customerDTO.getName(),
-                customerDTO.getEmail(),
-                customerDTO.getAddress(),
-                customerDTO.getPhone(),
-                passwordEncoder.encode(customerDTO.getPassword()),
-                Customer.CustomerStatus.ACTIVE)));
+        Customer newCustomer = (customerRepository.save(new Customer(customerDTO.getName(),
+                customerDTO.getEmail(), customerDTO.getAddress(), customerDTO.getPhone(),
+                passwordEncoder.encode(customerDTO.getPassword()), Customer.CustomerStatus.ACTIVE)));
         return ResponseEntity.status(HttpStatus.OK).body(createResponseDTOFromCustomer(newCustomer));
     }
 

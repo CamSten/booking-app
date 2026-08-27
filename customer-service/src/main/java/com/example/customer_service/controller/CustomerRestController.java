@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerRestController {
-
     private final CustomerService customerService;
 
     public CustomerRestController(CustomerService customerService) {
@@ -33,15 +32,14 @@ public class CustomerRestController {
         return ResponseEntity.notFound().build();
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<CustomerResponseDTO> customerExists(@RequestBody LoginRequestDTO requestDTO){
         return customerService.loginRequestIsValid(requestDTO);
     }
 
-    @PostMapping
+    @PostMapping("/signup")
     public ResponseEntity<CustomerResponseDTO> registerCustomer(@RequestBody CustomerDTO customer) {
-        return customerService.createCustomer(customer);
+        return customerService.signupRequestIsValid(customer);
     }
 
     @PutMapping("/{id}")

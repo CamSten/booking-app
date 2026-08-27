@@ -1,7 +1,9 @@
 package com.example.bookingapp.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter
 public class LoginRequestDTO {
     String email;
@@ -14,5 +16,4 @@ public class LoginRequestDTO {
         this.email = email;
         this.password = password;
     }
-
 }

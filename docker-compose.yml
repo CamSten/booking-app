@@ -3,14 +3,14 @@ services:
   booking-db:
     image: mysql:8.0
     environment:
-      MYSQL_DATABASE: bookingdb
+      MYSQL_DATABASE: bookify
       MYSQL_ROOT_PASSWORD: root
     ports:
       - '3306:3306'
   customer-db:
     image: mysql:8.0
     environment:
-      MYSQL_DATABASE: customerdb
+      MYSQL_DATABASE: customerDB
       MYSQL_ROOT_PASSWORD: root
     ports:
       - '3307:3306'
@@ -19,10 +19,10 @@ services:
     ports:
       - '8080:8080'
     depends_on:
-      - booking-db
+      - bookify
   customer-service:
     build: ./customer-service
     ports:
       - '8081:8081'
     depends_on:
-      - customer-db
+      - customerDB

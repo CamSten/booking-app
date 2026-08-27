@@ -7,10 +7,8 @@ import com.example.bookingapp.model.BookingDTO;
 import com.example.bookingapp.repository.BookingRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.time.*;
+import java.util.*;
 
 @Service
 public class BookingService {
@@ -41,6 +39,7 @@ public class BookingService {
     public List<Booking> getBookingsByRoomId(Long roomId){
         return bookingRepository.findByRoomid(roomId);
     }
+
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }

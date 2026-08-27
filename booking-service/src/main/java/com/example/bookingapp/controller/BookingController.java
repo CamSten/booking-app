@@ -6,26 +6,18 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.*;
 
-/*
-to do:
- - [X] customer id as parameter
- - [X] api request for customer id validation
- - [X] endpoint returning boolean for "customer has active bookings?" ?
-*/
-
 @RestController
 @RequestMapping("/bookings")
 public class BookingController {
     private final BookingService bookingService;
     private final RoomService roomService;
 
-    // Added constructor, removed autowire
     public BookingController (BookingService bookingService, RoomService roomService){
         this.bookingService = bookingService;
         this.roomService = roomService;
     }
-
-    @GetMapping("/")
+//Changed from "/".
+    @GetMapping("/get-all-bookings")
     public List<Booking> getAllBookings() {
         return bookingService.getAllBookings();
     }

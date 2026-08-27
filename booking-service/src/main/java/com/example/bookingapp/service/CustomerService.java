@@ -11,8 +11,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class CustomerService {
     private final RestTemplate restTemplate;
-    
-    // Point directly to the REST API we built yesterday
     private final String API_URL = "http://localhost:8081/api/customers";
 
     public CustomerService(RestTemplateConfig restTemplateConfig) {
@@ -22,7 +20,6 @@ public class CustomerService {
     public CustomerResponseDTO loginCustomer(String email, String password){
         try {
             LoginRequestDTO loginRequestDTO = new LoginRequestDTO(email, password);
-            // Must be a POST request to send the Body securely
             return restTemplate.postForObject(API_URL + "/login", loginRequestDTO, CustomerResponseDTO.class);
         } catch (Exception e) {
             return new CustomerResponseDTO(Feedback.INVALID_PASSWORD);
@@ -39,7 +36,6 @@ public class CustomerService {
 
     public CustomerResponseDTO updateCustomer(CustomerDTO customerDTO){
         try {
-            // PUT request to update an existing customer by ID
             restTemplate.put(API_URL + "/" + customerDTO.getId(), customerDTO);
             return new CustomerResponseDTO(Feedback.OK);
         } catch (Exception e) {
@@ -49,7 +45,6 @@ public class CustomerService {
 
     public CustomerResponseDTO deleteCustomer(Long customerId){
         try {
-            // DELETE request to delete by ID
             restTemplate.delete(API_URL + "/" + customerId);
             return new CustomerResponseDTO(Feedback.OK);
         } catch (Exception e) {

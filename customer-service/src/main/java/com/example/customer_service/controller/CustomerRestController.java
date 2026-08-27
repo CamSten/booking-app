@@ -34,7 +34,7 @@ public class CustomerRestController {
     }
 
 
-    @GetMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<CustomerResponseDTO> customerExists(@RequestBody LoginRequestDTO requestDTO){
         return customerService.loginRequestIsValid(requestDTO);
     }

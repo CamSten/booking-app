@@ -3,6 +3,7 @@ package com.example.bookingapp.service;
 import com.example.bookingapp.config.RestTemplateConfig;
 import com.example.bookingapp.model.CustomerDTO;
 import com.example.bookingapp.model.CustomerResponseDTO;
+import com.example.bookingapp.model.Feedback;
 import com.example.bookingapp.model.LoginRequestDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -10,30 +11,57 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class CustomerService {
     private final RestTemplate restTemplate;
+    
+    // Point directly to the REST API we built yesterday
+    private final String API_URL = "http://localhost:8081/api/customers";
 
     public CustomerService(RestTemplateConfig restTemplateConfig) {
         this.restTemplate = restTemplateConfig.restTemplate();
     }
 
-
     public CustomerResponseDTO loginCustomer(String email, String password){
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(email, password);
-        return restTemplate.getForObject("http://localhost:8081/customer/login=" + loginRequestDTO, CustomerResponseDTO.class);
+        try {
+            LoginRequestDTO loginRequestDTO = new LoginRequestDTO(email, password);
+            // Must be a POST request to send the Body securely
+            return restTemplate.postForObject(API_URL + "/login", loginRequestDTO, CustomerResponseDTO.class);
+        } catch (Exception e) {
+            return new CustomerResponseDTO(Feedback.INVALID_PASSWORD);
+        }
     }
 
     public CustomerResponseDTO signupCustomer(CustomerDTO customerDTO){
-        return restTemplate.getForObject("http://localhost:8081/customer/signup=" + customerDTO, CustomerResponseDTO.class);
+        try {
+            return restTemplate.postForObject(API_URL, customerDTO, CustomerResponseDTO.class);
+        } catch (Exception e) {
+            return new CustomerResponseDTO(Feedback.USER_EXISTS);
+        }
     }
 
     public CustomerResponseDTO updateCustomer(CustomerDTO customerDTO){
-        return restTemplate.getForObject("http://localhost:8081/customer/update=" + customerDTO, CustomerResponseDTO.class);
+        try {
+            // PUT request to update an existing customer by ID
+            restTemplate.put(API_URL + "/" + customerDTO.getId(), customerDTO);
+            return new CustomerResponseDTO(Feedback.OK);
+        } catch (Exception e) {
+            return new CustomerResponseDTO(Feedback.INVALID_USER);
+        }
     }
 
     public CustomerResponseDTO deleteCustomer(Long customerId){
-        return restTemplate.getForObject("http://localhost:8081/customer/delete=" + customerId, CustomerResponseDTO.class);
+        try {
+            // DELETE request to delete by ID
+            restTemplate.delete(API_URL + "/" + customerId);
+            return new CustomerResponseDTO(Feedback.OK);
+        } catch (Exception e) {
+            return new CustomerResponseDTO(Feedback.HAS_ACTIVE_BOOKINGS);
+        }
     }
 
     public CustomerResponseDTO getCustomerById(Long customerId){
-        return restTemplate.getForObject("http://localhost:8081/customer/id=" + customerId, CustomerResponseDTO.class);
+        try {
+            return restTemplate.getForObject(API_URL + "/" + customerId, CustomerResponseDTO.class);
+        } catch (Exception e) {
+            return new CustomerResponseDTO(Feedback.INVALID_USER);
+        }
     }
 }

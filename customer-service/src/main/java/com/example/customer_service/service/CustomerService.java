@@ -17,12 +17,10 @@ import java.util.List;
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final RestTemplate restTemplate;
-    //private final BookingRepository bookingRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public CustomerService(RestTemplateConfig restTemplateConfig, CustomerRepository customerRepository, /*BookingRepository bookingRepository,*/ PasswordEncoder passwordEncoder) {
+    public CustomerService(RestTemplateConfig restTemplateConfig, CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
-        //this.bookingRepository = bookingRepository;
         this.passwordEncoder = passwordEncoder;
         this.restTemplate = restTemplateConfig.restTemplate();
     }

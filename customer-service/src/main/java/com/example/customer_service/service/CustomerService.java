@@ -88,10 +88,8 @@ public class CustomerService {
     }
 
     public ResponseEntity<CustomerResponseDTO> deleteCustomer(Long customerId)  {
-         hasActiveBooking(customerId);  /* bookingRepository.existsByCustomeridAndStatus(id, Booking.BookingStatus.ACTIVE); */
         if ( hasActiveBooking(customerId)){
             return returnInvalid(Feedback.HAS_ACTIVE_BOOKINGS);
-//            throw new ActiveBookingException("Cannot delete a customer with an active booking");
         }
         Customer customer = customerRepository.findById(customerId).orElse(null);
         if (customer != null) {
@@ -106,7 +104,7 @@ public class CustomerService {
         Boolean result = restTemplate.getForObject("http://localhost:8080/bookings/customer/" + customerId
                 + "/has-active-booking", Boolean.class
         );
-        return result != null;
+        return Boolean.TRUE.equals(result);
 
     }
 

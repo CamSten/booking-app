@@ -128,6 +128,11 @@ public class FrontendController {
             return "redirect:/customer";
         }
         CustomerResponseDTO customer = customerService.getCustomerById(customerId);
+
+        if (customer.getFeedback() == Feedback.CUSTOMER_SERVICE_UNAVAILABLE) {
+            model.addAttribute("error", customer.getFeedback().feedback);
+            return "profile";
+        }
         model.addAttribute("customer", customer);
         return "profile";
     }
@@ -139,6 +144,11 @@ public class FrontendController {
             return "redirect:/customer";
         }
         CustomerResponseDTO customer = customerService.getCustomerById(customerId);
+
+        if (customer.getFeedback() == Feedback.CUSTOMER_SERVICE_UNAVAILABLE) {
+            model.addAttribute("error", customer.getFeedback().feedback);
+            return "editProfile";
+        }
         model.addAttribute("customer", customer);
         return "editProfile";
     }

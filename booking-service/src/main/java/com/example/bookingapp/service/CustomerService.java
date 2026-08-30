@@ -6,6 +6,7 @@ import com.example.bookingapp.model.CustomerResponseDTO;
 import com.example.bookingapp.model.Feedback;
 import com.example.bookingapp.model.LoginRequestDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -21,6 +22,8 @@ public class CustomerService {
         try {
             LoginRequestDTO loginRequestDTO = new LoginRequestDTO(email, password);
             return restTemplate.postForObject(API_URL + "/login", loginRequestDTO, CustomerResponseDTO.class);
+        } catch (ResourceAccessException e) {
+            return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);
         } catch (Exception e) {
             return new CustomerResponseDTO(Feedback.INVALID_PASSWORD);
         }
@@ -29,6 +32,8 @@ public class CustomerService {
     public CustomerResponseDTO signupCustomer(CustomerDTO customerDTO){
         try {
             return restTemplate.postForObject(API_URL +"/signup", customerDTO , CustomerResponseDTO.class);
+        } catch (ResourceAccessException e) {
+            return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);
         } catch (Exception e) {
             return new CustomerResponseDTO(Feedback.USER_EXISTS);
         }
@@ -38,6 +43,8 @@ public class CustomerService {
         try {
             restTemplate.put(API_URL + "/" + customerDTO.getId(), customerDTO);
             return new CustomerResponseDTO(Feedback.OK);
+        } catch (ResourceAccessException e) {
+            return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);
         } catch (Exception e) {
             return new CustomerResponseDTO(Feedback.INVALID_USER);
         }
@@ -47,6 +54,8 @@ public class CustomerService {
         try {
             restTemplate.delete(API_URL + "/" + customerId);
             return new CustomerResponseDTO(Feedback.OK);
+        } catch (ResourceAccessException e) {
+            return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);
         } catch (Exception e) {
             return new CustomerResponseDTO(Feedback.HAS_ACTIVE_BOOKINGS);
         }
@@ -55,8 +64,11 @@ public class CustomerService {
     public CustomerResponseDTO getCustomerById(Long customerId){
         try {
             return restTemplate.getForObject(API_URL + "/" + customerId, CustomerResponseDTO.class);
+        } catch (ResourceAccessException e) {
+            return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);
         } catch (Exception e) {
             return new CustomerResponseDTO(Feedback.INVALID_USER);
         }
     }
 }
+

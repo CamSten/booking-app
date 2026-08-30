@@ -15,6 +15,12 @@
                      role="alert">
                     <p th:text="${deleteError}" class="m-0"></p>
                 </div>
+
+                <div th:if="${error}"
+                     class="alert alert-danger text-center"
+                     role="alert">
+                    <p th:text="${error}" class="m-0"></p>
+                </div>
                 
                 <input type="hidden" id="customer-id" th:value="${customer.id}">
 

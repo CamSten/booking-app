@@ -2,7 +2,10 @@ package com.example.bookingapp.controller;
 
 import com.example.bookingapp.model.*;
 import com.example.bookingapp.service.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -77,11 +80,19 @@ public class BookingController {
     @PostMapping("")
     public Booking createBooking(@RequestBody BookingDTO booking, @RequestParam Long customerId) {
         if (!bookingService.isAuthorizedCustomer(customerId)) {
-//            throw new RuntimeException("User must be logged in to book a room");
-            return null;
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid customer");
         }
         return bookingService.createBooking(booking, customerId);
     }
+
+//    @PostMapping("")
+//    public Booking createBooking(@RequestBody BookingDTO booking, @RequestParam Long customerId) {
+//        if (!bookingService.isAuthorizedCustomer(customerId)) {
+//            throw new RuntimeException("User must be logged in to book a room");
+//            return null;
+//        }
+//        return bookingService.createBooking(booking, customerId);
+//    }
 
     @PutMapping("/{bookingId}")
     public Booking updateBooking(@PathVariable Long bookingId, @RequestBody BookingDTO booking, @RequestParam Long customerId) {

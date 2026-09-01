@@ -101,8 +101,13 @@ public class CustomerService {
     }
 
     public boolean hasActiveBooking(Long customerId)   {
-        Boolean result = restTemplate.getForObject("http://localhost:8080/bookings/customer/" + customerId
-                + "/has-active-booking", Boolean.class
+//        Boolean result = restTemplate.getForObject("http://localhost:8080/bookings/customer/" + customerId
+//                + "/has-active-booking", Boolean.class
+//        );
+        Boolean result = restTemplate.getForObject(
+                "http://booking-service:8080/bookings/customer/" + customerId
+                        + "/has-active-booking",
+                Boolean.class
         );
         return Boolean.TRUE.equals(result);
 

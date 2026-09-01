@@ -114,10 +114,15 @@ public class BookingService {
     }
 
     public boolean isValidCustomerId(Long customerId) {
-        return Boolean.TRUE.equals(restTemplate.getForObject("http://localhost:8081/customer/validate?customerId=" + customerId, Boolean.class));
+        return isAuthorizedCustomer(customerId);
     }
 
     public boolean isAuthorizedCustomer(Long customerId) {
-        return Boolean.TRUE.equals(restTemplate.getForObject("http://localhost:8081/customer/authorize?customerId=" + customerId, Boolean.class));
+        try {
+            restTemplate.getForEntity("http://localhost:8081/api/customers/" + customerId, Object.class);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -19,10 +19,18 @@ services:
     ports:
       - '8080:8080'
     depends_on:
-      - bookify
+      - booking-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://booking-db:3306/bookify?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
   customer-service:
     build: ./customer-service
     ports:
       - '8081:8081'
     depends_on:
-      - customerDB
+      - customer-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://customer-db:3306/customerDB?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root

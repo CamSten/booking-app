@@ -39,4 +39,33 @@ class BookingAppApplicationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
+
+    @Test
+    void shouldReturnBadRequestOnMissingEmail() {
+        String invalidCustomerJson = """
+            {
+                "name": "Test Customer",
+                "email": "",
+                "password": "password"
+            }
+            """;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(invalidCustomerJson, headers);
+        
+        try {
+            restTemplate.postForEntity("http://localhost:8081/api/customers/signup", request, String.class);
+        } catch (org.springframework.web.client.HttpClientErrorException e) {
+            assertEquals(HttpStatus.BAD_REQUEST, e.getStatusCode());
+        }
+    }
+
+    @Test
+    void shouldReturnNotFoundForInvalidCustomer() {
+        try {
+            restTemplate.getForEntity("http://localhost:8081/api/customers/999999", String.class);
+        } catch (org.springframework.web.client.HttpClientErrorException e) {
+            assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
+        }
+    }
 }

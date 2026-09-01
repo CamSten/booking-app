@@ -51,16 +51,34 @@ public class FrontendController {
         return "roompage";
     }
 
+//    @GetMapping("/book")
+//    public String showBookingPage(@RequestParam Long roomId, @RequestParam(required = false) Long bookingId,
+//                                  @RequestParam(required = false) LocalDate enddate, @RequestParam(required = false) LocalDate startdate,
+//                                  Model model) {
+//        model.addAttribute("room", roomRepository.findById(roomId).orElse(null));
+//        if (startdate != null && enddate != null) {
+//            model.addAttribute("bookingId", bookingId);
+//            model.addAttribute("startdate", startdate);
+//            model.addAttribute("enddate", enddate);
+//        }
+//        return "bookingpage";
+//    }
+
     @GetMapping("/book")
-    public String showBookingPage(@RequestParam Long roomId, @RequestParam(required = false) Long bookingId,
-                                  @RequestParam(required = false) LocalDate enddate, @RequestParam(required = false) LocalDate startdate,
-                                  Model model) {
-        if (startdate != null && enddate != null) {
-            model.addAttribute("room", roomRepository.findById(roomId).orElse(null));
-            model.addAttribute("bookingId", bookingId);
-            model.addAttribute("startdate", startdate);
-            model.addAttribute("enddate", enddate);
-        }
+    public String showBookingPage(
+            @RequestParam Long roomId,
+            @RequestParam(required = false) Long bookingId,
+            @RequestParam(required = false) LocalDate enddate,
+            @RequestParam(required = false) LocalDate startdate,
+            Model model) {
+
+        Room room = roomRepository.findById(roomId).orElse(null);
+
+        model.addAttribute("room", room);
+        model.addAttribute("bookingId", bookingId);
+        model.addAttribute("startdate", startdate);
+        model.addAttribute("enddate", enddate);
+
         return "bookingpage";
     }
 

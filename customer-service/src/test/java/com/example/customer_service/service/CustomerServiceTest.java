@@ -1,22 +1,19 @@
-package com.example.bookingapp.service;
+package com.example.customer_service.service;
 
-import com.example.bookingapp.model.Customer;
-import com.example.bookingapp.repository.BookingRepository;
-import com.example.bookingapp.repository.CustomerRepository;
+import com.example.customer_service.model.Customer;
+import com.example.customer_service.repository.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-@ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
     @Mock
     private CustomerRepository customerRepository;

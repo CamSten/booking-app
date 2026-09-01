@@ -5,6 +5,7 @@ import com.example.bookingapp.model.CustomerDTO;
 import com.example.bookingapp.model.CustomerResponseDTO;
 import com.example.bookingapp.model.Feedback;
 import com.example.bookingapp.model.LoginRequestDTO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -12,7 +13,10 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class CustomerService {
     private final RestTemplate restTemplate;
-    private final String API_URL = "http://localhost:8081/api/customers";
+//    private final String API_URL = "http://localhost:8081/api/customers";
+//private final String API_URL = "http://customer-service:8081/api/customers";
+@Value("${customer.service.url}")
+private String customerServiceUrl;
 
     public CustomerService(RestTemplateConfig restTemplateConfig) {
         this.restTemplate = restTemplateConfig.restTemplate();
@@ -21,7 +25,7 @@ public class CustomerService {
     public CustomerResponseDTO loginCustomer(String email, String password){
         try {
             LoginRequestDTO loginRequestDTO = new LoginRequestDTO(email, password);
-            return restTemplate.postForObject(API_URL + "/login", loginRequestDTO, CustomerResponseDTO.class);
+            return restTemplate.postForObject(customerServiceUrl + "/login", loginRequestDTO, CustomerResponseDTO.class);
         } catch (ResourceAccessException e) {
             return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);
         } catch (Exception e) {
@@ -31,7 +35,7 @@ public class CustomerService {
 
     public CustomerResponseDTO signupCustomer(CustomerDTO customerDTO){
         try {
-            return restTemplate.postForObject(API_URL +"/signup", customerDTO , CustomerResponseDTO.class);
+            return restTemplate.postForObject(customerServiceUrl +"/signup", customerDTO , CustomerResponseDTO.class);
         } catch (ResourceAccessException e) {
             return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);
         } catch (Exception e) {
@@ -41,7 +45,7 @@ public class CustomerService {
 
     public CustomerResponseDTO updateCustomer(CustomerDTO customerDTO){
         try {
-            restTemplate.put(API_URL + "/" + customerDTO.getId(), customerDTO);
+            restTemplate.put(customerServiceUrl + "/" + customerDTO.getId(), customerDTO);
             return new CustomerResponseDTO(Feedback.OK);
         } catch (ResourceAccessException e) {
             return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);
@@ -52,7 +56,7 @@ public class CustomerService {
 
     public CustomerResponseDTO deleteCustomer(Long customerId){
         try {
-            restTemplate.delete(API_URL + "/" + customerId);
+            restTemplate.delete(customerServiceUrl + "/" + customerId);
             return new CustomerResponseDTO(Feedback.OK);
         } catch (ResourceAccessException e) {
             return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);
@@ -63,7 +67,7 @@ public class CustomerService {
 
     public CustomerResponseDTO getCustomerById(Long customerId){
         try {
-            return restTemplate.getForObject(API_URL + "/" + customerId, CustomerResponseDTO.class);
+            return restTemplate.getForObject(customerServiceUrl + "/" + customerId, CustomerResponseDTO.class);
         } catch (ResourceAccessException e) {
             return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);
         } catch (Exception e) {

@@ -1,17 +1,15 @@
 package com.example.customer_service.service;
 
 import com.example.customer_service.config.RestTemplateConfig;
-import com.example.customer_service.exception.ActiveBookingException;
-import com.example.customer_service.exception.EmailExistsException;
 import com.example.customer_service.model.*;
 import com.example.customer_service.repository.CustomerRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import java.util.Optional;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CustomerService {
@@ -25,55 +23,66 @@ public class CustomerService {
         this.restTemplate = restTemplateConfig.restTemplate();
     }
 
-    public ResponseEntity<CustomerResponseDTO> loginRequestIsValid(LoginRequestDTO requestDTO){
+    public CustomerResult loginRequestIsValid(LoginRequestDTO requestDTO) {
         return loginCustomer(requestDTO.getEmail(), requestDTO.getPassword());
     }
 
-    public ResponseEntity<CustomerResponseDTO> signupRequestIsValid(CustomerDTO dto) {
-        if (dto.getEmail() == null || dto.getEmail().isBlank()){
+    public CustomerResult signupRequestIsValid(CustomerDTO dto) {
+        if (dto.getEmail() == null || dto.getEmail().isBlank()) {
             System.out.println("empty email");
-            return returnInvalid(Feedback.EMPTY_EMAIL);
+            return new CustomerResult(null, Feedback.EMPTY_EMAIL);
         }
-        if (dto.getPassword() == null || dto.getPassword().isBlank()){
+        if (dto.getPassword() == null || dto.getPassword().isBlank()) {
             System.out.println("empty password");
-            return returnInvalid(Feedback.EMPTY_PASSWORD);
+            return new CustomerResult(null, Feedback.EMPTY_PASSWORD);
         }
         return createCustomer(dto);
     }
 
-    public Customer getCustomerById(Long id) {
-        return customerRepository.findById(id).orElse(null);
+    public CustomerDTO getCustomerById(Long id) {
+        Customer customer = customerRepository.findById(id).orElse(null);
+        return customer != null ? toDTO(customer) : null;
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerDTO> getAllCustomers() {
+        return toDTOList(customerRepository.findAll());
     }
 
-    public ResponseEntity<CustomerResponseDTO> createCustomer(CustomerDTO customerDTO) {
+    public CustomerDTO toDTO(Customer c) {
+        return new CustomerDTO(c.getId(), c.getName(), c.getEmail(), c.getAddress(), c.getPhone());
+    }
+
+    public List<CustomerDTO> toDTOList(List<Customer> customerList) {
+        List<CustomerDTO> customerDTOS = new ArrayList<>();
+        for (Customer c : customerList) {
+            customerDTOS.add(toDTO(c));
+        }
+        return customerDTOS;
+    }
+
+    public CustomerResult createCustomer(CustomerDTO dto) {
         System.out.println("createCustomer is called");
-        Optional<Customer> existingCustomer = customerRepository.findByEmail(customerDTO.getEmail());
+        Optional<Customer> existingCustomer = customerRepository.findByEmail(dto.getEmail());
 
         if (existingCustomer.isPresent()) {
-            return returnInvalid(Feedback.USER_EXISTS);
+            return new CustomerResult(null, Feedback.USER_EXISTS);
         }
 
-        Customer newCustomer = (customerRepository.save(new Customer(customerDTO.getName(),
-                customerDTO.getEmail(), customerDTO.getAddress(), customerDTO.getPhone(),
-                passwordEncoder.encode(customerDTO.getPassword()), Customer.CustomerStatus.ACTIVE)));
-        return ResponseEntity.status(HttpStatus.OK).body(createResponseDTOFromCustomer(newCustomer));
+        Customer newCustomer = (customerRepository.save(new Customer(dto.getName(), dto.getEmail(), dto.getAddress(),
+                dto.getPhone(), passwordEncoder.encode(dto.getPassword()), Customer.CustomerStatus.ACTIVE)));
+        return new CustomerResult(toDTO(newCustomer), Feedback.OK);
     }
 
-    public Customer updateCustomer(Long id, Customer customer) {
+    public CustomerResult updateCustomer(Long id, Customer customer) {
         Customer existing = customerRepository.findById(id).orElse(null);
 
         if (existing == null) {
-            return null;
+            return new CustomerResult(null, Feedback.INVALID_USER);
         }
-
         Optional<Customer> emailOwner = customerRepository.findByEmail(customer.getEmail());
-
         if (emailOwner.isPresent() && emailOwner.get().getId() != id) {
-            throw new EmailExistsException("Email already exists");
+//            throw new EmailExistsException("Email already exists");
+            return new CustomerResult(null, Feedback.USER_EXISTS);
         }
 
         existing.setName(customer.getName());
@@ -84,55 +93,56 @@ public class CustomerService {
             existing.setPassword(passwordEncoder.encode(customer.getPassword()));
         }
 
-        return customerRepository.save(existing);
+        return new CustomerResult(toDTO(customerRepository.save(existing)), Feedback.OK);
     }
 
-    public ResponseEntity<CustomerResponseDTO> deleteCustomer(Long customerId)  {
-        if ( hasActiveBooking(customerId)){
-            return returnInvalid(Feedback.HAS_ACTIVE_BOOKINGS);
+    public CustomerResult deleteCustomer(Long customerId) {
+        ResponseEntity<Boolean> response = hasActiveBooking(customerId);
+        if (response.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
+            return new CustomerResult(null, Feedback.BOOKING_SERVICE_UNAVAILABLE);
+        }
+        if (Boolean.TRUE.equals(response.getBody())) {
+            return new CustomerResult(null, Feedback.HAS_ACTIVE_BOOKINGS);
         }
         Customer customer = customerRepository.findById(customerId).orElse(null);
         if (customer != null) {
             customer.setStatus(Customer.CustomerStatus.UNREGISTERED);
-            customerRepository.save(customer);
-            ResponseEntity.status(HttpStatus.OK).body(new CustomerResponseDTO(Feedback.OK));
+            return new CustomerResult(toDTO(customerRepository.save(customer)), Feedback.OK);
         }
-        return returnInvalid(Feedback.INVALID_USER);
+        return new CustomerResult(null, Feedback.INVALID_USER);
     }
 
-    public boolean hasActiveBooking(Long customerId)   {
-//        Boolean result = restTemplate.getForObject("http://localhost:8080/bookings/customer/" + customerId
-//                + "/has-active-booking", Boolean.class
-//        );
-        Boolean result = restTemplate.getForObject(
-                "http://booking-service:8080/bookings/customer/" + customerId
-                        + "/has-active-booking",
-                Boolean.class
-        );
-        return Boolean.TRUE.equals(result);
-
+    public ResponseEntity<Boolean> hasActiveBooking(Long customerId) {
+        try {
+            return restTemplate.getForEntity("http://booking-service:8080/bookings/customer/" + customerId
+                    + "/has-active-booking", Boolean.class);
+        }
+        catch (HttpStatusCodeException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
+        }
+        catch (ResourceAccessException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+        }
     }
 
-    public ResponseEntity<CustomerResponseDTO> loginCustomer(String email, String password) {
-        if (email == null || email.isBlank() ) {
-            return returnInvalid(Feedback.EMPTY_EMAIL);
-        }
-        else if (password == null || password.isBlank()){
-            return returnInvalid(Feedback.EMPTY_PASSWORD);
+    public CustomerResult loginCustomer(String email, String password) {
+        if (email == null || email.isBlank()) {
+            return new CustomerResult(null, Feedback.EMPTY_EMAIL);
+        } else if (password == null || password.isBlank()) {
+            return new CustomerResult(null, Feedback.EMPTY_PASSWORD);
         }
         Customer savedCustomer = customerRepository.findByEmail(email).stream().findAny().orElse(null);
         if (savedCustomer != null) {
-            savedCustomer = customerRepository.findByEmail(email).stream().filter(customer ->
-                    passwordEncoder.matches(password, customer.getPassword())).findAny().orElse(null);
-            if (savedCustomer != null) {
-                CustomerResponseDTO responseDTO = new CustomerResponseDTO(savedCustomer.getId(), savedCustomer.getName(), savedCustomer.getEmail(), savedCustomer.getAddress(), savedCustomer.getPhone(), Feedback.OK);
-                return ResponseEntity.status(HttpStatus.OK).body((responseDTO));
-            }
-            else {
-                return returnInvalid(Feedback.INVALID_PASSWORD);
+            if (passwordEncoder.matches(password, savedCustomer.getPassword())) {
+//            savedCustomer = customerRepository.findByEmail(email).stream().filter(customer ->
+//                    passwordEncoder.matches(password, customer.getPassword())).findAny().orElse(null);
+//            if (savedCustomer != null) {
+                return new CustomerResult(toDTO(savedCustomer), Feedback.OK);
+            } else {
+                return new CustomerResult(null, Feedback.INVALID_PASSWORD);
             }
         }
-        return returnInvalid(Feedback.INVALID_EMAIL);
+        return new CustomerResult(null, Feedback.INVALID_EMAIL);
     }
 
     public boolean validateCustomer(Long customerId) {
@@ -140,19 +150,7 @@ public class CustomerService {
         return customer != null && customer.getStatus() == Customer.CustomerStatus.ACTIVE;
     }
 
-    public boolean validateAuthorizedCustomer(Long customerId, Long loggedInCustomerId){
+    public boolean validateAuthorizedCustomer(Long customerId, Long loggedInCustomerId) {
         return customerId != null && customerId.equals(loggedInCustomerId);
-    }
-
-    private CustomerResponseDTO createResponseDTOFromCustomer(Customer customer){
-        return new CustomerResponseDTO(customer.getId(), customer.getName(), customer.getEmail(), customer.getAddress(), customer.getPhone(), Feedback.OK);
-    }
-
-    private CustomerResponseDTO validResponse(CustomerDTO customer){
-        return new CustomerResponseDTO(customer.getId(), customer.getName(), customer.getEmail(), customer.getAddress(), customer.getPhone(), Feedback.OK);
-    }
-
-    private ResponseEntity<CustomerResponseDTO> returnInvalid(Feedback feedback){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CustomerResponseDTO(feedback));
     }
 }

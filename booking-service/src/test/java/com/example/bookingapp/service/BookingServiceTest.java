@@ -1,6 +1,8 @@
 package com.example.bookingapp.service;
 
 import com.example.bookingapp.model.Booking;
+import com.example.bookingapp.model.BookingDTO;
+import com.example.bookingapp.model.BookingResult;
 import com.example.bookingapp.repository.BookingRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -128,9 +130,10 @@ public class BookingServiceTest {
         Long id = 40L;
         when(bookingRepository.findById(id)).thenReturn(Optional.of(b1));
         when(bookingRepository.save(any(Booking.class))).thenReturn(b1);
-        Booking result = bookingService.cancelBooking(id);
+        BookingResult result = bookingService.cancelBooking(id);
+        Booking cancelled = bookingRepository.findById(id).orElse(null);
         verify(bookingRepository).save(any(Booking.class));
         assertNotNull(result);
-        assertEquals(Booking.BookingStatus.CANCELLED, result.getStatus());
+        assertEquals(Booking.BookingStatus.CANCELLED, cancelled.getStatus());
     }
 }

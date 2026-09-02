@@ -3,9 +3,8 @@ package com.example.bookingapp.controller;
 import com.example.bookingapp.model.*;
 import com.example.bookingapp.service.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.time.LocalDate;
 import java.util.*;
 
@@ -19,15 +18,16 @@ public class BookingController {
         this.bookingService = bookingService;
         this.roomService = roomService;
     }
-//Changed from "/".
+
     @GetMapping("/get-all-bookings")
-    public List<Booking> getAllBookings() {
+    public List<BookingDTO> getAllBookings() {
         return bookingService.getAllBookings();
     }
 
     @GetMapping("/{id}")
-    public Booking getBookingById(@PathVariable Long id) {
-        return bookingService.getBookingById(id);
+    public ResponseEntity<BookingDTO> getBookingById(@PathVariable Long id) {
+        BookingDTO booking = bookingService.getBookingById(id);
+        return (booking == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok(booking);
     }
 
     @GetMapping("/customer/{customerId}/has-active-booking")
@@ -36,79 +36,89 @@ public class BookingController {
     }
 
     @GetMapping("/customer/{customerid}")
-    public List<Booking> getBookingsByCustomerId(@PathVariable Long customerid) {
+    public List<BookingDTO> getBookingsByCustomerId(@PathVariable Long customerid) {
         return bookingService.getBookingsByCustomerId(customerid);
     }
 
     @GetMapping("/customer/active/{customerid}")
-    public List<Booking> getUpcomingBookingsByCustomerId(@PathVariable Long customerid) {
+    public List<BookingDTO> getUpcomingBookingsByCustomerId(@PathVariable Long customerid) {
         return bookingService.getActiveBookingsByCustomerId(customerid);
     }
 
     @GetMapping("/room/{roomid}")
-    public List<Booking> getBookingsByRoomId(@PathVariable Long roomid) {
+    public List<BookingDTO> getBookingsByRoomId(@PathVariable Long roomid) {
         return bookingService.getBookingsByRoomId(roomid);
     }
 
     @GetMapping("/startdate/{date}")
-    public List<Booking> getBookingsByStartdate(@PathVariable LocalDate date) {
-        return bookingService.getBookingsByStartdate(date);
+    public List<BookingDTO> getBookingsByStartDate(@PathVariable LocalDate date) {
+        return bookingService.getBookingsByStartDate(date);
     }
 
     @GetMapping("/availability/{roomid}/{startdate}/{enddate}")
     public boolean checkRoomAvailability(@PathVariable Long roomid, @PathVariable LocalDate startdate, @PathVariable LocalDate enddate) {
-        return bookingService.checkRoomAvailability(roomid, startdate, enddate, (long) -1);
+        return bookingService.checkRoomAvailability(roomid, startdate, enddate, null);
     }
 
     @GetMapping("/availability/{startdate}/{enddate}")
     public List<Room> getAvailableRoomsByTimeframe(@PathVariable LocalDate startdate, @PathVariable LocalDate enddate){
         List<Room> allRooms = roomService.getAllRooms();
-        List<Room> availableRooms = new ArrayList<>();
-        for (Room r : allRooms){
-            if(checkRoomAvailability(r.getId(), startdate, enddate)){
-                availableRooms.add(r);
-            }
-        }
-        return availableRooms;
+        return bookingService.getAvailableRoomByTimeFrame(allRooms, startdate, enddate);
     }
 
     @GetMapping("/room/{roomid}/blocked-dates")
-    public List<Booking> getBlockedDates(@PathVariable Long roomid) {
+    public List<BookingDTO> getBlockedDates(@PathVariable Long roomid) {
         return bookingService.getActiveBookingsByRoomId(roomid);
     }
 
     @PostMapping("")
-    public Booking createBooking(@RequestBody BookingDTO booking, @RequestParam Long customerId) {
-        if (!bookingService.isAuthorizedCustomer(customerId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid customer");
+    public ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO booking, @RequestParam Long customerId) {
+        ResponseEntity<Object> authResponse = bookingService.isAuthorizedCustomer(customerId);
+        if (!authResponse.getStatusCode().equals(HttpStatus.OK)) {
+            return ResponseEntity.status(authResponse.getStatusCode()).build();
         }
-        return bookingService.createBooking(booking, customerId);
+        BookingResult response = bookingService.createBooking(booking, customerId);
+        HttpStatus status = getStatus(response.status());
+        if (response.dto() == null) {
+            return ResponseEntity.status(status).build();
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(response.dto());
     }
 
-//    @PostMapping("")
-//    public Booking createBooking(@RequestBody BookingDTO booking, @RequestParam Long customerId) {
-//        if (!bookingService.isAuthorizedCustomer(customerId)) {
-//            throw new RuntimeException("User must be logged in to book a room");
-//            return null;
-//        }
-//        return bookingService.createBooking(booking, customerId);
-//    }
-
     @PutMapping("/{bookingId}")
-    public Booking updateBooking(@PathVariable Long bookingId, @RequestBody BookingDTO booking, @RequestParam Long customerId) {
-        if (!bookingService.isAuthorizedCustomer(customerId)) {
-//            throw new RuntimeException("User must be logged in to update a booking");
-            return null;
+    public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @RequestBody BookingDTO booking, @RequestParam Long customerId) {
+        ResponseEntity<Object> authResponse = bookingService.isAuthorizedCustomer(customerId);
+        if (!authResponse.getStatusCode().equals(HttpStatus.OK)) {
+            return ResponseEntity.status(authResponse.getStatusCode()).build();
         }
-        return bookingService.updateBooking(bookingId, booking);
+        BookingResult response = bookingService.updateBooking(bookingId, booking);
+        HttpStatus status = getStatus(response.status());
+        if (status != HttpStatus.OK){
+            return ResponseEntity.status(status).build();
+        }
+        return ResponseEntity.status(status).body(response.dto());
     }
 
     @PutMapping("/{bookingId}/cancel")
-    public Booking cancelBooking (@PathVariable Long bookingId, @RequestParam Long customerId){
-        if (!bookingService.isAuthorizedCustomer(customerId)) {
-//            throw new RuntimeException("User must be logged in to cancel a booking");
-            return null;
+    public ResponseEntity<BookingDTO> cancelBooking (@PathVariable Long bookingId, @RequestParam Long customerId){
+        ResponseEntity<Object> authResponse = bookingService.isAuthorizedCustomer(customerId);
+        if (!authResponse.getStatusCode().equals(HttpStatus.OK)) {
+            return ResponseEntity.status(authResponse.getStatusCode()).build();
         }
-        return bookingService.cancelBooking(bookingId);
+        BookingResult response = bookingService.cancelBooking(bookingId);
+        HttpStatus status = getStatus(response.status());
+        if (status != HttpStatus.OK){
+            return ResponseEntity.status(status).build();
+        }
+        return ResponseEntity.status(status).body(response.dto());
+    }
+
+    private HttpStatus getStatus(BookingResultStatus response){
+        return switch (response) {
+            case OK -> HttpStatus.OK;
+            case INVALID_DATES -> HttpStatus.BAD_REQUEST;
+            case NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case ROOM_UNAVAILABLE -> HttpStatus.CONFLICT;
+        };
     }
 }

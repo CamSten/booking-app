@@ -8,7 +8,8 @@ public enum Feedback {
     INVALID_PASSWORD("The password is incorrect"),
     USER_EXISTS("Account with this email already exists"),
     INVALID_USER("The user does not exist"),
-    HAS_ACTIVE_BOOKINGS("Cannot delete a customer with an active booking");
+    HAS_ACTIVE_BOOKINGS("Cannot delete a customer with an active booking"),
+    BOOKING_SERVICE_UNAVAILABLE("Booking service is unavailable");
     public final String feedback;
 
     Feedback(String feedback){

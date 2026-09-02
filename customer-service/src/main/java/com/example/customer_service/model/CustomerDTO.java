@@ -14,13 +14,12 @@ public class CustomerDTO {
     public CustomerDTO() {
     }
 
-    public CustomerDTO(long id, String name, String email, String address, String phone, String password) {
+    public CustomerDTO(long id, String name, String email, String address, String phone) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.address = address;
         this.phone = phone;
-        this.password = password;
     }
 
 }

@@ -2,79 +2,110 @@
 package com.example.bookingapp.service;
 
 import com.example.bookingapp.config.RestTemplateConfig;
-import com.example.bookingapp.model.Booking;
-import com.example.bookingapp.model.BookingDTO;
+import com.example.bookingapp.model.*;
 import com.example.bookingapp.repository.BookingRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import java.time.*;
 import java.util.*;
 
 @Service
 public class BookingService {
-    private final BookingRepository bookingRepository;
+    private final BookingRepository bookingRepo;
     private final RestTemplate restTemplate;
 
-    public BookingService(BookingRepository bookingRepository, RestTemplateConfig restTemplateConfig) {
-        this.bookingRepository = bookingRepository;
+    public BookingService(BookingRepository bookingRepo, RestTemplateConfig restTemplateConfig) {
+        this.bookingRepo = bookingRepo;
         this.restTemplate = restTemplateConfig.restTemplate();
     }
 
-    public Booking getBookingById(Long id) {
-        return bookingRepository.findById(id).orElse(null);
+    public BookingDTO getBookingById(Long id) {
+        Booking booking = bookingRepo.findById(id).orElse(null);
+        return booking != null ? toDTO(booking) : null;
     }
 
-    public List<Booking> getBookingsByCustomerId(Long customerid) {
-        List<Booking> bookingList =  bookingRepository.findByCustomerid(customerid);
-        return bookingList != null ? bookingList : Collections.emptyList();
+    public List<BookingDTO> getBookingsByCustomerId(Long customerId) {
+        List<Booking> bookingList = bookingRepo.findByCustomerid(customerId);
+        return bookingList != null ? toDTOList(bookingList) : Collections.emptyList();
     }
 
     public boolean hasActiveBooking(Long customerId) {
-        return bookingRepository.existsByCustomeridAndStatus(customerId, Booking.BookingStatus.ACTIVE);
+        return bookingRepo.existsByCustomeridAndStatus(customerId, Booking.BookingStatus.ACTIVE);
     }
 
-    public List<Booking> getBookingsByStartdate(LocalDate startdate){
-        return bookingRepository.findByStartdate(startdate);
-    }
-    public List<Booking> getBookingsByRoomId(Long roomId){
-        return bookingRepository.findByRoomid(roomId);
+    public List<BookingDTO> getBookingsByStartDate(LocalDate startDate){
+        return toDTOList(bookingRepo.findByStartdate(startDate));
     }
 
-    public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
+    public List<BookingDTO> getBookingsByRoomId(Long roomId){
+        return toDTOList(bookingRepo.findByRoomid(roomId));
     }
-    public Booking createBooking(BookingDTO req, Long customerId) {
-        if (checkRoomAvailability(req.getRoomid(), req.getStartdate(), req.getEnddate(), (long) -1)){
-            Booking booking = new Booking();
-            booking.setRoomid(req.getRoomid());
-            booking.setStartdate(req.getStartdate());
-            booking.setEnddate(req.getEnddate());
-            booking.setGuestcount(req.getGuestcount());
-            booking.setExtrabed(req.isExtrabed());
-            booking.setCost(req.getCost());
-            booking.setCustomerid(customerId);
-            booking.setStatus(Booking.BookingStatus.ACTIVE);
-            booking.setSubmitdate(LocalDateTime.now());
-            return bookingRepository.save(booking);
+
+    public List<BookingDTO> getAllBookings() {
+        return toDTOList(bookingRepo.findAll());
+    }
+
+    public BookingDTO toDTO(Booking b){
+        return new BookingDTO(b.getId(), b.getRoomid(), b.getCost(), b.getStartdate(), b.getEnddate(), b.getGuestcount(), b.isExtrabed());
+    }
+
+    public List<BookingDTO> toDTOList(List<Booking> bookingList){
+        List<BookingDTO> toReturn = new ArrayList<>();
+        for (Booking b : bookingList){
+            toReturn.add(toDTO(b));
         }
-        return null;
+        return toReturn;
     }
 
-    public List<Booking> getActiveBookingsByRoomId(Long roomId){
-        return bookingRepository.findByRoomidAndStatus(roomId, Booking.BookingStatus.ACTIVE);
-    }
-    public List<Booking> getActiveBookingsByCustomerId(long customerId){
-        return bookingRepository.findByCustomeridAndStatus(customerId, Booking.BookingStatus.ACTIVE)
-                .stream().filter(b -> !b.getEnddate().isBefore(LocalDate.now())).toList();
-    }
-
-    public boolean checkRoomAvailability(Long roomId, LocalDate startDate, LocalDate enddate, Long bookingId){
-        if (!checkDateValidity(startDate, enddate)){
-            return false;
+    public BookingResult createBooking(BookingDTO req, Long customerId) {
+        if (!checkDateValidity(req.getStartdate(), req.getEnddate())){
+            return toResult(null, BookingResultStatus.INVALID_DATES);
         }
-        List<Booking> activeBookings = getActiveBookingsByRoomId(roomId);
+        if (!checkRoomAvailability(req.getRoomid(), req.getStartdate(), req.getEnddate(), null)){
+            return toResult(null, BookingResultStatus.ROOM_UNAVAILABLE);
+        }
+        Booking booking = new Booking();
+        booking.setRoomid(req.getRoomid());
+        booking.setStartdate(req.getStartdate());
+        booking.setEnddate(req.getEnddate());
+        booking.setGuestcount(req.getGuestcount());
+        booking.setExtrabed(req.isExtrabed());
+        booking.setCost(req.getCost());
+        booking.setCustomerid(customerId);
+        booking.setStatus(Booking.BookingStatus.ACTIVE);
+        booking.setSubmitdate(LocalDateTime.now());
+        return toResult(bookingRepo.save(booking), BookingResultStatus.OK);
+    }
+
+    public BookingResult toResult(Booking b, BookingResultStatus status){
+        BookingDTO dto = b != null ? toDTO(b) : null;
+        return new BookingResult(dto, status);
+    }
+
+    private List<Booking> retrieveActiveBookingsByRoomId(Long roomId){
+        return bookingRepo.findByRoomidAndStatus(roomId, Booking.BookingStatus.ACTIVE);
+    }
+
+    public List<BookingDTO> getActiveBookingsByRoomId(Long roomId){
+        return toDTOList(retrieveActiveBookingsByRoomId(roomId));
+    }
+
+    public List<BookingDTO> getActiveBookingsByCustomerId(long customerId){
+        return toDTOList(bookingRepo.findByCustomeridAndStatus(customerId, Booking.BookingStatus.ACTIVE)
+                .stream().filter(b -> !b.getEnddate().isBefore(LocalDate.now())).toList());
+    }
+
+    public boolean checkRoomAvailability(Long roomId, LocalDate startDate, LocalDate endDate, Long bookingId){
+        List<Booking> activeBookings = retrieveActiveBookingsByRoomId(roomId);
         for (Booking b : activeBookings){
-            boolean dateTaken = (startDate.isBefore(b.getEnddate()) && enddate.isAfter(b.getStartdate()));
+            boolean dateTaken = (startDate.isBefore(b.getEnddate()) && endDate.isAfter(b.getStartdate()));
+            if (bookingId == null){
+                return dateTaken;
+            }
             if (dateTaken && !b.getId().equals(bookingId)){
                 return false;
             }
@@ -82,47 +113,59 @@ public class BookingService {
         return true;
     }
 
-    public Booking updateBooking(Long bookingId, BookingDTO booking) {
-        Booking existingBooking = bookingRepository.findById(bookingId).orElse(null);
-        if (existingBooking != null) {
-            if (checkRoomAvailability(booking.getRoomid(), booking.getStartdate(), booking.getEnddate(), existingBooking.getId())) {
-                existingBooking.setRoomid(booking.getRoomid());
-                existingBooking.setGuestcount(booking.getGuestcount());
-                existingBooking.setStartdate(booking.getStartdate());
-                existingBooking.setEnddate(booking.getEnddate());
-                existingBooking.setExtrabed(booking.isExtrabed());
-                existingBooking.setCost(booking.getCost());
-                return bookingRepository.save(existingBooking);
+    public BookingResult updateBooking(Long bookingId, BookingDTO booking) {
+        Booking existing = bookingRepo.findById(bookingId).orElse(null);
+        if (existing != null) {
+            if (!checkDateValidity(booking.getStartdate(), booking.getEnddate())){
+                return toResult(null, BookingResultStatus.INVALID_DATES);
             }
+            if (checkRoomAvailability(booking.getRoomid(), booking.getStartdate(), booking.getEnddate(), existing.getId())) {
+                existing.setRoomid(booking.getRoomid());
+                existing.setGuestcount(booking.getGuestcount());
+                existing.setStartdate(booking.getStartdate());
+                existing.setEnddate(booking.getEnddate());
+                existing.setExtrabed(booking.isExtrabed());
+                existing.setCost(booking.getCost());
+                return toResult(bookingRepo.save(existing), BookingResultStatus.OK);
+            }
+            return toResult(null, BookingResultStatus.ROOM_UNAVAILABLE);
         }
-        return null;
+        return toResult(null, BookingResultStatus.NOT_FOUND);
     }
 
-    public Booking cancelBooking(Long id){
-        Booking existingBooking = bookingRepository.findById(id).orElse(null);
+    public BookingResult cancelBooking(Long id){
+        Booking existingBooking = bookingRepo.findById(id).orElse(null);
         if (existingBooking!= null){
             existingBooking.setStatus(Booking.BookingStatus.CANCELLED);
-            return bookingRepository.save(existingBooking);
+            return toResult(bookingRepo.save(existingBooking), BookingResultStatus.OK);
         }
-        return null;
+        return toResult(null, BookingResultStatus.NOT_FOUND);
     }
 
-    public boolean checkDateValidity(LocalDate startDate, LocalDate enddate){
-        boolean correctOrder = (!startDate.isAfter(enddate) && !startDate.isEqual(enddate));
+    public boolean checkDateValidity(LocalDate startDate, LocalDate endDate){
+        boolean correctOrder = (!startDate.isAfter(endDate) && !startDate.isEqual(endDate));
         boolean notHistoric = (!startDate.isBefore(LocalDate.now()));
         return (correctOrder && notHistoric);
     }
 
-    public boolean isValidCustomerId(Long customerId) {
-        return isAuthorizedCustomer(customerId);
+    public List<Room> getAvailableRoomByTimeFrame(List<Room> allRooms, LocalDate startDate, LocalDate endDate){
+        List<Room> availableRooms = new ArrayList<>();
+        for (Room r : allRooms){
+            if(checkRoomAvailability(r.getId(), startDate, endDate, null)){
+                availableRooms.add(r);
+            }
+        }
+        return availableRooms;
     }
 
-    public boolean isAuthorizedCustomer(Long customerId) {
+    public ResponseEntity<Object> isAuthorizedCustomer(Long customerId) {
         try {
-            restTemplate.getForEntity("http://localhost:8081/api/customers/" + customerId, Object.class);
-            return true;
-        } catch (Exception e) {
-            return false;
+            return restTemplate.getForEntity("http://localhost:8081/api/customers/" + customerId, Object.class);
+        } catch (HttpClientErrorException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
+
+        } catch (ResourceAccessException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
     }
 }

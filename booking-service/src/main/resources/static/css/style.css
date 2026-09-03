@@ -24,12 +24,7 @@
 
 body {
     overflow-x: hidden;
-    background: linear-gradient(
-            135deg,
-            #f5e6e8,
-            #fdf6f0,
-            #e8f1f2
-    );
+    background: linear-gradient(135deg, #f5e6e8, #fdf6f0, #e8f1f2);
     font-family: Arial, sans-serif;
     color: #2f2a28;
 }
@@ -49,11 +44,7 @@ body {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-            to bottom,
-            rgba(255, 250, 245, 0.75),
-            rgba(255, 250, 245, 0.4)
-    );
+    background: linear-gradient(to bottom, rgba(255, 250, 245, 0.75), rgba(255, 250, 245, 0.4));
 }
 
 .hero-content {
@@ -78,13 +69,9 @@ body {
     color: #777;
 }
 
-.booking-container {
-    max-width: 1100px;
-}
+.booking-container {max-width: 1100px;}
 
-.booking-container .row {
-    justify-content: center;
-}
+.booking-container .row {justify-content: center;}
 
 .booking-card,
 .calendar-card {
@@ -92,9 +79,7 @@ body {
     border-radius: 20px;
     padding: 24px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-    transition:
-            transform 0.15s ease,
-            box-shadow 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .booking-card {
@@ -112,16 +97,15 @@ body {
     display: flex;
     justify-content: center;
 }
+
 .bookings-section {
     max-width: 1100px;
     margin: 50px auto;
     padding: 34px;
     background: rgba(255, 250, 245, 0.92);
     border-radius: 28px;
-    border:
-            1px solid rgba(166, 123, 107, 0.10);
-    box-shadow:
-            0 18px 50px rgba(0,0,0,0.08);
+    border: 1px solid rgba(166, 123, 107, 0.10);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.08);
     backdrop-filter: blur(6px);
 }
 
@@ -142,54 +126,6 @@ body {
     text-align: center;
     text-transform: uppercase;
     margin-bottom: 34px;
-}
-
-#bookings-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 16px;
-}
-
-#bookings-table thead th {
-    border: none;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #a67b6b;
-    padding: 0 14px 10px 14px;
-}
-
-#bookings-table tbody tr {
-    transition:
-            transform 0.16s ease,
-            box-shadow 0.16s ease;
-    box-shadow:
-            0 6px 18px rgba(0,0,0,0.05);
-}
-
-#bookings-table tbody td:first-child {
-    border-top-left-radius: 18px;
-    border-bottom-left-radius: 18px;
-}
-
-#bookings-table tbody td:last-child {
-    border-top-right-radius: 18px;
-    border-bottom-right-radius: 18px;
-}
-
-#bookings-table tbody tr:hover {
-    transform: translateY(-3px);
-    box-shadow:
-            0 14px 32px rgba(0,0,0,0.10);
-}
-
-#bookings-table td {
-    border: none;
-    padding: 18px 16px;
-    vertical-align: middle;
-    color: #4e4541;
-    font-size: 0.95rem;
 }
 
 #bookings-container td[colspan] {
@@ -242,6 +178,7 @@ body {
     font-size: 1.1rem;
     font-weight: 500;
 }
+
 #guest-section .room-label,
 .room-label {
     font-size: 0.85rem;
@@ -250,9 +187,7 @@ body {
     letter-spacing: 0.15em;
     font-weight: 600;
 }
-#guest-section {
-    margin: 18px 0;
-}
+#guest-section {margin: 18px 0;}
 
 #guest-count {
     width: 100%;
@@ -262,9 +197,7 @@ body {
     background: #fff;
     color: #2f2a28;
     font-size: 0.95rem;
-    transition:
-            border-color 0.15s ease,
-            box-shadow 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 #guest-count:focus {
@@ -273,9 +206,7 @@ body {
     box-shadow: 0 0 0 4px rgba(166, 123, 107, 0.15);
 }
 
-#extra-bed-section {
-    margin: 18px 0;
-}
+#extra-bed-section {margin: 18px 0;}
 
 #extra-bed-section label {
     display: flex;
@@ -284,9 +215,7 @@ body {
     color: #5a514d;
 }
 
-#extra-bed {
-    accent-color: #a67b6b;
-}
+#extra-bed {accent-color: #a67b6b;}
 
 .extra-bed-label {
     display: flex;
@@ -295,9 +224,7 @@ body {
     color: #5a514d;
 }
 
-.extra-bed-label span {
-    font-weight: 500;
-}
+.extra-bed-label span {font-weight: 500;}
 
 .extra-bed-fee {
     font-size: 0.78rem;
@@ -334,6 +261,7 @@ body {
     color: #5f4b45;
     margin: 0;
 }
+
 .modal-actions {
     display: flex;
     justify-content: center;
@@ -350,17 +278,11 @@ body {
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    transition:
-            background 0.18s ease,
-            transform 0.15s ease,
-            box-shadow 0.18s ease,
-            opacity 0.18s ease;
+    transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease, opacity 0.18s ease;
     cursor: pointer;
 }
 
-.modal-btn:hover {
-    transform: translateY(-2px);
-}
+.modal-btn:hover {transform: translateY(-2px);}
 
 .modal-btn-primary {
     background: #a67b6b;
@@ -396,11 +318,7 @@ body {
 
 .modal-header {
     border-bottom: none;
-    padding:
-            28px
-            32px
-            10px
-            32px;
+    padding: 28px 32px 10px 32px;
     background: transparent;
 }
 
@@ -415,11 +333,7 @@ body {
 }
 
 .modal-body {
-    padding:
-            12px
-            34px
-            26px
-            34px;
+    padding: 12px 34px 26px 34px;
     text-align: center;
     color: #5a514d;
 }
@@ -436,8 +350,7 @@ body {
 .modal-body p {
     margin: 14px 0;
     padding-bottom: 12px;
-    border-bottom:
-            1px solid rgba(166, 123, 107, 0.12);
+    border-bottom: 1px solid rgba(166, 123, 107, 0.12);
     line-height: 1.75;
     font-size: 0.95rem;
     letter-spacing: 0.025em;
@@ -454,19 +367,13 @@ body {
 .modal-footer {
     border-top: none;
     justify-content: center;
-    padding:
-            0
-            30px
-            30px
-            30px;
+    padding: 0 30px 30px 30px;
     gap: 12px;
 }
 
 .btn-close {
     opacity: 0.35;
-    transition:
-            opacity 0.18s ease,
-            transform 0.18s ease;
+    transition: opacity 0.18s ease, transform 0.18s ease;
 }
 .btn-close:hover {
     opacity: 0.8;
@@ -481,12 +388,10 @@ body {
     object-fit: cover;
     border-radius: 18px;
     display: block;
-    margin:
-            0 auto
-            18px auto;
-    box-shadow:
-            0 14px 34px rgba(0,0,0,0.16);
+    margin: 0 auto 18px auto;
+    box-shadow: 0 14px 34px rgba(0,0,0,0.16);
 }
+
 .book-btn {
     width: 100%;
     margin-top: 20px;
@@ -500,22 +405,20 @@ body {
     letter-spacing: 0.18em;
     text-transform: uppercase;
     margin-bottom: 6px;
-    transition:
-            background 0.2s ease,
-            transform 0.15s ease,
-            box-shadow 0.15s ease;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
+
+#book-button {display: none;}
 
 .book-btn:hover {
     background: #8f6658;
     transform: translateY(-1px);
     box-shadow: 0 6px 18px rgba(166, 123, 107, 0.35);
 }
+
 .booking-row {
     cursor: pointer;
-    transition:
-            transform 0.15s ease,
-            box-shadow 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .booking-row:hover {
@@ -550,22 +453,6 @@ body {
     margin-bottom: 12px;
 }
 
-.search-title {
-    display: block;
-    font-size: 1rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #a67b6b;
-    margin-bottom: 6px;
-}
-
-.search-prompt{
-    font-family: "League Script", cursive;
-    font-size: 2.5rem;
-    font-weight: 500;
-    color: #5f4b45;
-    margin: 0;
-}
 .bookings-table-card {
     background: #fffaf5;
     border-radius: 20px;
@@ -583,7 +470,6 @@ body {
 #bookings-table thead th {
     border: none;
     padding: 0 14px 10px 14px;
-
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.16em;
@@ -604,7 +490,6 @@ body {
 #bookings-table td {
     border: none;
     padding: 18px 16px;
-
     vertical-align: middle;
     font-size: 0.95rem;
     color: #4e4541;
@@ -647,9 +532,7 @@ body {
 
 .flatpickr-calendar .dayContainer,
 .flatpickr-calendar .flatpickr-days,
-.flatpickr-calendar .flatpickr-weekdays {
-    background: transparent !important;
-}
+.flatpickr-calendar .flatpickr-weekdays {background: transparent !important;}
 
 .flatpickr-day {
     font-weight: 600;
@@ -678,9 +561,7 @@ body {
 }
 
 .flatpickr-day:before,
-.flatpickr-day:after {
-    display: none !important;
-}
+.flatpickr-day:after {display: none !important;}
 
 .flatpickr-day:hover {
     background: rgba(166, 123, 107, 0.10);
@@ -694,4 +575,14 @@ body {
     cursor: not-allowed;
     text-decoration: none !important;
     box-shadow: none !important;
+}
+
+.back-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }

@@ -4,6 +4,7 @@ package com.example.bookingapp.service;
 import com.example.bookingapp.config.RestTemplateConfig;
 import com.example.bookingapp.model.*;
 import com.example.bookingapp.repository.BookingRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import java.util.*;
 public class BookingService {
     private final BookingRepository bookingRepo;
     private final RestTemplate restTemplate;
+    @Value("${customer.service.url}")
+    private String customerServiceUrl;
 
     public BookingService(BookingRepository bookingRepo, RestTemplateConfig restTemplateConfig) {
         this.bookingRepo = bookingRepo;
@@ -94,6 +97,11 @@ public class BookingService {
         return toDTOList(retrieveActiveBookingsByRoomId(roomId));
     }
 
+    public List<BookingDTO> getCompletedBookingsByCustomerId(Long customerId){
+        return toDTOList((bookingRepo.findByCustomeridAndStatus(customerId, Booking.BookingStatus.COMPLETED)
+                .stream().filter(b -> !b.getEnddate().isBefore(LocalDate.now())).toList()));
+    }
+
     public List<BookingDTO> getActiveBookingsByCustomerId(long customerId){
         return toDTOList(bookingRepo.findByCustomeridAndStatus(customerId, Booking.BookingStatus.ACTIVE)
                 .stream().filter(b -> !b.getEnddate().isBefore(LocalDate.now())).toList());
@@ -159,8 +167,9 @@ public class BookingService {
     }
 
     public ResponseEntity<Object> isAuthorizedCustomer(Long customerId) {
+        System.out.println("is authorizedCustomer is called");
         try {
-            return restTemplate.getForEntity("http://localhost:8081/api/customers/" + customerId, Object.class);
+            return restTemplate.getForEntity(customerServiceUrl + "/" + customerId, Object.class);
         } catch (HttpClientErrorException e) {
             return ResponseEntity.status(e.getStatusCode()).build();
 

@@ -62,23 +62,19 @@
                             <span class="room-text"
                                   th:text="${room.extraBedAvailable ? 'Yes' : 'No'}"></span>
                         </div>
-
                         <p class="room-text mb-4">
                             A beautiful and cozy room perfect for your stay.
                         </p>
-
                         <a th:href="@{/book(roomId=${room.id},startdate=${startdate},enddate=${enddate})}"
-                           class="book-btn text-center text-decoration-none"> Book Now
+                           class="book-btn text-center text-decoration-none">Book Now
                         </a>
-
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
+    <div th:replace="~{fragments/roomreviews.html :: review-view}"></div>
 </main>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

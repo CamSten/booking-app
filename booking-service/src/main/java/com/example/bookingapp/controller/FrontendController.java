@@ -1,8 +1,8 @@
 package com.example.bookingapp.controller;
 
 import com.example.bookingapp.model.*;
-import com.example.bookingapp.repository.RoomRepository;
 import com.example.bookingapp.service.CustomerService;
+import com.example.bookingapp.service.RoomService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Controller
 public class FrontendController {
-    private final RoomRepository roomRepository;
+    private final RoomService roomService;
     private final CustomerService customerService;
 
     @GetMapping("/")
@@ -21,70 +21,46 @@ public class FrontendController {
         return "redirect:/home";
     }
 
-    public FrontendController(RoomRepository roomRepository, CustomerService customerService) {
-        this.roomRepository = roomRepository;
+    public FrontendController(RoomService roomService, CustomerService customerService) {
+        this.roomService = roomService;
         this.customerService = customerService;
     }
 
     @GetMapping("/home")
     public String showHomePage(Model model,
-                               @RequestParam(required = false) LocalDate startdate,
-                               @RequestParam(required = false) LocalDate enddate) {
+                               @RequestParam(required = false) LocalDate startdate, @RequestParam(required = false) LocalDate enddate) {
         if (startdate != null && enddate != null) {
-            List<Room> availableRooms = roomRepository.findAvailableRooms(startdate, enddate, Booking.BookingStatus.CANCELLED);
+            List<Room> availableRooms = roomService.findAvailableRooms(startdate, enddate);
             model.addAttribute("rooms", availableRooms);
         } else {
-            model.addAttribute("rooms", roomRepository.findAll());
+            model.addAttribute("rooms", roomService.getAllRooms());
         }
         return "homepage";
     }
 
     @GetMapping("/room")
-    public String showRoomPage(
-            @RequestParam Long id,
-            @RequestParam(required = false) String startdate,
-            @RequestParam(required = false) String enddate,
-            Model model) {
-        model.addAttribute("room", roomRepository.findById(id).orElse(null));
+    public String showRoomPage(@RequestParam Long id,
+                               @RequestParam(required = false) String startdate,
+                               @RequestParam(required = false) String enddate, Model model) {
+        model.addAttribute("room", roomService.getRoomById(id));
         model.addAttribute("startdate", startdate);
         model.addAttribute("enddate", enddate);
         return "roompage";
     }
 
-//    @GetMapping("/book")
-//    public String showBookingPage(@RequestParam Long roomId, @RequestParam(required = false) Long bookingId,
-//                                  @RequestParam(required = false) LocalDate enddate, @RequestParam(required = false) LocalDate startdate,
-//                                  Model model) {
-//        model.addAttribute("room", roomRepository.findById(roomId).orElse(null));
-//        if (startdate != null && enddate != null) {
-//            model.addAttribute("bookingId", bookingId);
-//            model.addAttribute("startdate", startdate);
-//            model.addAttribute("enddate", enddate);
-//        }
-//        return "bookingpage";
-//    }
-
     @GetMapping("/book")
     public String showBookingPage(
             @RequestParam Long roomId,
             @RequestParam(required = false) Long bookingId,
-            @RequestParam(required = false) LocalDate enddate,
             @RequestParam(required = false) LocalDate startdate,
+            @RequestParam(required = false) LocalDate enddate,
             Model model) {
-
-        Room room = roomRepository.findById(roomId).orElse(null);
-
+        Room room = roomService.getRoomById(roomId);
         model.addAttribute("room", room);
         model.addAttribute("bookingId", bookingId);
         model.addAttribute("startdate", startdate);
         model.addAttribute("enddate", enddate);
-
         return "bookingpage";
-    }
-
-    @GetMapping("/search")
-    public String showSearchPage() {
-        return "searchpage";
     }
 
     @GetMapping("/customer")

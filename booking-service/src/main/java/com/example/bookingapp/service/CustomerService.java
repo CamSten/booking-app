@@ -49,9 +49,9 @@ public class CustomerService {
         }
     }
 
-    public CustomerResponseDTO updateCustomer(CustomerDTO customerDTO){
+    public CustomerResponseDTO updateCustomer(Long customerId, CustomerDTO customerDTO){
         try {
-            restTemplate.put(customerServiceUrl + "/" + customerDTO.getId(), customerDTO);
+            restTemplate.put(customerServiceUrl + "/" + customerId, customerDTO);
             return new CustomerResponseDTO(Feedback.OK);
         } catch (ResourceAccessException e) {
             return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);

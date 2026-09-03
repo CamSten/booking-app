@@ -44,12 +44,12 @@ public class CustomerServiceTest {
     @Test
     void updateCustomer_ShouldUpdateCustomer_WithNewPassword() {
         Customer updatedData = new Customer("TestTest Customer", "TestTest@mail.com", "TestTest Street 1", "123456", "TestPassWord");
-
+        CustomerDTO dto = new CustomerDTO(updatedData.getId(), updatedData.getName(), updatedData.getEmail(), updatedData.getAddress(), updatedData.getPhone());
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
         when(passwordEncoder.encode("TestPassWord")).thenReturn("TestTestPassWord");
         when(customerRepository.save(any(Customer.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        CustomerResult updateCustomer = customerService.updateCustomer(1L, updatedData);
+        CustomerResult updateCustomer = customerService.updateCustomer(1L, dto);
         CustomerDTO result = updateCustomer.dto();
 
         assertEquals("TestTest Customer", result.getName());

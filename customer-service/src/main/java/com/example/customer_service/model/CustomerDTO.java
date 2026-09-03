@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class CustomerDTO {
-    private long id;
+    private Long id;
     private String name;
     private String email;
     private String address;
@@ -14,7 +14,7 @@ public class CustomerDTO {
     public CustomerDTO() {
     }
 
-    public CustomerDTO(long id, String name, String email, String address, String phone) {
+    public CustomerDTO(Long id, String name, String email, String address, String phone) {
         this.id = id;
         this.name = name;
         this.email = email;

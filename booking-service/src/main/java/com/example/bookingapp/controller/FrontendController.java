@@ -49,6 +49,11 @@ public class FrontendController {
         return "roompage";
     }
 
+    @GetMapping("/search")
+    public String showSearchPage( ) {
+        return "searchpage";
+    }
+
     @GetMapping("/book")
     public String showBookingPage(@RequestParam Long roomId,
             @RequestParam(required = false) Long bookingId,
@@ -144,16 +149,18 @@ public class FrontendController {
     }
 
     @PostMapping("/profile/edit")
-    public String updateProfile(@ModelAttribute("customer") CustomerDTO customer, HttpSession session, Model model) {
+    public String updateProfile(@ModelAttribute("customer") CustomerDTO customer, HttpSession session, Model model,
+                                RedirectAttributes redirectAttributes) {
         Long customerId = (Long) session.getAttribute("loginCustomerId");
         if (customerId == null) {
             return "redirect:/customer";
         }
-        CustomerResponseDTO responseDTO = customerService.updateCustomer(customer);
+        CustomerResponseDTO responseDTO = customerService.updateCustomer(customerId, customer);
         if (responseDTO.getFeedback() != Feedback.OK) {
             model.addAttribute("editError", responseDTO.getFeedback().feedback);
             return "editProfile";
         }
+        redirectAttributes.addFlashAttribute("successMessage", "Your profile has been updated.");
         return "redirect:/profile";
     }
 

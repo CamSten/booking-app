@@ -16,7 +16,7 @@ public class GlobalModelAttributes {
 
     @ModelAttribute
     public void addCommonAttributes(Model model, HttpSession session) {
-        Long userId = sessionService.getUserId(session);
+        Long userId = sessionService.getCustomerId(session);
         model.addAttribute("loggedIn", userId != null);
         model.addAttribute("loginCustomerId", userId);
     }

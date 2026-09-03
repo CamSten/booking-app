@@ -2,8 +2,8 @@ package com.example.bookingapp.controller;
 
 import com.example.bookingapp.model.*;
 import com.example.bookingapp.service.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -45,6 +45,11 @@ public class BookingController {
         return bookingService.getActiveBookingsByCustomerId(customerid);
     }
 
+    @GetMapping("/customer/completed/{customerid}")
+    public List<BookingDTO> getFulfilledBookingsForCustomer(@PathVariable Long customerid) {
+        return bookingService.getCompletedBookingsByCustomerId(customerid);
+    }
+
     @GetMapping("/room/{roomid}")
     public List<BookingDTO> getBookingsByRoomId(@PathVariable Long roomid) {
         return bookingService.getBookingsByRoomId(roomid);
@@ -72,45 +77,46 @@ public class BookingController {
     }
 
     @PostMapping("")
-    public ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO booking, @RequestParam Long customerId) {
-        ResponseEntity<Object> authResponse = bookingService.isAuthorizedCustomer(customerId);
-        if (!authResponse.getStatusCode().equals(HttpStatus.OK)) {
-            return ResponseEntity.status(authResponse.getStatusCode()).build();
+    public ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO booking, HttpSession session) {
+        ResponseEntity<Long> validateUser = validate(session);
+        if (validateUser.getStatusCode() == HttpStatus.OK) {
+            Long customerId = validateUser.getBody();
+            BookingResult response = bookingService.createBooking(booking, customerId);
+            HttpStatus status = getStatus(response.status());
+            if (response.dto() == null) {
+                return ResponseEntity.status(status).build();
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(response.dto());
         }
-        BookingResult response = bookingService.createBooking(booking, customerId);
-        HttpStatus status = getStatus(response.status());
-        if (response.dto() == null) {
-            return ResponseEntity.status(status).build();
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(response.dto());
+        return ResponseEntity.status(validateUser.getStatusCode()).build();
     }
 
     @PutMapping("/{bookingId}")
-    public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @RequestBody BookingDTO booking, @RequestParam Long customerId) {
-        ResponseEntity<Object> authResponse = bookingService.isAuthorizedCustomer(customerId);
-        if (!authResponse.getStatusCode().equals(HttpStatus.OK)) {
-            return ResponseEntity.status(authResponse.getStatusCode()).build();
+    public ResponseEntity<BookingDTO> updateBooking(@PathVariable Long bookingId, @RequestBody BookingDTO booking, HttpSession session) {
+        ResponseEntity<Long> validateUser = validate(session);
+        if (validateUser.getStatusCode() == HttpStatus.OK) {
+            BookingResult response = bookingService.updateBooking(bookingId, booking);
+            HttpStatus status = getStatus(response.status());
+            if (status != HttpStatus.OK) {
+                return ResponseEntity.status(status).build();
+            }
+            return ResponseEntity.status(status).body(response.dto());
         }
-        BookingResult response = bookingService.updateBooking(bookingId, booking);
-        HttpStatus status = getStatus(response.status());
-        if (status != HttpStatus.OK){
-            return ResponseEntity.status(status).build();
-        }
-        return ResponseEntity.status(status).body(response.dto());
+        return ResponseEntity.status(validateUser.getStatusCode()).build();
     }
 
     @PutMapping("/{bookingId}/cancel")
-    public ResponseEntity<BookingDTO> cancelBooking (@PathVariable Long bookingId, @RequestParam Long customerId){
-        ResponseEntity<Object> authResponse = bookingService.isAuthorizedCustomer(customerId);
-        if (!authResponse.getStatusCode().equals(HttpStatus.OK)) {
-            return ResponseEntity.status(authResponse.getStatusCode()).build();
+    public ResponseEntity<BookingDTO> cancelBooking(@PathVariable Long bookingId, HttpSession session) {
+        ResponseEntity<Long> validateUser = validate(session);
+        if (validateUser.getStatusCode() == HttpStatus.OK) {
+            BookingResult response = bookingService.cancelBooking(bookingId);
+            HttpStatus status = getStatus(response.status());
+            if (status != HttpStatus.OK) {
+                return ResponseEntity.status(status).build();
+            }
+            return ResponseEntity.status(status).body(response.dto());
         }
-        BookingResult response = bookingService.cancelBooking(bookingId);
-        HttpStatus status = getStatus(response.status());
-        if (status != HttpStatus.OK){
-            return ResponseEntity.status(status).build();
-        }
-        return ResponseEntity.status(status).body(response.dto());
+        return ResponseEntity.status(validateUser.getStatusCode()).build();
     }
 
     private HttpStatus getStatus(BookingResultStatus response){
@@ -120,5 +126,17 @@ public class BookingController {
             case NOT_FOUND -> HttpStatus.NOT_FOUND;
             case ROOM_UNAVAILABLE -> HttpStatus.CONFLICT;
         };
+    }
+
+    private ResponseEntity<Long> validate(HttpSession session) {
+        Long customerId = (Long) session.getAttribute("loginCustomerId");
+        if (customerId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        ResponseEntity<Object> authResponse = bookingService.isAuthorizedCustomer(customerId);
+        if (authResponse.getStatusCode().equals(HttpStatus.OK)) {
+            return ResponseEntity.ok(customerId);
+        }
+        return ResponseEntity.status(authResponse.getStatusCode()).build();
     }
 }

@@ -19,4 +19,13 @@ public class CustomerResponseDTO {
     public CustomerResponseDTO(Feedback feedback){
         this.feedback = feedback;
     }
+
+    public CustomerResponseDTO(CustomerDTO customer, Feedback feedback) {
+        this.id = customer.getId();
+        this.name = customer.getName();
+        this.email = customer.getEmail();
+        this.address = customer.getAddress();
+        this.phone = customer.getPhone();
+        this.feedback = feedback;
+    }
 }

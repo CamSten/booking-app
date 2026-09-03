@@ -18,22 +18,15 @@ public class Customer {
     private String address;
     private String phone;
     private String password;
-    public enum CustomerStatus {
-        ACTIVE,
-        UNREGISTERED,
-    }
-    @Enumerated(EnumType.STRING)
-    private CustomerStatus status;
 
     public Customer() {
     }
 
-    public Customer(String name, String email, String address, String phone, String password, CustomerStatus status) {
+    public Customer(String name, String email, String address, String phone, String password) {
         this.name = name;
         this.email = email;
         this.address = address;
         this.phone = phone;
         this.password = password;
-        this.status = status;
     }
 }

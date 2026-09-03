@@ -61,9 +61,7 @@ public class CustomerService {
     }
 
     public CustomerResult createCustomer(CustomerDTO dto) {
-        System.out.println("createCustomer is called");
         Optional<Customer> existingCustomer = customerRepository.findByEmail(dto.getEmail());
-
         if (existingCustomer.isPresent()) {
             return new CustomerResult(null, Feedback.USER_EXISTS);
         }
@@ -73,9 +71,8 @@ public class CustomerService {
         return new CustomerResult(toDTO(newCustomer), Feedback.OK);
     }
 
-    public CustomerResult updateCustomer(Long id, Customer customer) {
+    public CustomerResult updateCustomer(Long id, CustomerDTO customer) {
         Customer existing = customerRepository.findById(id).orElse(null);
-
         if (existing == null) {
             return new CustomerResult(null, Feedback.INVALID_USER);
         }

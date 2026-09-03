@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SessionService {
 
-    public Long getUserId(HttpSession session) {
-        return (session.getAttribute("loginCustomerId") != null) ? (Long) session.getAttribute("loginUserId") : null;
+    public Long getCustomerId(HttpSession session) {
+        return (Long) session.getAttribute("loginCustomerId");
     }
 }

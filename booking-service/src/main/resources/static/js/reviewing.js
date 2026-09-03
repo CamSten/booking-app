@@ -18,7 +18,7 @@ export function leaveReview(booking, modalBody, modalFooter){
     </div>`
     const commentSection = modalBody.querySelector(".comment-section");
     commentSection.addEventListener(`input`,() => {
-        const comment = commentSection.values;
+        const comment = commentSection.value;
         if (submitButton !== null && (comment === null || comment === ``)){
             modalFooter.innerHTML = ``;
         }
@@ -31,7 +31,7 @@ export function leaveReview(booking, modalBody, modalFooter){
 function showSubmitButton(modalFooter, review) {
     modalFooter.innerHTML = `<button type="submit" id="comment-btn" class="comment-btn">Leave review</button>`;
     submitButton = modalFooter.querySelector(".comment-btn");
-    submitButton.addEventListener(`click`, sendReview(review))
+    submitButton.addEventListener("click", () => sendReview(review));
 }
 
 function sendReview(review){

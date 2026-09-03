@@ -27,16 +27,37 @@ public class FrontendController {
     }
 
     @GetMapping("/home")
-    public String showHomePage(Model model,
-                               @RequestParam(required = false) LocalDate startdate, @RequestParam(required = false) LocalDate enddate) {
+    public String showHomePage(
+            Model model,
+            @RequestParam(required = false) LocalDate startdate,
+            @RequestParam(required = false) LocalDate enddate,
+            HttpSession session) {
+
+        System.out.println("=== HOME ===");
+        System.out.println("Session ID: " + session.getId());
+        System.out.println("Customer ID: " + session.getAttribute("loginCustomerId"));
+
         if (startdate != null && enddate != null) {
             List<Room> availableRooms = roomService.findAvailableRooms(startdate, enddate);
             model.addAttribute("rooms", availableRooms);
         } else {
             model.addAttribute("rooms", roomService.getAllRooms());
         }
+
         return "homepage";
     }
+
+//    @GetMapping("/home")
+//    public String showHomePage(Model model,
+//                               @RequestParam(required = false) LocalDate startdate, @RequestParam(required = false) LocalDate enddate) {
+//        if (startdate != null && enddate != null) {
+//            List<Room> availableRooms = roomService.findAvailableRooms(startdate, enddate);
+//            model.addAttribute("rooms", availableRooms);
+//        } else {
+//            model.addAttribute("rooms", roomService.getAllRooms());
+//        }
+//        return "homepage";
+//    }
 
     @GetMapping("/room")
     public String showRoomPage(@RequestParam Long id,

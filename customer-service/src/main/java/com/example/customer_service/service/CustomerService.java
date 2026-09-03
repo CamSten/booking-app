@@ -106,8 +106,8 @@ public class CustomerService {
         }
         Customer customer = customerRepository.findById(customerId).orElse(null);
         if (customer != null) {
-            customer.setStatus(Customer.CustomerStatus.UNREGISTERED);
-            return new CustomerResult(toDTO(customerRepository.save(customer)), Feedback.OK);
+            customerRepository.deleteById(customerId);
+            return new CustomerResult(null, Feedback.OK);
         }
         return new CustomerResult(null, Feedback.INVALID_USER);
     }

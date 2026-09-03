@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<div th:replace="~{fragments/head :: head}"></div>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Search rooms')}"></head>
 <body>
     <div th:replace="~{fragments/hero :: hero(hideSearch=true)}"></div>
 <div class="booking-container container my-5">

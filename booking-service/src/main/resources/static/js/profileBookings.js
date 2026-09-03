@@ -18,8 +18,7 @@ function createBookingViewCompleted(){
 function createBookingView(table, active) {
     const bookingType = active ? "active" : "active";
     table.innerHTML = "";
-    fetch(`/bookings/customer/${bookingType}/${customerId}`)
-        .then(r => r.json())
+    fetch(`/bookings/customer/${bookingType}/${customerId}`).then(r => r.json())
         .then(bookings => {
             if (bookings.length === 0) {
                 if (!active) {
@@ -43,8 +42,7 @@ function getBookingRow(booking, active) {
     const row = document.createElement("tr");
     row.classList.add("booking-row");
     row.innerHTML = `
-        <td>
-            <img src="/images/rooms/room_${booking.roomid}_1.jpg" class="booking-thumbnail" alt="Room image">        </td>
+        <td><img src="/images/rooms/room_${booking.roomid}_1.jpg" class="booking-thumbnail" alt="Room image"></td>
             <td>${booking.startdate}</td>
             <td>${booking.enddate}</td>
             <td>${booking.guestcount}</td>
@@ -59,22 +57,17 @@ function showBookingDetails(booking, active) {
     const modal = new bootstrap.Modal(document.getElementById('myModal'));
     const modalBody = document.getElementById('modalBody');
     const modalFooter = document.querySelector(".modal-footer");
-    let buttons = active ? `<button class="modal-btn modal-btn-primary edit-booking-button">
-        Edit booking</button>
-    <button class="modal-btn modal-btn-danger delete-booking-button">
-        Cancel booking</button>` : `<button class="modal-btn modal-btn-primary review-booking-button">
-        Leave review</button>`
+    let buttons = active ?
+        `<button class="modal-btn modal-btn-primary edit-booking-button">Edit booking</button>
+         <button class="modal-btn modal-btn-danger delete-booking-button">Cancel booking</button>`
+        : `<button class="modal-btn modal-btn-primary review-booking-button">Leave review</button>`
     modalBody.innerHTML = `
         <img src="/images/rooms/room_${booking.roomid}_1.jpg" class="booking-thumbnail" alt="Room image">        
         <h5>Room ${booking.roomid}</h5>
-        <p><strong>Dates:</strong><br>
-            ${booking.startdate} → ${booking.enddate}</p>
-        <p><strong>Guests:</strong>
-            ${booking.guestcount}</p>
-        ${booking.extrabed ? `
-        <p><strong>Extra bed:</strong> Yes</p>` : ''}
-        <p><strong>Total cost:</strong>
-            ${booking.cost} SEK</p>`;
+        <p><strong>Dates:</strong><br>${booking.startdate} → ${booking.enddate}</p>
+        <p><strong>Guests:</strong>${booking.guestcount}</p>
+        ${booking.extrabed ? `<p><strong>Extra bed:</strong> Yes</p>` : ''}
+        <p><strong>Total cost:</strong>${booking.cost} SEK</p>`;
     modalFooter.innerHTML = `<div class="modal-actions"> ${buttons}</div>`;
     if (active) {
         document.querySelector(".edit-booking-button").onclick = () => editBooking(booking);
@@ -89,6 +82,7 @@ function showBookingDetails(booking, active) {
 function editBooking(booking){
     window.location.href = `/book?roomId=${booking.roomid}&bookingId=${booking.id}`;
 }
+
 function showDeleteConfirm(booking){
     const modalElement = document.getElementById('myModal');
     const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
@@ -105,13 +99,11 @@ function showDeleteConfirm(booking){
 
 function deleteBooking(booking){
     const id = booking.id;
-    fetch(`/bookings/${id}/cancel`,{
-        method: "PUT"})
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Cancel failed");
-            }
-        })
+    fetch(`/bookings/${id}/cancel`,{method: "PUT"}).then(response => {
+        if (!response.ok) {
+            throw new Error("Cancel failed");
+        }
+    })
         .then(() => {
             createBookingViewActive();
             showFeedback("Your booking has been cancelled.");

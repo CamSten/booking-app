@@ -29,12 +29,10 @@ function showSearchButton(){
 function searchRooms(){
     const startdate = formatDate(bookingState.selectedDates[0]);
     const enddate = formatDate(bookingState.selectedDates[1]);
-    window.location.href =
-        `/home?startdate=${startdate}&enddate=${enddate}`;
+    window.location.href = `/home?startdate=${startdate}&enddate=${enddate}`;
 }
 
 function hideSearchButton(){
     document.getElementById('search-button').style.display = "none";
 }
-document.getElementById('search-button')
-    .addEventListener('click', searchRooms);
+document.getElementById('search-button').addEventListener('click', searchRooms);

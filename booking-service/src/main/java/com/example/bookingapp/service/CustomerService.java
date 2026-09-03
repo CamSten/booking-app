@@ -40,7 +40,7 @@ public class CustomerService {
     public CustomerResponseDTO signupCustomer(CustomerDTO dto) {
         try {
             CustomerDTO response = restTemplate.postForObject(customerServiceUrl + "/signup", dto, CustomerDTO.class);
-            return  (response != null) ? new CustomerResponseDTO(response, Feedback.OK) :
+            return (response != null) ? new CustomerResponseDTO(response, Feedback.OK) :
                     new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);
         } catch (ResourceAccessException e) {
             return new CustomerResponseDTO(Feedback.CUSTOMER_SERVICE_UNAVAILABLE);

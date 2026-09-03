@@ -27,37 +27,17 @@ public class FrontendController {
     }
 
     @GetMapping("/home")
-    public String showHomePage(
-            Model model,
+    public String showHomePage(Model model,
             @RequestParam(required = false) LocalDate startdate,
-            @RequestParam(required = false) LocalDate enddate,
-            HttpSession session) {
-
-        System.out.println("=== HOME ===");
-        System.out.println("Session ID: " + session.getId());
-        System.out.println("Customer ID: " + session.getAttribute("loginCustomerId"));
-
+            @RequestParam(required = false) LocalDate enddate) {
         if (startdate != null && enddate != null) {
             List<Room> availableRooms = roomService.findAvailableRooms(startdate, enddate);
             model.addAttribute("rooms", availableRooms);
         } else {
             model.addAttribute("rooms", roomService.getAllRooms());
         }
-
         return "homepage";
     }
-
-//    @GetMapping("/home")
-//    public String showHomePage(Model model,
-//                               @RequestParam(required = false) LocalDate startdate, @RequestParam(required = false) LocalDate enddate) {
-//        if (startdate != null && enddate != null) {
-//            List<Room> availableRooms = roomService.findAvailableRooms(startdate, enddate);
-//            model.addAttribute("rooms", availableRooms);
-//        } else {
-//            model.addAttribute("rooms", roomService.getAllRooms());
-//        }
-//        return "homepage";
-//    }
 
     @GetMapping("/room")
     public String showRoomPage(@RequestParam Long id,
@@ -70,8 +50,7 @@ public class FrontendController {
     }
 
     @GetMapping("/book")
-    public String showBookingPage(
-            @RequestParam Long roomId,
+    public String showBookingPage(@RequestParam Long roomId,
             @RequestParam(required = false) Long bookingId,
             @RequestParam(required = false) LocalDate startdate,
             @RequestParam(required = false) LocalDate enddate,
@@ -97,14 +76,14 @@ public class FrontendController {
                         @RequestParam(required = false) Long roomId) {
         CustomerResponseDTO responseDTO = customerService.loginCustomer(customer.getEmail(), customer.getPassword());
         if (responseDTO.getFeedback() == Feedback.OK) {
-            session.setAttribute("loginCustomerId", responseDTO.getId());
+            session.setAttribute("loginCustomerId", responseDTO.getCustomerDTO().getId());
             if (Boolean.TRUE.equals(returnToBook) && roomId != null) {
                 return "redirect:/book?roomId=" + roomId;
             }
             return "redirect:/profile";
         }
         model.addAttribute("error", responseDTO.getFeedback().feedback);
-        model.addAttribute("loginCustomer", customer);
+        model.addAttribute("loginCustomer", responseDTO.getCustomerDTO());
         model.addAttribute("signupCustomer", new CustomerDTO());
         return "customer";
     }
@@ -115,40 +94,37 @@ public class FrontendController {
                          @RequestParam(required = false) Long roomId) {
         CustomerResponseDTO responseDTO = customerService.signupCustomer(customer);
         if (responseDTO.getFeedback() == Feedback.OK) {
-            session.setAttribute("loginCustomerId", responseDTO.getId());
+            session.setAttribute("loginCustomerId", responseDTO.getCustomerDTO().getId());
             if (Boolean.TRUE.equals(returnToBook) && roomId != null) {
                 return "redirect:/book?roomId=" + roomId;
             }
             return "redirect:/profile";
         }
         model.addAttribute("signupError", responseDTO.getFeedback().feedback);
-        model.addAttribute("signupCustomer", customer);
+        model.addAttribute("signupCustomer", responseDTO.getCustomerDTO());
         model.addAttribute("loginCustomer", new CustomerDTO());
-
         return "customer";
     }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-
         return "redirect:/customer";
     }
 
     @GetMapping("/profile")
     public String profile(HttpSession session, Model model) {
         Long customerId = (Long) session.getAttribute("loginCustomerId");
-
         if (customerId == null) {
             return "redirect:/customer";
         }
-        CustomerResponseDTO customer = customerService.getCustomerById(customerId);
-
-        if (customer.getFeedback() == Feedback.CUSTOMER_SERVICE_UNAVAILABLE) {
-            model.addAttribute("error", customer.getFeedback().feedback);
+        CustomerResponseDTO response = customerService.getCustomerById(customerId);
+        if (response.getFeedback() == Feedback.CUSTOMER_SERVICE_UNAVAILABLE) {
+            model.addAttribute("error", response.getFeedback().feedback);
+            model.addAttribute("customer", new CustomerDTO());
             return "profile";
         }
-        model.addAttribute("customer", customer);
+        model.addAttribute("customer", response.getCustomerDTO());
         return "profile";
     }
 
@@ -158,25 +134,22 @@ public class FrontendController {
         if (customerId == null) {
             return "redirect:/customer";
         }
-        CustomerResponseDTO customer = customerService.getCustomerById(customerId);
-
-        if (customer.getFeedback() == Feedback.CUSTOMER_SERVICE_UNAVAILABLE) {
-            model.addAttribute("error", customer.getFeedback().feedback);
+        CustomerResponseDTO response = customerService.getCustomerById(customerId);
+        if (response.getFeedback() == Feedback.CUSTOMER_SERVICE_UNAVAILABLE) {
+            model.addAttribute("error", response.getFeedback().feedback);
             return "editProfile";
         }
-        model.addAttribute("customer", customer);
+        model.addAttribute("customer", response.getCustomerDTO());
         return "editProfile";
     }
 
     @PostMapping("/profile/edit")
     public String updateProfile(@ModelAttribute("customer") CustomerDTO customer, HttpSession session, Model model) {
         Long customerId = (Long) session.getAttribute("loginCustomerId");
-
         if (customerId == null) {
             return "redirect:/customer";
         }
         CustomerResponseDTO responseDTO = customerService.updateCustomer(customer);
-
         if (responseDTO.getFeedback() != Feedback.OK) {
             model.addAttribute("editError", responseDTO.getFeedback().feedback);
             return "editProfile";
@@ -187,7 +160,6 @@ public class FrontendController {
     @PostMapping("/profile/delete")
     public String deleteCustomer(HttpSession session, RedirectAttributes redirectAttributes) {
         Long customerId = (Long) session.getAttribute("loginCustomerId");
-
         if (customerId == null) {
             return "redirect:/customer";
         }
@@ -195,11 +167,9 @@ public class FrontendController {
         if(responseDTO.getFeedback() == Feedback.OK) {
             session.invalidate();
             return "redirect:/customer";
-
         }
         else {
             redirectAttributes.addFlashAttribute("deleteError", responseDTO.getFeedback().feedback);
-
             return "redirect:/profile";
         }
     }

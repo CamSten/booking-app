@@ -11,13 +11,10 @@ const bookingState = {
     cost: 0,
 };
 document.addEventListener("DOMContentLoaded", async () => {
-    document.getElementById('book-button')
-        .addEventListener('click', handleBookingClick);
-
+    document.getElementById('book-button').addEventListener('click', handleBookingClick);
     booking = await getBookingData();
     await initializeCalendar();
     showGuestSection();
-
     if (booking) {
         applyBookingInfo(booking);
     }
@@ -29,10 +26,8 @@ async function getBookingData() {
         return JSON.parse(storedBooking);
     }
     if (!bookingId) {
-        const prefillStart =
-            document.getElementById("prefill-startdate")?.value;
-        const prefillEnd =
-            document.getElementById("prefill-enddate")?.value;
+        const prefillStart = document.getElementById("prefill-startdate")?.value;
+        const prefillEnd = document.getElementById("prefill-enddate")?.value;
         if (prefillStart && prefillEnd) {
             return {
                 startdate: prefillStart,
@@ -50,8 +45,7 @@ async function getBookingData() {
 }
 
 async function initializeCalendar() {
-    const roomId =
-        document.getElementById("room-id").value;
+    const roomId = document.getElementById("room-id").value;
     const response = await fetch(`/bookings/room/${roomId}/blocked-dates`);
     if (!response.ok) {
         throw new Error("API error");
@@ -59,19 +53,12 @@ async function initializeCalendar() {
     const bookings = await response.json();
     let filteredBookings = bookings;
     if (editMode) {
-        filteredBookings =
-            bookings.filter(
-                b => b.id !== Number(bookingId)
-            );
+        filteredBookings = bookings.filter(b => b.id !== Number(bookingId));
     }
-    const disabledDates =
-        filteredBookings
-            .filter(b => b.startdate && b.enddate)
-            .map(b => ({
-                from: b.startdate,
-                to: b.enddate
-            }));
-
+    const disabledDates = filteredBookings.filter(b => b.startdate && b.enddate).map(b => ({
+        from: b.startdate,
+        to: b.enddate
+    }));
     calendar = flatpickr("#calendar", {
         mode: "range",
         inline: true,
@@ -83,12 +70,8 @@ async function initializeCalendar() {
                     new Date(selectedDates[0]),
                     new Date(selectedDates[1])
                 ];
-                document.getElementById(
-                    "booking-dates"
-                ).textContent = dateStr;
-                updateTotalPrice(
-                    bookingState.selectedDates
-                );
+                document.getElementById("booking-dates").textContent = dateStr;
+                updateTotalPrice(bookingState.selectedDates);
                 updateExtraBedCheckbox();
                 showBookingButton();
             }
@@ -109,7 +92,6 @@ function updateExtraBedCheckbox() {
 }
 
 function applyBookingInfo(booking) {
-    console.log(`booking.startdate: ${booking.startdate}, booking.guestcount: ${booking.guestcount}`)
     const start = new Date(booking.startdate);
     const end = new Date(booking.enddate);
     calendar.setDate([start, end]);
@@ -126,8 +108,7 @@ function applyBookingInfo(booking) {
 }
 
 function showGuestSection() {
-    const guestSection =
-        document.getElementById('guest-section');
+    const guestSection = document.getElementById('guest-section');
     guestSection.style.display = "block";
     let options = `
         <option value="1">1</option>
@@ -135,8 +116,7 @@ function showGuestSection() {
     if (extraBedOption) {
         options += `<option value="3">3</option>`;
     }
-    guestSection.innerHTML += `
-    <select id="guest-count">${options}</select>`;
+    guestSection.innerHTML += `<select id="guest-count">${options}</select>`;
     guestcount = document.getElementById('guest-count');
     guestcount.addEventListener('change', () => {
         if (bookingState.selectedDates) {
@@ -191,11 +171,13 @@ function handleBookingClick() {
     };
     let url = editMode ? `/bookings/${bookingId}` : "/bookings";
     let method = editMode ? "PUT" : "POST";
-    console.log("url is: " + url)
     fetch(url, {method: method, headers: {"Content-Type": "application/json"}, body: JSON.stringify(bookingRequest)})
         .then(response => {
             if (!response.ok) {
-                throw new Error("Booking failed");
+
+
+                console.log("STATUS:", response.status);
+                throw new Error("Booking failed with status " + response.status);
             }
             return response.json();})
         .then(data => {showConfirmationModal(data);})
@@ -237,7 +219,7 @@ function showConfirmationModal(data) {
     modalTitle.innerHTML = editMode ? "Your booking has been updated" : "Booking confirmed"
     const modalFooter = document.querySelector(".modal-footer");
     modalFooter.innerHTML = `
-    <button class="modal-btn modal-btn-primary"data-bs-dismiss="modal"> Close</button>`;
+    <button class="modal-btn modal-btn-primary" data-bs-dismiss="modal"> Close</button>`;
     const reroute = editMode ? "/profile" : "/home";
     modalElement.addEventListener("hidden.bs.modal", () => {
             window.location.href = reroute;

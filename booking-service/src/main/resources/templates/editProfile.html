@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head}"></head>
+<head th:replace="~{fragments/head :: head('Edit profile')}"></head>
 <body>
-    <div th:replace="~{fragments/hero :: hero(hideLogin=true)}"></div>
-
+<div th:replace="~{fragments/hero :: hero(hideLogin=true)}"></div>
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-12 col-md-6">
@@ -13,14 +12,14 @@
                 <div th:if="${editError}" class="alert alert-danger text-center" role="alert">
                     <p th:text="${editError}" class="m-0"></p>
                 </div>
-                
+
                 <form th:action="@{/profile/edit}" th:object="${customer}" method="post">
-                    
+
                     <div class="mb-3">
                         <label class="form-label" style="color: #a67b6b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em;">Name</label>
                         <input type="text" class="form-control" th:field="*{name}" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label" style="color: #a67b6b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em;">Email</label>
                         <input type="email" class="form-control" th:field="*{email}" required>

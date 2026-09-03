@@ -17,18 +17,14 @@ export function leaveReview(roomId, customerId, modalBody, modalFooter) {
             <div class="mb-3">
                 <label class="form-label review-label">Share your thoughts</label>
                 <textarea 
-                    id="comment-section"
-                    class="comment-section"
-                    placeholder="Add a comment..."
-                    rows="4"
-                    required>
+                    id="comment-section" class="comment-section" placeholder="Add a comment..." rows="4" required>
                 </textarea>
             </div>
         </div>`;
-    modalFooter.innerHTML = `<button type="button" class="comment-btn" disabled>Leave review </button>`;
+    modalFooter.innerHTML = `<button type="button" class="review-submit-button" disabled>Leave review </button>`;
     const stars = modalBody.querySelectorAll(".star");
     const commentSection = modalBody.querySelector(".comment-section");
-    submitButton = modalFooter.querySelector(".comment-btn");
+    submitButton = modalFooter.querySelector(".review-submit-button");
     stars.forEach(star => {
         star.addEventListener("click", () => {
             selectedRating = Number(star.dataset.rating);

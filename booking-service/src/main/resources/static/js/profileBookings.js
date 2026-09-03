@@ -1,46 +1,42 @@
 import {leaveReview} from "./reviewing.js";
 
-const table = document.getElementById("bookings-container");
-const customerid = document.getElementById("customer-id").value;
+const completedBookingSection = document.getElementById("completed-bookings-section");
+const upcomingBookingTable = document.getElementById("upcoming-bookings-container");
+const completedBookingTable = document.getElementById("completed-bookings-container");
+const customerId = document.getElementById("customer-id").value;
+
 createBookingViewActive();
 createBookingViewCompleted();
 
 function createBookingViewActive(){
-    table.innerHTML = "";
-    fetch(`/bookings/customer/active/${customerid}`)
-        .then(r => r.json())
-        .then(bookings => {
-            if (bookings.length === 0) {
-                table.innerHTML = "<tr><td colspan='5'>No upcoming bookings</td></tr>";
-                return;
-            }
-            bookings.forEach(booking => {
-                getBookingRow(booking, true);
-            });
-        })
-        .catch(error => {
-            console.error(error);
-            alert("Something went wrong with retrieving bookings");
-        })
+    createBookingView(upcomingBookingTable, true);
 }
 function createBookingViewCompleted(){
+    createBookingView(completedBookingTable, false);
+}
+
+function createBookingView(table, active) {
+    const bookingType = active ? "active" : "active";
     table.innerHTML = "";
-    fetch(`/bookings/customer/completed/${customerid}`)
+    fetch(`/bookings/customer/${bookingType}/${customerId}`)
         .then(r => r.json())
         .then(bookings => {
             if (bookings.length === 0) {
-                table.innerHTML = "<tr><td colspan='5'>No previous bookings</td></tr>";
+                if (!active) {
+                    completedBookingSection.style.display = "none";
+                }
                 return;
             }
-            bookings.forEach(booking => {
-                getBookingRow(booking, false);
-
+            if (!active) {
+                completedBookingSection.style.display = "block";
+            }
+            bookings.forEach(booking => {table.appendChild(getBookingRow(booking, active));
             });
         })
         .catch(error => {
             console.error(error);
             alert("Something went wrong with retrieving bookings");
-        })
+        });
 }
 
 function getBookingRow(booking, active) {
@@ -56,7 +52,7 @@ function getBookingRow(booking, active) {
     row.addEventListener("click", () => {
         showBookingDetails(booking, active);
     });
-    table.appendChild(row);
+    return row;
 }
 
 function showBookingDetails(booking, active) {
@@ -69,7 +65,8 @@ function showBookingDetails(booking, active) {
         Cancel booking</button>` : `<button class="modal-btn modal-btn-primary review-booking-button">
         Leave review</button>`
     modalBody.innerHTML = `
-        <img src="/images/rooms/room_${booking.roomid}_1.jpg" class="booking-thumbnail" alt="Room image">        <h5>Room ${booking.roomid}</h5>
+        <img src="/images/rooms/room_${booking.roomid}_1.jpg" class="booking-thumbnail" alt="Room image">        
+        <h5>Room ${booking.roomid}</h5>
         <p><strong>Dates:</strong><br>
             ${booking.startdate} → ${booking.enddate}</p>
         <p><strong>Guests:</strong>
@@ -78,30 +75,26 @@ function showBookingDetails(booking, active) {
         <p><strong>Extra bed:</strong> Yes</p>` : ''}
         <p><strong>Total cost:</strong>
             ${booking.cost} SEK</p>`;
-    modalFooter.innerHTML = `
-        <div class="modal-actions"> ${buttons}</div>`;
+    modalFooter.innerHTML = `<div class="modal-actions"> ${buttons}</div>`;
     if (active) {
         document.querySelector(".edit-booking-button").onclick = () => editBooking(booking);
         document.querySelector(".delete-booking-button").onclick = () => showDeleteConfirm(booking);
     }
     else {
-        document.querySelector(".review-booking-button").onclick = () => leaveReview(booking, modalBody, modalFooter);
+        document.querySelector(".review-booking-button").onclick = () => leaveReview(booking.roomid, customerId, modalBody, modalFooter);
     }
     modal.show();
 }
 
 function editBooking(booking){
-    window.location.href =
-        `/book?roomId=${booking.roomid}&bookingId=${booking.id}`;
+    window.location.href = `/book?roomId=${booking.roomid}&bookingId=${booking.id}`;
 }
 function showDeleteConfirm(booking){
     const modalElement = document.getElementById('myModal');
-    const modal = bootstrap.Modal.getInstance(modalElement)
-        || new bootstrap.Modal(modalElement);
+    const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
     const modalBody = document.getElementById('modalBody');
     const modalFooter = document.querySelector(".modal-footer");
-    modalBody.innerHTML = `
-        <p>Are you sure you want to cancel this booking?</p>`;
+    modalBody.innerHTML = `<p>Are you sure you want to cancel this booking?</p>`;
     modalFooter.innerHTML = `
         <button class="modal-btn modal-btn-danger yes">Yes</button>
         <button class="modal-btn modal-btn-secondary no">No</button>`;
@@ -130,10 +123,8 @@ function deleteBooking(booking){
 
 function showFeedback(message) {
     const modalElement = document.getElementById('myModal');
-    const modal = bootstrap.Modal.getInstance(modalElement)
-        || new bootstrap.Modal(modalElement);
-    document.getElementById('modalBody').innerHTML = `
-        <p>${message}</p>`;
+    const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+    document.getElementById('modalBody').innerHTML = `<p>${message}</p>`;
     document.querySelector(".modal-footer").innerHTML = `
         <button class="modal-btn modal-btn-primary" data-bs-dismiss="modal">Close</button>`;
     modal.show();

@@ -1,39 +1,73 @@
-
+let selectedRating = 0;
 let submitButton = null;
-export function leaveReview(booking, modalBody, modalFooter){
-    modalBody.innerHTML = ``;
-    modalFooter.innerHTML = ``;
-    let comments = "";
-    modalBody.innerHTML = ` <div class="review-card h-100">
-        <h2 class="text-center mb-4" style="font-family: 'Playfair Display', serif; color: #5f4b45;">Add review</h2>
-        <form method="post">
-            <input type="hidden" name="bookingId" th:value="${param.bookingId}">
-            <div class="mb-3">
-                <label class="form-label" style="color: #a67b6b;font-size: 0.85rem;text-transform: uppercase;letter-spacing: 0.1em;"> Share your thoughts</label>
-                <input type="text" id="comment-section" class="comment-section" placeholder="add a comment:"
-                       required>
+
+export function leaveReview(roomId, customerId, modalBody, modalFooter) {
+    selectedRating = 0;
+    submitButton = null;
+    modalBody.innerHTML = `
+        <div class="review-card">
+            <h2 class="text-center review-title">Add review</h2>
+            <div class="star-container">
+                <span class="star" data-rating="1">☆</span>
+                <span class="star" data-rating="2">☆</span>
+                <span class="star" data-rating="3">☆</span>
+                <span class="star" data-rating="4">☆</span>
+                <span class="star" data-rating="5">☆</span>
             </div>
-            
-        </form>
-    </div>`
+            <div class="mb-3">
+                <label class="form-label review-label">Share your thoughts</label>
+                <textarea 
+                    id="comment-section"
+                    class="comment-section"
+                    placeholder="Add a comment..."
+                    rows="4"
+                    required>
+                </textarea>
+            </div>
+        </div>`;
+    modalFooter.innerHTML = `<button type="button" class="comment-btn" disabled>Leave review </button>`;
+    const stars = modalBody.querySelectorAll(".star");
     const commentSection = modalBody.querySelector(".comment-section");
-    commentSection.addEventListener(`input`,() => {
-        const comment = commentSection.value;
-        if (submitButton !== null && (comment === null || comment === ``)){
-            modalFooter.innerHTML = ``;
-        }
-        else if (submitButton === null && comment !== null || comment !== ``) {
-            showSubmitButton(modalFooter, comment);
-        }
+    submitButton = modalFooter.querySelector(".comment-btn");
+    stars.forEach(star => {
+        star.addEventListener("click", () => {
+            selectedRating = Number(star.dataset.rating);
+            updateStars(stars);
+            updateSubmitButton();
+        });
+    });
+    commentSection.addEventListener("input", () => {
+        updateSubmitButton();
+    });
+    submitButton.addEventListener("click", () => {
+        const review = {
+            roomId: roomId,
+            customerId: customerId,
+            rating: selectedRating,
+            comment: commentSection.value
+        };
+        sendReview(review);
     });
 }
 
-function showSubmitButton(modalFooter, review) {
-    modalFooter.innerHTML = `<button type="submit" id="comment-btn" class="comment-btn">Leave review</button>`;
-    submitButton = modalFooter.querySelector(".comment-btn");
-    submitButton.addEventListener("click", () => sendReview(review));
+function updateStars(stars) {
+    stars.forEach(star => {
+        const rating = Number(star.dataset.rating);
+        star.textContent = (rating <= selectedRating) ? "★" :  star.textContent = "☆";
+    });
 }
 
-function sendReview(review){
+function updateSubmitButton() {
+    const comment = document.getElementById("comment-section").value.trim();
+    if (selectedRating > 0 && comment.length > 0) {
+        submitButton.disabled = false;
+    }
+    else {
+        submitButton.disabled = true;
+    }
+}
 
+function sendReview(review) {
+    console.log("Review ready for backend:");
+    console.log(review);
 }

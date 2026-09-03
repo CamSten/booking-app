@@ -69,7 +69,7 @@ public class CustomerService {
         }
 
         Customer newCustomer = (customerRepository.save(new Customer(dto.getName(), dto.getEmail(), dto.getAddress(),
-                dto.getPhone(), passwordEncoder.encode(dto.getPassword()), Customer.CustomerStatus.ACTIVE)));
+                dto.getPhone(), passwordEncoder.encode(dto.getPassword()))));
         return new CustomerResult(toDTO(newCustomer), Feedback.OK);
     }
 
@@ -106,8 +106,8 @@ public class CustomerService {
         }
         Customer customer = customerRepository.findById(customerId).orElse(null);
         if (customer != null) {
-            customer.setStatus(Customer.CustomerStatus.UNREGISTERED);
-            return new CustomerResult(toDTO(customerRepository.save(customer)), Feedback.OK);
+            customerRepository.deleteById(customerId);
+            return new CustomerResult(null, Feedback.OK);
         }
         return new CustomerResult(null, Feedback.INVALID_USER);
     }
@@ -143,14 +143,5 @@ public class CustomerService {
             }
         }
         return new CustomerResult(null, Feedback.INVALID_EMAIL);
-    }
-
-    public boolean validateCustomer(Long customerId) {
-        Customer customer = customerRepository.findById(customerId).orElse(null);
-        return customer != null && customer.getStatus() == Customer.CustomerStatus.ACTIVE;
-    }
-
-    public boolean validateAuthorizedCustomer(Long customerId, Long loggedInCustomerId) {
-        return customerId != null && customerId.equals(loggedInCustomerId);
     }
 }

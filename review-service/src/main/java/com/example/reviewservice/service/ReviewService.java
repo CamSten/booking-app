@@ -1,7 +1,7 @@
-package com.example.bookingapp.service;
+package com.example.reviewservice.service;
 
-import com.example.bookingapp.model.*;
-import com.example.bookingapp.repository.ReviewRepository;
+import com.example.reviewservice.model.*;
+import com.example.reviewservice.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

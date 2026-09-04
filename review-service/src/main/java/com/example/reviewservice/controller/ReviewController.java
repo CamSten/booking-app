@@ -1,8 +1,8 @@
-package com.example.bookingapp.controller;
+package com.example.reviewservice.controller;
 
-import com.example.bookingapp.model.ReviewCollectionDTO;
-import com.example.bookingapp.model.ReviewRequestDTO;
-import com.example.bookingapp.service.ReviewService;
+import com.example.reviewservice.model.ReviewCollectionDTO;
+import com.example.reviewservice.model.ReviewRequestDTO;
+import com.example.reviewservice.service.ReviewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

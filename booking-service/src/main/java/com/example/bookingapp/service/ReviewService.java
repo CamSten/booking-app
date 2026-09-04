@@ -48,9 +48,9 @@ public class ReviewService {
                 dto.setCustomer("Unknown Customer");
             }
 
-            List<Booking> bookings = bookingService.getBookingsByCustomerId(r.getCustomerId());
-            Booking latestBooking = null;
-            for (Booking b : bookings) {
+            List<BookingDTO> bookings = bookingService.getBookingsByCustomerId(r.getCustomerId());
+            BookingDTO latestBooking = null;
+            for (BookingDTO b : bookings) {
                 if (b.getRoomid().equals(roomId)) {
                     if (latestBooking == null || b.getStartdate().isAfter(latestBooking.getStartdate())) {
                         latestBooking = b;

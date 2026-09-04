@@ -49,3 +49,27 @@ services:
         - SPRING_DATASOURCE_URL=jdbc:mysql://customer-db:3306/customerDB?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
         - SPRING_DATASOURCE_USERNAME=root
         - SPRING_DATASOURCE_PASSWORD=root
+  review-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: reviewdb
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3309:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p-root" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  review-service:
+      build: ./review-service
+      ports:
+        - "8082:8082"
+      depends_on:
+        review-db:
+          condition: service_healthy
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:mysql://review-db:3306/reviewdb?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+        - SPRING_DATASOURCE_USERNAME=root
+        - SPRING_DATASOURCE_PASSWORD=root

@@ -2,22 +2,23 @@ package com.example.reviewservice.service;
 
 import com.example.reviewservice.model.*;
 import com.example.reviewservice.repository.ReviewRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final CustomerService customerService;
-    private final BookingService bookingService;
+    private final RestTemplate restTemplate;
 
-    public ReviewService(ReviewRepository reviewRepository, CustomerService customerService, BookingService bookingService) {
+    public ReviewService(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
-        this.customerService = customerService;
-        this.bookingService = bookingService;
+        this.restTemplate = new RestTemplate();
     }
 
     public void saveReview(ReviewRequestDTO request) {
@@ -41,22 +42,33 @@ public class ReviewService {
             dto.setComments(r.getComment());
             dto.setSubmitdate(r.getSubmitDate());
 
-            CustomerResponseDTO cr = customerService.getCustomerById(r.getCustomerId());
-            if (cr.getCustomerDTO() != null) {
-                dto.setCustomer(cr.getCustomerDTO().getName());
-            } else {
+            try {
+                ResponseEntity<CustomerDTO> response = restTemplate.getForEntity("http://customer-service:8081/api/customers/" + r.getCustomerId(), CustomerDTO.class);
+                if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                    dto.setCustomer(response.getBody().getName());
+                } else {
+                    dto.setCustomer("Unknown Customer");
+                }
+            } catch (Exception e) {
                 dto.setCustomer("Unknown Customer");
             }
 
-            List<BookingDTO> bookings = bookingService.getBookingsByCustomerId(r.getCustomerId());
             BookingDTO latestBooking = null;
-            for (BookingDTO b : bookings) {
-                if (b.getRoomid().equals(roomId)) {
-                    if (latestBooking == null || b.getStartdate().isAfter(latestBooking.getStartdate())) {
-                        latestBooking = b;
+            try {
+                ResponseEntity<BookingDTO[]> bookingResponse = restTemplate.getForEntity("http://booking-service:8080/bookings/customer/" + r.getCustomerId(), BookingDTO[].class);
+                if (bookingResponse.getStatusCode().is2xxSuccessful() && bookingResponse.getBody() != null) {
+                    List<BookingDTO> bookings = Arrays.asList(bookingResponse.getBody());
+                    for (BookingDTO b : bookings) {
+                        if (b.getRoomid().equals(roomId)) {
+                            if (latestBooking == null || b.getStartdate().isAfter(latestBooking.getStartdate())) {
+                                latestBooking = b;
+                            }
+                        }
                     }
                 }
+            } catch (Exception e) {
             }
+            
             if (latestBooking != null) {
                 dto.setStartdate(latestBooking.getStartdate());
                 dto.setEnddate(latestBooking.getEnddate());

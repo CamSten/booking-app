@@ -1,4 +1,4 @@
-package com.example.bookingapp.model;
+package com.example.reviewservice.model;
 
 import lombok.Getter;
 import lombok.Setter;

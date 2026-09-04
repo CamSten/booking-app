@@ -17,11 +17,13 @@ public class ReviewController {
 
     @PostMapping
     public ResponseEntity<Void> addReview(@RequestBody ReviewRequestDTO request) {
-        return null;
+        reviewService.saveReview(request);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/room/{roomId}")
     public ResponseEntity<ReviewCollectionDTO> getReviewsByRoomId(@PathVariable Long roomId) {
-        return null;
+        ReviewCollectionDTO collection = reviewService.getReviewsForRoom(roomId);
+        return ResponseEntity.ok(collection);
     }
 }

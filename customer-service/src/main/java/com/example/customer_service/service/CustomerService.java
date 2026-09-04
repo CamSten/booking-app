@@ -31,11 +31,9 @@ public class CustomerService {
 
     public CustomerResult signupRequestIsValid(CustomerDTO dto) {
         if (dto.getEmail() == null || dto.getEmail().isBlank()) {
-            System.out.println("empty email");
             return new CustomerResult(null, Feedback.EMPTY_EMAIL);
         }
         if (dto.getPassword() == null || dto.getPassword().isBlank()) {
-            System.out.println("empty password");
             return new CustomerResult(null, Feedback.EMPTY_PASSWORD);
         }
         return createCustomer(dto);
@@ -125,7 +123,6 @@ public class CustomerService {
     }
 
     public CustomerResult loginCustomer(String email, String password) {
-        System.out.println("loginCustomer is called for email: " + email);
         if (email == null || email.isBlank()) {
             return new CustomerResult(null, Feedback.EMPTY_EMAIL);
         } else if (password == null || password.isBlank()) {

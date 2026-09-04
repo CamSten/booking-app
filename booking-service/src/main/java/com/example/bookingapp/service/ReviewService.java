@@ -33,7 +33,7 @@ public class ReviewService {
     public ReviewCollectionDTO getReviewsForRoom(Long roomId) {
         List<Review> reviews = reviewRepository.findByRoomId(roomId);
         List<ReviewDTO> reviewDTOs = new ArrayList<>();
-        int totalRating = 0;
+        double totalRating = 0;
 
         for (Review r : reviews) {
             ReviewDTO dto = new ReviewDTO();

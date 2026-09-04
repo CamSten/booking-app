@@ -1,0 +1,75 @@
+services:
+  booking-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: bookify
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '3308:3306'
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p-root" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  customer-db:
+      image: mysql:8.0
+      environment:
+        MYSQL_DATABASE: customerDB
+        MYSQL_ROOT_PASSWORD: root
+      ports:
+        - '3307:3306'
+      healthcheck:
+        test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p-root-" ]
+        interval: 5s
+        timeout: 5s
+        retries: 10
+
+  booking-service:
+      build: ./booking-service
+      ports:
+        - '8080:8080'
+      depends_on:
+        booking-db:
+          condition: service_healthy
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:mysql://booking-db:3306/bookify?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+        - SPRING_DATASOURCE_USERNAME=root
+        - SPRING_DATASOURCE_PASSWORD=root
+        - CUSTOMER_SERVICE_URL=http://customer-service:8081/api/customers
+
+  customer-service:
+      build: ./customer-service
+      ports:
+        - '8081:8081'
+      depends_on:
+        customer-db:
+          condition: service_healthy
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:mysql://customer-db:3306/customerDB?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+        - SPRING_DATASOURCE_USERNAME=root
+        - SPRING_DATASOURCE_PASSWORD=root
+  review-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: reviewdb
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3309:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p-root" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  review-service:
+      build: ./review-service
+      ports:
+        - "8082:8082"
+      depends_on:
+        review-db:
+          condition: service_healthy
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:mysql://review-db:3306/reviewdb?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+        - SPRING_DATASOURCE_USERNAME=root
+        - SPRING_DATASOURCE_PASSWORD=root

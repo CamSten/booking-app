@@ -24,7 +24,9 @@ public class CustomerService {
     }
 
     public CustomerResult loginRequestIsValid(LoginRequestDTO requestDTO) {
-        return loginCustomer(requestDTO.getEmail(), requestDTO.getPassword());
+        CustomerResult result = loginCustomer(requestDTO.getEmail(), requestDTO.getPassword());
+        System.out.println("result in loginRequestIsValid: " + result.feedback());
+        return result;
     }
 
     public CustomerResult signupRequestIsValid(CustomerDTO dto) {
@@ -123,6 +125,7 @@ public class CustomerService {
     }
 
     public CustomerResult loginCustomer(String email, String password) {
+        System.out.println("loginCustomer is called for email: " + email);
         if (email == null || email.isBlank()) {
             return new CustomerResult(null, Feedback.EMPTY_EMAIL);
         } else if (password == null || password.isBlank()) {

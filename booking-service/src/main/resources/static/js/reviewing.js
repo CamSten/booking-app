@@ -63,7 +63,17 @@ function updateSubmitButton() {
     }
 }
 
-function sendReview(review) {
-    console.log("Review ready for backend:");
-    console.log(review);
+async function sendReview(review) {
+    const response = await fetch("/reviews", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(review)
+    });
+    if (response.ok) {
+        window.location.reload(); 
+    } else {
+        alert("Failed to submit review.");
+    }
 }

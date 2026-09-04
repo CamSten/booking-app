@@ -62,15 +62,6 @@ function createStars(number) {
     return stars;
 }
 
-async function getReviewsForRoom(roomId){
-    //fetch reviews for roomId
-
-    //  GET /reviews/room/{roomId}
-    //
-    //  Response: (ReviewCollectionDTO)
-    //  {
-    //     average: 4.5,
-    //     totalReviews: 23,
-    //     reviews: [ ] (List<ReviewDTO)
-    // }
+async function getReviewsForRoom(roomId) {
+    return await fetch(`/reviews/room/${roomId}`);
 }
